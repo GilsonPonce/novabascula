@@ -16,6 +16,7 @@
             class="form-control form-control-lg text-center"
             type="text"
             placeholder="000000"
+            value="2000"
             aria-label=".form-control-lg example"
             disabled
           />
@@ -25,46 +26,34 @@
         <div class="col-3">
             <label for="select_tipo_peso" class="form-label">Tipo de peso</label>
           <select class="form-select" id="select_tipo_peso" aria-label="Default select example">
-            <option value="0" selected>ENTRADA</option>
-            <option value="1">SALIDA</option>
+            <option value="ENTRADA" selected>ENTRADA</option>
+            <option value="SALIDA">SALIDA</option>
           </select>
         </div>
       </div>
-      <div id="form_entrada" class="row justify-content-center">
-        <div class="col-6">
+      <div id="form_entrada" class="row justify-content-center ">
+        <div class="col-6 mt-3">
           <label for="select_proveedor" class="form-label">Proveedor</label>
           <select class="form-select" id="select_proveedor" aria-label="Default select example">
-            <option selected>Open this select menu</option>
-            <option value="1">One</option>
-            <option value="2">Two</option>
-            <option value="3">Three</option>
+           
           </select>
         </div>
         <div class="col-6 mt-3">
           <label for="select_transportista" class="form-label">Chofer</label>
           <select class="form-select" id="select_transportista" aria-label="Default select example">
-            <option selected>Open this select menu</option>
-            <option value="1">One</option>
-            <option value="2">Two</option>
-            <option value="3">Three</option>
+           
           </select>
         </div>
         <div class="col-6 mt-3">
           <label for="select_chofer" class="form-label">Vehiculo</label>
-          <select class="form-select" id="select_vehiculo" aria-label="Default select example">
-            <option selected>Open this select menu</option>
-            <option value="1">One</option>
-            <option value="2">Two</option>
-            <option value="3">Three</option>
+          <select class="form-select" id="select_vehiculo" aria-label="Default select example" disabled>
+           
           </select>
         </div>
         <div class="col-6 mt-3">
-          <label for="select_chofer" class="form-label">Forma de Recepcion</label>
-          <select class="form-select" id="select_chofer" aria-label="Default select example">
-            <option selected>Plataforma</option>
-            <option value="1">Pacas</option>
-            <option value="2">Tulas</option>
-            <option value="3">Costales</option>
+          <label for="select_forma_recepcion_entrada" class="form-label">Forma de Recepcion</label>
+          <select class="form-select" id="select_forma_recepcion_entrada" aria-label="Default select example">
+            
           </select>
         </div>
         <div class="col-12 text-center mt-4">
@@ -79,76 +68,54 @@
           <div class="col-12 text-center">
             <button id="boton_buscarticket_salida" class="btn btn-primary">Buscar Ticket</button>
           </div>
-          <div class="col-6 mt-3">
-            <p class="d-inline">Nro Ticket: </p><b  class="d-inline" id="p_numero_ticket"></b>
-          </div>
-          <div class="col-6 mt-3">
-            <p class="d-inline">Placa:</p><b class="d-inline" id="p_placa_ticket"></b>
-          </div>
-          <div class="col-6">
-            <p class="d-inline">Nombre Chofer:</p><b class="d-inline" id="p_chofer_ticket"></b>
-          </div>
-          <div class="col-6">
-            <p class="d-inline">Proveedor/Cliente:</p><b class="d-inline" id="p_proveedor_ticket"></b>
-          </div>
-          <div class="col-4 mb-3">
-            <p class="d-inline">Peso Entrada:</p><b class="d-inline" id="p_pesoEntrada_ticket"></b>
-          </div>
-          <div class="col-4 mb-3">
-            <p class="d-inline">Peso Salida:</p><b class="d-inline" id="p_pesoSalida_ticket"></b>
-          </div>
-          <div class="col-4 mb-3">
-            <p class="d-inline">Peso Neto:</p><b class="d-inline" id="p_pesoNeto_ticket"></b>
+          <div class="row bg-warning m-3 rounded">
+            <div class="col-6 mt-3">
+              <p class="d-inline">Nro Ticket: </p><b  class="d-inline" id="p_numero_ticket"></b>
+            </div>
+            <div class="col-6 mt-3">
+              <p class="d-inline">Placa:</p><b class="d-inline" id="p_placa_ticket"></b>
+            </div>
+            <div class="col-6">
+              <p class="d-inline">Nombre Chofer:</p><b class="d-inline" id="p_transportista_ticket"></b>
+            </div>
+            <div class="col-6">
+              <p class="d-inline">Proveedor/Cliente:</p><b class="d-inline" id="p_proveedor_ticket"></b>
+            </div>
           </div>
           <div class="col-4 mt-2">
             <label for="select_linea" class="form-label">Linea</label>
             <select class="form-select" id="select_linea" aria-label="Default select example">
-              <option selected>Open this select menu</option>
-              <option value="1">One</option>
-              <option value="2">Two</option>
-              <option value="3">Three</option>
+              
             </select>
           </div>
           <div class="col-4 mt-2">
             <label for="select_proceso" class="form-label">Proceso</label>
-            <select class="form-select" id="select_proceso" aria-label="Default select example">
-              <option selected>Open this select menu</option>
-              <option value="1">One</option>
-              <option value="2">Two</option>
-              <option value="3">Three</option>
+            <select class="form-select" id="select_proceso" aria-label="Default select example" disabled>
+              
             </select>
           </div>
           <div class="col-4 mt-2">
             <label for="select_material" class="form-label">Material</label>
-            <select class="form-select" id="select_material" aria-label="Default select example">
-              <option selected>Open this select menu</option>
-              <option value="1">One</option>
-              <option value="2">Two</option>
-              <option value="3">Three</option>
+            <select class="form-select" id="select_material" aria-label="Default select example" disabled>
+              
             </select>
           </div>
-          <div class="col-4 mt-2">
+          <div class="col-4 mt-3">
             <label for="select_tipo_material" class="form-label">Tipo material</label>
-            <select class="form-select" id="select_tipo_material" aria-label="Default select example">
-              <option selected>Open this select menu</option>
-              <option value="1">One</option>
-              <option value="2">Two</option>
-              <option value="3">Three</option>
+            <select class="form-select" id="select_tipo_material" aria-label="Default select example" disabled>
+              
             </select>
           </div>
           <div class="col-6 mt-3">
             <label for="select_forma_recepcion_salida" class="form-label">Forma de Recepcion</label>
             <select class="form-select" id="select_forma_recepcion_salida" aria-label="Default select example">
-              <option selected>Plataforma</option>
-              <option value="1">Pacas</option>
-              <option value="2">Tulas</option>
-              <option value="3">Costales</option>
+              
             </select>
           </div>
-          <div class="col-6 mt-3">
+          <!-- <div class="col-6 mt-3">
             <label for="textarea_observacion" class="form-label">Observacion</label>
             <textarea class="form-control" id="textarea_observacion" aria-label="With textarea" rows="2" minlength="100"></textarea>
-          </div>
+          </div> -->
           <div class="input-group mt-3">
             <input type="number" id="input_porcentaje_contaminacion" class="form-control" placeholder="Porcentaje de contaminacion" aria-label="Username">
             <span class="input-group-text">%</span>
@@ -156,10 +123,7 @@
           </div>
           <div class="input-group mt-3">
             <select class="form-select" id="select_contaminacion" aria-label="Example select with button addon">
-              <option selected>Madera</option>
-              <option value="1">Refrigeradora</option>
-              <option value="2">Plastico</option>
-              <option value="3">Lodo</option>
+             
             </select>
             <button class="btn btn-outline-secondary" id="boton_cotaminacion" type="button">Agregar</button>
           </div>
