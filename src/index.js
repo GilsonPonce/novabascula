@@ -33,19 +33,19 @@ function alerta(icon = 'warning', text) {
     alert.fireFrameless(swalOptions, null, true, false);
 }
 
-function alertaPregunta() {
+function alertaPregunta(id) {
     let alert = new Alert();
 
     let swalOptions = {
-        title: "Quieres terminar e imprimir el ticket?",
+        title: "Quieres terminar e/i imprimir el ticket?",
         icon: "warning",
         showCancelButton: true
     };
 
-    let promise = alert.fireWithFrame(swalOptions, "Delete file?", null, false);
+    let promise = alert.fireWithFrame(swalOptions, "Terminar ticket?", null, false);
     promise.then((result) => {
         if (result.value) {
-           console.log('Imprimiendo.....')
+           procesarTicket(id)
         } else if (result.dismiss === Alert.DismissReason.cancel) {
             console.log('Cancelado......')
         }
@@ -242,29 +242,7 @@ function getTicketSinProcesar() {
     });
 }
 
-function getInfoTicket(id) {
-    $query = `
-    select
-    tic.id_ticket, tic.fecha_ticket, veh.placa , pro.nombre as proveedor, tran.nombre as transportista
-    from 
-    (select prov.id_proveedor, concat(per.apellidos,' ',per.nombres) as nombre from persona per inner join proveedor prov on per.id_persona = prov.id_persona ) pro,
-    (select trans.id_transportista, concat(per.apellidos,' ',per.nombres) as nombre from persona per inner join transportista trans on per.id_persona = trans.id_persona ) tran,
-    ticket tic, vehiculo veh
-    where veh.id_vehiculo = tic.id_vehiculo and pro.id_proveedor = tic.id_proveedor and tran.id_transportista = veh.id_transportista and tic.procesado = 0 and tic.id_ticket =` + getConnection().escape(id)
 
-    getConnection().query($query, function (err, rows, fields) {
-        if (err) {
-            console.log("An error ocurred performing the query.");
-            return;
-        }
-
-        if (rows.length == 0) {
-            console.log('No hay tickets');
-            return;
-        }
-        return rows;
-    });
-}
 
 //choferes
 function getVehiculo() {
@@ -322,16 +300,16 @@ function registrarEntrada(
     });
 }
 
-function registrarSalida(
-    { id_ticket, tipo_peso, id_tipo_material, forma_recepcion, peso, peso_contaminacion, porcentaje_contaminacion, peso_total }
-) {
-    let sqlpeso = `insert into peso(id_ticket,tipo_peso,id_tipo_peso,id_tipo_material,forma_recepcion,peso,peso_contaminacion,porcentaje_contaminacion,peso_total) 
-    values(${id_ticket},${tipo_peso},${id_tipo_peso},${id_tipo_material},${forma_recepcion},${peso},${peso_contaminacion},${porcentaje_contaminacion}},${peso_total})`
-    getConnection().query(sqlpeso, function (err, result) {
-        if (err) alerta('error', err.message);
-        if (result && result.affectedRows > 0) alertaPregunta()
-    });
-}
+// function registrarSalida(
+//     { id_ticket, tipo_peso, id_tipo_material, forma_recepcion, peso, peso_contaminacion, porcentaje_contaminacion, peso_total }
+// ) {
+//     let sqlpeso = `insert into peso(id_ticket,tipo_peso,id_tipo_peso,id_tipo_material,forma_recepcion,peso,peso_contaminacion,porcentaje_contaminacion,peso_total) 
+//     values(${id_ticket},${tipo_peso},${id_tipo_peso},${id_tipo_material},${forma_recepcion},${peso},${peso_contaminacion},${porcentaje_contaminacion}},${peso_total})`
+//     getConnection().query(sqlpeso, function (err, result) {
+//         if (err) alerta('error', err.message);
+//         if (result && result.affectedRows > 0) alertaPregunta()
+//     });
+// }
 
 function procesarTicket(id_ticket) {
     let sqlprocesar = `update ticket set procesado = 1, fecha_procesado = ${moment.format("YYYY-MM-DD h:mm:ss")} WHERE id_ticket = ` + getConnection().escape(id_ticket);
@@ -456,7 +434,8 @@ ipcMain.on('openMain', () => {
 ipcMain.on('closeTicket', () => { windowtickets.close() });
 ipcMain.on('hideMain', () => { window.minimize() });
 ipcMain.on('showMain', () => { window.show() });
-ipcMain.on('showAlert', (event, data) => { alerta(data) });
+ipcMain.on('showAlert', (event, ...data) => { alerta(data[0],data[1]) });
+ipcMain.on('showAlertPregunta', (event, data) => { alertaPregunta(data) });
 ipcMain.on('login', (event, data) => { login(data) });
 ipcMain.handle('info',(event, id) => {
     window.webContents.send('pasoinfo',id);
@@ -520,9 +499,6 @@ ipcMain.on('getInfoTicket',(event,id)=>{
     console.log(ticket);
     event.returnValue = ticket;
 })
-
-
-
 
 
 require('electron-reload')(__dirname)

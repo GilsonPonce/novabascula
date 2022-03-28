@@ -76,10 +76,16 @@
               <p class="d-inline">Placa:</p><b class="d-inline" id="p_placa_ticket"></b>
             </div>
             <div class="col-6">
-              <p class="d-inline">Nombre Chofer:</p><b class="d-inline" id="p_transportista_ticket"></b>
+              <p class="d-inline">Chofer:</p><b class="d-inline" id="p_transportista_ticket"></b>
             </div>
             <div class="col-6">
-              <p class="d-inline">Proveedor/Cliente:</p><b class="d-inline" id="p_proveedor_ticket"></b>
+              <p class="d-inline">Proveedor:</p><b class="d-inline" id="p_proveedor_ticket"></b>
+            </div>
+            <div class="col-6 mb-3">
+              <p class="d-inline">Peso Entrada:</p><b class="d-inline" id="p_entrada_ticket"></b>
+            </div>
+            <div class="col-6 mb-3">
+              <p class="d-inline">Peso Neto:</p><b class="d-inline" id="p_neto_ticket"></b>
             </div>
           </div>
           <div class="col-4 mt-2">
@@ -120,12 +126,16 @@
             <input type="number" id="input_porcentaje_contaminacion" class="form-control" placeholder="Porcentaje de contaminacion" aria-label="Username">
             <span class="input-group-text">%</span>
             <input type="text" id="input_peso_contaminacion" class="form-control" placeholder="000000 Kg" aria-label="Server" disabled>
+            <span class="input-group-text">Kg</span>
           </div>
           <div class="input-group mt-3">
             <select class="form-select" id="select_contaminacion" aria-label="Example select with button addon">
-             
+  
             </select>
-            <button class="btn btn-outline-secondary" id="boton_cotaminacion" type="button">Agregar</button>
+            <button class="btn btn-outline-secondary" id="boton_contaminacion" type="button">Agregar</button>
+          </div>
+          <div class="col-12 m-2" id="lista_contaminacion">
+
           </div>
          </div>
        </div>
