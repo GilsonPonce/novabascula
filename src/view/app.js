@@ -326,16 +326,10 @@ function getPesoUltimoTicket(id) {
         where pe.id_peso = ${rows[0].id}`
         getConnection().query(query, function (err, rows1, fields) {
             if (err) ipcRenderer('showAlert', 'error', err.message)
-            rows1.map(({ tipo_peso, peso_total, peso }) => {
-                if (tipo_peso == "ENTRADA") {
+            rows1.map(({ peso }) => {
                     pesoNeto = parseInt(peso) - parseInt(input_peso.value);
                     p_entrada_ticket.innerHTML = peso;
                     p_neto_ticket.innerHTML = parseInt(peso) - parseInt(input_peso.value);
-                } else {
-                    pesoNeto = parseInt(peso_total) - (parseInt(input_peso.value));
-                    p_entrada_ticket.innerHTML = peso_total;
-                    p_neto_ticket.innerHTML = parseInt(peso_total) - (parseInt(input_peso.value));
-                }
             });
         })
     });
