@@ -49,7 +49,7 @@ function infoImpresion(id) {
             let tipo_ticket = ""
             pesos.map((item) => {
                 if (item.tipo_peso == "SALIDA") {
-                    tipo_ticket = item.linea + "-" + item.material;
+                    tipo_ticket = item.linea + " - " + item.material;
                     return;
                 }
             });
@@ -209,7 +209,7 @@ function infoImpresion(id) {
                             if (!err) console.log("ELiminacion exitosa")
                         })
                         console.log('Print ticket');
-                         BrowserWindow.getFocusedWindow().reload()
+                        window.reload()
                     })
                 }
             });
@@ -479,7 +479,7 @@ function registrarEntrada(
                 if (err2) alerta('error', err2.message);
                 if (result2 && result2.affectedRows > 0){
                     alerta('success', 'Peso Entrada Registrado')
-                    BrowserWindow.getFocusedWindow().reload()
+                    window.reload()
                 } 
             });
         }

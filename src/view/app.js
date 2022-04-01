@@ -102,8 +102,8 @@ function mostrarticket(e) {
 }
 
 function calcularpeso() {
-    input_peso_contaminacion.value = (Number(parseInt(pesoNeto)) * Number(parseInt(input_porcentaje_contaminacion.value == "" ? 0 : input_porcentaje_contaminacion.value))) / 100
-    p_neto_ticket.innerHTML = parseFloat(pesoNeto) - parseFloat(isNaN(input_peso_contaminacion.value) ? 0 : input_peso_contaminacion.value)
+    input_peso_contaminacion.value = (Number(parseInt(pesoNeto == "" ? 0 : pesoNeto)) * Number(parseInt(input_porcentaje_contaminacion.value == "" ? 0 : input_porcentaje_contaminacion.value))) / 100
+    p_neto_ticket.innerHTML = parseFloat(pesoNeto == "" ? 0 : pesoNeto) - parseFloat(isNaN(input_peso_contaminacion.value) ? 0 : input_peso_contaminacion.value)
 }
 
 
@@ -138,10 +138,15 @@ function registrarPesoEntrada() {
         forma_recepcion: select_forma_recepcion_entrada.value,
         peso: parseInt(input_peso.value)
     }
-    if (infoTicket.id_vehiculo != 0 && infoTicket.id_proveedor != 0 && pesoEntrada.forma_recepcion != "" && pesoEntrada.peso != "") {
+    if (infoTicket.id_vehiculo != 0 
+        && !isNaN(infoTicket.id_vehiculo)
+        && infoTicket.id_proveedor != 0 
+        && !isNaN(infoTicket.id_proveedor)
+        && pesoEntrada.forma_recepcion != "" 
+        && pesoEntrada.peso != "") {
         ipcRenderer.send('registrarPesoEntrada', infoTicket, pesoEntrada)
     } else {
-        ipcRenderer.send('showAlert', 'Datos incompletos');
+        ipcRenderer.send('showAlert','warning','Datos incompletos');
     }
 }
 
@@ -157,16 +162,26 @@ function registrarPesoSalida() {
         peso_total: parseFloat(p_neto_ticket.innerHTML)
     }
     if (
-        pesoSalida.id_ticket != 0 &&
+        pesoSalida.id_ticket != 0 && !isNaN(pesoSalida.id_ticket) &&
         pesoSalida.tipo_peso != "" &&
-        pesoSalida.id_tipo_material != 0 &&
+        pesoSalida.id_tipo_material != 0 && !isNaN(pesoSalida.id_tipo_material) &&
         pesoSalida.forma_recepcion != "" &&
-        pesoSalida.peso != 0 &&
-        pesoSalida.peso_total != 0
+        pesoSalida.peso != 0 && !isNaN(pesoSalida.peso) &&
+        pesoSalida.peso_total != 0 && !isNaN(pesoSalida.peso_total)
     ) {
         if(isNaN(pesoSalida.peso_contaminacion)) pesoSalida.peso_contaminacion = 0
         if(isNaN(pesoSalida.porcentaje_contaminacion)) pesoSalida.porcentaje_contaminacion = 0
-        registrarSalida(pesoSalida);
+        if(pesoSalida.peso_contaminacion > 0 && pesoSalida.porcentaje_contaminacion > 0 && contaminaciones.length == 0){
+            ipcRenderer.send('showAlert','warning','Falta elejir los tipo de contaminacion')
+            select_contaminacion.focus()
+        }else if(pesoSalida.peso_contaminacion == 0 && pesoSalida.porcentaje_contaminacion == 0 && contaminaciones.length > 0){
+            ipcRenderer.send('showAlert','warning','Falta poner el porcentaje de contaminacion')
+            input_porcentaje_contaminacion.focus();
+        }else{
+            registrarSalida(pesoSalida);
+        }
+    }else{
+        ipcRenderer.send('showAlert','warning','Faltan campos por llenar')
     }
 
 }
@@ -228,7 +243,7 @@ ipcRenderer.on('tipoMateriales', (event, arg) => {
 });
 
 ipcRenderer.on('tipoContaminaciones', (event, arg) => {
-    let html = '<option value="0" selected>Open this select menu</option>';
+    let html = '';
     arg.map(({ id_tipo_contaminacion, nombre }) => {
         html += `<option value="${id_tipo_contaminacion}_${nombre}">${nombre}</option>`
     });
@@ -256,7 +271,7 @@ ipcRenderer.on('vehiculos', (event, arg) => {
 
 ipcRenderer.on('formasRecepciones', (event, arg) => {
     let cont = 0;
-    let html = '<option value="0">Open this select menu</option>';
+    let html = '<option value="">Open this select menu</option>';
     arg.map(({ id_forma_recepcion, nombre }) => {
         cont++;
         cont == 1
@@ -268,10 +283,6 @@ ipcRenderer.on('formasRecepciones', (event, arg) => {
     select_forma_recepcion_entrada.innerHTML = html;
     select_forma_recepcion_salida.innerHTML = html;
 });
-
-ipcRenderer.on('ticket', (event, arg) => {
-
-})
 
 function getInfoTicket(id) {
     $query = `
@@ -329,6 +340,7 @@ function getPesoUltimoTicket(id) {
                     pesoNeto = parseInt(peso) - parseInt(input_peso.value);
                     p_entrada_ticket.innerHTML = peso;
                     p_neto_ticket.innerHTML = parseInt(peso) - parseInt(input_peso.value);
+                    calcularpeso();
             });
         })
     });
