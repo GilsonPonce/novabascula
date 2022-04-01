@@ -65,6 +65,7 @@ SerialPort.list()
                         let valor = data.substring(5, 11)//seis digitos 000000
                         valor = Number(valor)//elimina ceros a la derecha
                         input_peso.value = valor
+                        calcularpeso();
                     })
                 } else {
                     console.log(`PUERTO ${path} NO CUMPLE CON ESPECIFICACIONES`)
@@ -101,7 +102,7 @@ function mostrarticket(e) {
 }
 
 function calcularpeso() {
-    input_peso_contaminacion.value = (Number(parseInt(input_peso.value)) * Number(parseInt(input_porcentaje_contaminacion.value == "" ? 0 : input_porcentaje_contaminacion.value))) / 100
+    input_peso_contaminacion.value = (Number(parseInt(pesoNeto)) * Number(parseInt(input_porcentaje_contaminacion.value == "" ? 0 : input_porcentaje_contaminacion.value))) / 100
     p_neto_ticket.innerHTML = parseFloat(pesoNeto) - parseFloat(isNaN(input_peso_contaminacion.value) ? 0 : input_peso_contaminacion.value)
 }
 
@@ -161,8 +162,6 @@ function registrarPesoSalida() {
         pesoSalida.id_tipo_material != 0 &&
         pesoSalida.forma_recepcion != "" &&
         pesoSalida.peso != 0 &&
-        pesoSalida.peso_contaminacion != 0 &&
-        pesoSalida.porcentaje_contaminacion != 0 &&
         pesoSalida.peso_total != 0
     ) {
         if(isNaN(pesoSalida.peso_contaminacion)) pesoSalida.peso_contaminacion = 0
