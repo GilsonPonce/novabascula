@@ -38,14 +38,17 @@ function alerta(icon = 'warning', text) {
 
 function infoImpresion(id) {
     let conteoSalida = 0;
+    window.setProgressBar(0.1, {mode: "normal"});//rango de valor recibido es 0 a 1.0
     procesarTicket(id);
     let salidaconta = [];
     let contaminacion = [];
     let html = ``;
     infoticket(id)
         .then((info_ticket) => {
+            window.setProgressBar(0.3, {mode: "normal"});
             return infopesos(id, info_ticket)
         }).then(({ infoticket, pesos }) => {
+            window.setProgressBar(0.4, {mode: "normal"});
             let tipo_ticket = ""
             pesos.map((item) => {
                 if (item.tipo_peso == "SALIDA") {
@@ -173,6 +176,7 @@ function infoImpresion(id) {
             html += ` </table>`
             return infocontaminacion(id);
         }).then((NombreContaminacion) => {
+            window.setProgressBar(0.5, {mode: "normal"});
             if (contaminacion.length > 0) {
                 html += `<table class="table_data">`
                 for (i in contaminacion) {
@@ -191,6 +195,7 @@ function infoImpresion(id) {
                 }
                 html += `  </table>`
             }
+            window.setProgressBar(0.6, {mode: "normal"});
             html += `</div> </body> </html>`
             let options = { format: 'A5', orientation: "landscape" }
             let nombre = "./" + id + ".pdf"
@@ -198,21 +203,26 @@ function infoImpresion(id) {
             pdf.create(html, options).toFile(nombre, (err, res) => {
                 if (err) alerta('error', err.message);
                 if (res) {
+                    window.setProgressBar(0.7, {mode: "normal"});
                     urlarchivo = res.filename;
                     print(res.filename, {
                         monochrome: true,
                         paperSize: "A5",
                         copies: 1
                     }).then(() => {
+                        window.setProgressBar(0.8, {mode: "normal"});
                         fs.unlink(urlarchivo, (err) => {
                             if (err) alerta("error", err.message)
                             if (!err) console.log("ELiminacion exitosa")
                         })
                         console.log('Print ticket');
+                        window.setProgressBar(1.0, {mode: "normal"});
+                        window.setProgressBar(-1.0, {mode: "normal"});
                         window.reload()
                     })
                 }
             });
+           
         });
 }
 
