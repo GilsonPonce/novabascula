@@ -6,6 +6,26 @@ const input_usuario = document.getElementById('input_usuario_login');
 const input_contrasena = document.getElementById('input_password_login');
 
 boton_login.addEventListener('click', ingresar);
+input_cedula.addEventListener('keyup', function(e) {
+    var keycode = e.keyCode || e.which;
+    if (keycode == 13) {
+      input_usuario.focus();
+    }
+  });
+
+input_usuario.addEventListener('keyup', function(e) {
+    var keycode = e.keyCode || e.which;
+    if (keycode == 13) {
+      input_contrasena.focus();
+    }
+  });
+
+input_contrasena.addEventListener('keyup', function(e) {
+    var keycode = e.keyCode || e.which;
+    if (keycode == 13) {
+      ingresar();
+    }
+  });
 
 function ingresar() {
     let cedula = input_cedula.value;
