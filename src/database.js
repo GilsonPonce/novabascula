@@ -75,5 +75,7 @@ const getTicketSinProcesar = () => {
     })
 }
 
+
+
 module.exports = { getConnection, infocontaminacion, infopesos, infoticket, getTicketSinProcesar }
 

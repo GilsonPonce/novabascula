@@ -1,17 +1,46 @@
 {
   "name": "novabascula",
   "version": "1.0.0",
-  "description": "",
+  "description": "programa para imprimir ticket de bascula",
   "main": "src/index.js",
   "scripts": {
     "start": "electron .",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
-  "author": "",
+  "author": "Novared",
   "license": "ISC",
+  "build": {
+    "appId": "enupal-electronv1",
+    "asar": true,
+    "dmg": {
+      "contents": [
+        {
+          "x": 110,
+          "y": 150
+        },
+        {
+          "x": 240,
+          "y": 150,
+          "type": "link",
+          "path": "/Applications"
+        }
+      ]
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb"
+      ]
+    },
+    "win": {
+      "target": "NSIS",
+      "icon": "build/icon.ico"
+    }
+  },
   "dependencies": {
-    "electron": "^17.0.0",
     "electron-alert": "^0.1.20",
     "electron-progressbar": "^2.0.1",
     "electron-reload": "^2.0.0-alpha.1",
@@ -23,6 +52,8 @@
     "serialport": "^10.3.0"
   },
   "devDependencies": {
+    "electron": "^18.0.1",
+    "electron-builder": "^22.14.13",
     "electron-rebuild": "^3.2.7"
   }
 }

@@ -102,8 +102,8 @@ function mostrarticket(e) {
 }
 
 function calcularpeso() {
-    input_peso_contaminacion.value = (Number(parseInt(pesoNeto == "" ? 0 : pesoNeto)) * Number(parseInt(input_porcentaje_contaminacion.value == "" ? 0 : input_porcentaje_contaminacion.value))) / 100
-    p_neto_ticket.innerHTML = parseFloat(pesoNeto == "" ? 0 : pesoNeto) - parseFloat(isNaN(input_peso_contaminacion.value) ? 0 : input_peso_contaminacion.value)
+    input_peso_contaminacion.value = Math.abs((Number(parseInt(pesoNeto == "" ? 0 : pesoNeto)) * Number(parseInt(input_porcentaje_contaminacion.value == "" ? 0 : input_porcentaje_contaminacion.value))) / 100)
+    p_neto_ticket.innerHTML = Math.abs(parseFloat(pesoNeto == "" ? 0 : pesoNeto) - parseFloat(isNaN(input_peso_contaminacion.value) ? 0 : input_peso_contaminacion.value))
 }
 
 
@@ -337,9 +337,9 @@ function getPesoUltimoTicket(id) {
         getConnection().query(query, function (err, rows1, fields) {
             if (err) ipcRenderer('showAlert', 'error', err.message)
             rows1.map(({ peso }) => {
-                    pesoNeto = parseInt(peso) - parseInt(input_peso.value);
+                    pesoNeto = Math.abs(parseInt(peso) - parseInt(input_peso.value));
                     p_entrada_ticket.innerHTML = peso;
-                    p_neto_ticket.innerHTML = parseInt(peso) - parseInt(input_peso.value);
+                    p_neto_ticket.innerHTML = Math.abs(parseInt(peso) - parseInt(input_peso.value));
                     calcularpeso();
             });
         })
