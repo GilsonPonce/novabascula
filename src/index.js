@@ -10,7 +10,7 @@ const { print } = require('pdf-to-printer');
 let window;
 let windowtickets;
 let windowlogin;
-let windowticketpdf;
+let windowadmin;
 let lineas;
 let procesos;
 let materiales;
@@ -546,6 +546,44 @@ function createWindow() {
     })
 }
 
+function createWindowAdmin() {
+    windowadmin = new BrowserWindow({
+        width: 800,
+        minWidth: 800,
+        maxWidth: 800,
+        height: 600,
+        minHeight: 600,
+        maxHeight: 600,
+        backgroundColor: "#ccc",
+        resizable: false,
+        maximizable: false,
+        autoHideMenuBar: true,
+        center: true,
+        webPreferences: {
+            nodeIntegration: true,
+            contextIsolation: false,
+            preload: path.join(__dirname, 'preload.js')
+        },
+    });
+
+    windowadmin.loadURL(url.format({
+        pathname: path.join(__dirname, 'view/paneladmin.html'),
+        protocol: 'file',
+        slashes: true
+    }));
+
+    windowadmin.on('closed', function () {
+        windowadmin = null;
+    })
+}
+
+function showWindowAdmin(){
+    createWindowAdmin();
+    windowadmin.once('ready-to-show', () => {
+        windowadmin.show();
+    });
+}
+
 function windowticketsinpro() {
     windowtickets = new BrowserWindow({
         frame: false,
@@ -639,6 +677,9 @@ ipcMain.on('openMain', () => {
         windowlogin.close();
     });
 });
+ipcMain.on('openAdmin',()=>{
+    showWindowAdmin();
+})
 
 ipcMain.on('closeTicket', () => { windowtickets.close() });
 ipcMain.on('hideMain', () => { window.minimize() });

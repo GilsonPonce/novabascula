@@ -16,6 +16,7 @@ const boton_buscar_ticket = document.getElementById('boton_buscarticket_salida')
 const boton_registrar_salida = document.getElementById('boton_registrar_salida');
 const boton_registrar_entrada = document.getElementById('boton_registrar_entrada');
 const boton_contaminacion = document.getElementById('boton_contaminacion');
+const boton_setting = document.getElementById('boton_setting');
 const p_numero_ticket = document.getElementById('p_numero_ticket');
 const p_placa_ticket = document.getElementById('p_placa_ticket');
 const p_transportista_ticket = document.getElementById('p_transportista_ticket');
@@ -93,7 +94,9 @@ select_transportista.addEventListener('change', cargarVehiculos);
 boton_registrar_entrada.addEventListener('click', registrarPesoEntrada);
 boton_registrar_salida.addEventListener('click', registrarPesoSalida);
 boton_contaminacion.addEventListener('click', addIdContaminacion);
-
+boton_setting.addEventListener('click',()=>{
+    ipcRenderer.send('openAdmin')
+});
 
 function mostrarticket(e) {
     //p_numero_ticket.innerText = filePat

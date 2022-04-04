@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="bootstrap.min.css" />
+    <title>Panel De Control</title>
+</head>
+
+<body>
+    <div class="container">
+        <div class="input-group mb-3">
+            <span class="input-group-text" id="basic-addon1">IP DE SERVIDOR</span>
+            <input type="text" value="localhost" class="form-control" placeholder="192.168.35.0" id="input_ip_servidor"
+                aria-label="Username" aria-describedby="basic-addon1">
+        </div>
+        <select class="form-select" aria-label="Default select example">
+            <option selected>Open this select menu</option>
+            <option value="USUARIO">USUARIO</option>
+            <option value="PROVEEDOR">PROVEEDOR</option>
+            <option value="TRANSPORTISTA">TRANSPORTISTA</option>
+            <option value="VEHICULO">VEHICULO</option>
+            <option value="TICKET">TICKET</option>
+            <option value="CONTAMINACION">CONTAMINACION</option>
+        </select>
+        <div class="row d-none" id="form_persona">
+            <div class="col">
+                <input type="number" class="form-control" placeholder="Cedula" aria-label="Cedula">
+            </div>
+            <div class="col">
+                <input type="text" class="form-control" placeholder="Nombres" aria-label="Nombres">
+            </div>
+            <div class="col">
+                <input type="text" class="form-control" placeholder="Apellidos" aria-label="Apellidos">
+            </div>
+            <div class="col">
+                <input type="text" class="form-control" placeholder="Fecha nacimiento" aria-label="Fecha nacimiento">
+            </div>
+            <div class="col">
+                <label for="inputEmail4" class="form-label">Sexo</label>
+                <select class="form-select" aria-label="Default select example">
+                    <option selected>Open this select menu</option>
+                    <option value="MASCULINO">MASCULINO</option>
+                    <option value="FEMENINO">FEMENINO</option>
+                </select>
+            </div>
+            <div class="col">
+                <label for="inputEmail4" class="form-label">Estado civil</label>
+                <select class="form-select" aria-label="Default select example">
+                    <option selected>Open this select menu</option>
+                    <option value="MASCULINO">SOLTERO</option>
+                    <option value="FEMENINO">CASADO</option>
+                    <option value="FEMENINO">UNION LIBRE</option>
+                    <option value="FEMENINO">DIVORCIADO</option>
+                </select>
+            </div>
+            <div class="col">
+                <input type="text" class="form-control" placeholder="Ciudadania" aria-label="Ciudadania">
+            </div>
+            <div class="col">
+                <input type="text" class="form-control" placeholder="Instruccion" aria-label="Instruccion">
+            </div>
+            <div class="col">
+                <input type="text" class="form-control" placeholder="Lugar Expedicion" aria-label="Lugar Expedicion">
+            </div>
+            <div class="col">
+                <input type="date" class="form-control" placeholder="Fecha Expedicion" aria-label="Fecha Expedicion">
+            </div>
+            <div class="col">
+                <input type="date" class="form-control" placeholder="Fecha Expiracion" aria-label="Fecha Expiracion">
+            </div>
+        </div>
+        <div class="row d-none" id="form_credencial">
+            <div class="col">
+                <input type="text" class="form-control" placeholder="Usuario" aria-label="Usuario">
+            </div>
+            <div class="col">
+                <input type="text" class="form-control" placeholder="Contrasena" aria-label="Contrasena">
+            </div>
+            <div class="col">
+                <label for="inputEmail4" class="form-label">Usuario</label>
+                <select class="form-select" aria-label="Default select example">
+                    <option selected>Open this select menu</option>
+                    <option value="MASCULINO">MARIA JOSE NOBOA</option>
+                </select>
+            </div>
+        </div>
+        <div class="row d-none" id="form_proveedor">
+            <div class="col">
+                <label for="inputEmail4" class="form-label">Activo</label>
+                <select class="form-select" aria-label="Default select example">
+                    <option selected>Open this select menu</option>
+                    <option value="1">Si</option>
+                    <option value="0">No</option>
+                </select>
+            </div>
+        </div>
+        <div class="row d-none" id="form_transportista">
+            <div class="col">
+                <input type="date" class="form-control" placeholder="Vencimiento Licencia"
+                    aria-label="Vencimiento Licencia">
+            </div>
+            <div class="col">
+                <label for="inputEmail4" class="form-label">Activo</label>
+                <select class="form-select" aria-label="Default select example">
+                    <option selected>Open this select menu</option>
+                    <option value="1">Si</option>
+                    <option value="0">No</option>
+                </select>
+            </div>
+        </div>
+        <div class="row d-none" id="form_vehiculo">
+            <div class="col">
+                <input type="text" class="form-control" placeholder="Placa" aria-label="Placa">
+            </div>
+            <div class="col">
+                <input type="date" class="form-control" placeholder="Vencimiento matricula"
+                    aria-label="Vencimiento matricula">
+            </div>
+            <div class="col">
+                <label for="inputEmail4" class="form-label">Activo</label>
+                <select class="form-select" aria-label="Default select example">
+                    <option selected>Open this select menu</option>
+                    <option value="1">Si</option>
+                    <option value="0">No</option>
+                </select>
+            </div>
+            <div class="col">
+                <label for="inputEmail4" class="form-label">Transportista</label>
+                <select class="form-select" aria-label="Default select example">
+                    <option selected>Open this select menu</option>
+                    <option value="1">Si</option>
+                    <option value="0">No</option>
+                </select>
+            </div>
+            <div class="col">
+                <input type="text" class="form-control d-none" placeholder="Tipo Vehiculo" aria-label="Tipo Vehiculo">
+                <label for="inputEmail4" class="form-label">Tipo Vehiculo</label>
+                <select class="form-select" aria-label="Default select example">
+                    <option selected>Open this select menu</option>
+                    <option value="1">Si</option>
+                    <option value="0">No</option>
+                </select>
+            </div>
+        </div>
+        <div class="row d-none" id="form_contaminacion">
+            <div class="col">
+                <input type="text" class="form-control" placeholder="Contaminacion" aria-label="Contaminacion">
+            </div>
+        </div>
+        <div class="row d-none" id="form_configuracion">
+            <div class="col">
+                <input type="text" class="form-control" placeholder="Linea" aria-label="Linea">
+            </div>
+            <div class="col">
+                <input type="text" class="form-control" placeholder="Proceso" aria-label="Proceso">
+            </div>
+            <div class="col">
+                <input type="text" class="form-control" placeholder="Material" aria-label="Material">
+            </div>
+            <div class="col">
+                <input type="text" class="form-control" placeholder="Tipo Material" aria-label="Tipo Material">
+            </div>
+        </div>
+        <div class="row d-none" id="form_ticket">
+            <div class="col">
+                <input type="date" class="form-control" placeholder="Fecha procesado" aria-label="Fecha procesado">
+            </div>
+            <div class="col">
+                <label for="inputEmail4" class="form-label">Procesado</label>
+                <select class="form-select" aria-label="Default select example">
+                    <option selected>Open this select menu</option>
+                    <option value="1">Si</option>
+                    <option value="0">No</option>
+                </select>
+            </div>
+            <div class="col">
+                <label for="inputEmail4" class="form-label">Vehiculo</label>
+                <select class="form-select" aria-label="Default select example">
+                    <option selected>Open this select menu</option>
+                    <option value="1">Si</option>
+                    <option value="0">No</option>
+                </select>
+            </div>
+            <div class="col">
+                <label for="inputEmail4" class="form-label">Proveedor</label>
+                <select class="form-select" aria-label="Default select example">
+                    <option selected>Open this select menu</option>
+                    <option value="1">Si</option>
+                    <option value="0">No</option>
+                </select>
+            </div>
+        </div>
+        <div class="row" id="form_table_show">
+
+        </div>
+    </div>
+</body>
+
+</html>
