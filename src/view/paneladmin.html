@@ -11,84 +11,118 @@
 
 <body>
     <div class="container">
-        <div class="input-group mb-3">
-            <span class="input-group-text" id="basic-addon1">IP DE SERVIDOR</span>
-            <input type="text" value="localhost" class="form-control" placeholder="192.168.35.0" id="input_ip_servidor"
-                aria-label="Username" aria-describedby="basic-addon1">
+        <div class="row">
+            <div class="col">
+                <div class="input-group mb-3 mt-3">
+                    <span class="input-group-text" id="basic-addon1">IP DE SERVIDOR</span>
+                    <input type="text" id="input_host" value="localhost" class="form-control" placeholder="192.168.35.0"
+                        id="input_ip_servidor" aria-label="Username" aria-describedby="basic-addon1">
+                </div>
+            </div>
         </div>
-        <select class="form-select" aria-label="Default select example">
-            <option selected>Open this select menu</option>
-            <option value="USUARIO">USUARIO</option>
-            <option value="PROVEEDOR">PROVEEDOR</option>
-            <option value="TRANSPORTISTA">TRANSPORTISTA</option>
-            <option value="VEHICULO">VEHICULO</option>
-            <option value="TICKET">TICKET</option>
-            <option value="CONTAMINACION">CONTAMINACION</option>
-        </select>
-        <div class="row d-none" id="form_persona">
+        <div class="row">
             <div class="col">
-                <input type="number" class="form-control" placeholder="Cedula" aria-label="Cedula">
+                <select class="form-select mb-3" id="select_opcion" aria-label="Default select example">
+                    <option selected>Open this select menu</option>
+                    <option value="USUARIO">REGISTRO DE USUARIO</option>
+                    <option value="PROVEEDOR">REGISTRO DE PROVEEDOR</option>
+                    <option value="TRANSPORTISTA">REGISTRO DE TRANSPORTISTA</option>
+                    <option value="VEHICULO">REGISTRO DE VEHICULO</option>
+                    <option value="LINEA">REGISTRO DE LINEA</option>
+                    <option value="PROCESO">REGISTRO DE PROCESO</option>
+                    <option value="MATERIAL">REGISTRO DE MATERIAL</option>
+                    <option value="TIPO_MATERIAL">REGISTRO DE TIPO DE MATERIAL</option>
+                    <option value="TIPO_VEHICULO">REGISTRO DE TIPO DE VEHICULOS</option>
+                    <option value="TIPO_CONTAMINACION">REGISTRO DE TIPOS DE CONTAMINACION</option>
+                    <option value="EDI_TICKET_PESO">EDICION DE TICKET Y PESOS</option>
+                    <option value="EDI_USUARIO">EDICION DE USUARIOS</option>
+                    <option value="EDI_PROVEEDOR">EDICION DE PROVEEDOR</option>
+                    <option value="EDI_TRANSPORTISTA">EDICION DE TRANSPORTISTA</option>
+                    <option value="EDI_VEHICULO">EDICION DE VEHICULO</option>
+                    <option value="EDI_LINEA">EDICION DE LINEA</option>
+                    <option value="EDI_PROCESO">EDICION DE PROCESO</option>
+                    <option value="EDI_MATERIAL">EDICION DE MATERIAL</option>
+                    <option value="EDI_TIPO_MATERIAL">EDICION DE TIPO MATERIAL</option>
+                    <option value="EDI_TIPO_VEHICULO">EDICION DE TIPO VEHICULO</option>
+                    <option value="EDI_TIPO_CONTAMINACION">EDICION DE TIPO CONTAMINACION</option>
+                </select>
             </div>
+        </div>
+        <div class="row d-none bg-info text-white rounded p-3 mb-2" id="form_edicion">
             <div class="col">
-                <input type="text" class="form-control" placeholder="Nombres" aria-label="Nombres">
+                <label for="inputEmail4" class="form-label" id="label_select_edicion">Proveedor</label>
+                <select class="form-select" aria-label="Default select example" id="select_edicion">
+                    <option selected>Open this select menu</option>
+                    <option value="1">Si</option>
+                    <option value="0">No</option>
+                </select>
             </div>
-            <div class="col">
-                <input type="text" class="form-control" placeholder="Apellidos" aria-label="Apellidos">
+        </div>
+        <div class="alert alert-info m-3" id="aviso" role="alert">
+            Escoje una opción para habilitar el modulo correspondinte!
+        </div>
+        <div class="row d-none bg-primary rounded p-3 text-white" id="form_persona">
+            <div class="col-6 mb-2 ">
+                <input type="number" id="input_form_usuario_cedula" class="form-control" placeholder="Cedula" aria-label="Cedula">
             </div>
-            <div class="col">
-                <input type="text" class="form-control" placeholder="Fecha nacimiento" aria-label="Fecha nacimiento">
+            <div class="col-6 mb-2">
+                <input type="text" id="input_form_usuario_nombres" class="form-control" placeholder="Nombres" aria-label="Nombres">
             </div>
-            <div class="col">
+            <div class="col-6 mb-2">
+                <input type="text" id="input_form_usuario_apellidos" class="form-control" placeholder="Apellidos" aria-label="Apellidos">
+            </div>
+            <div class="col-6 mb-2">
+                <input type="text" id="input_form_usuario_fecha_nacimiento" class="form-control" placeholder="Fecha nacimiento" aria-label="Fecha nacimiento">
+            </div>
+            <div class="col-6 mb-2">
                 <label for="inputEmail4" class="form-label">Sexo</label>
-                <select class="form-select" aria-label="Default select example">
+                <select class="form-select" id="select_form_usuario_sexo" aria-label="Default select example">
                     <option selected>Open this select menu</option>
                     <option value="MASCULINO">MASCULINO</option>
                     <option value="FEMENINO">FEMENINO</option>
                 </select>
             </div>
-            <div class="col">
+            <div class="col-6 mb-2">
                 <label for="inputEmail4" class="form-label">Estado civil</label>
-                <select class="form-select" aria-label="Default select example">
+                <select class="form-select" id="select_form_usuario_estado_civil" aria-label="Default select example">
                     <option selected>Open this select menu</option>
-                    <option value="MASCULINO">SOLTERO</option>
-                    <option value="FEMENINO">CASADO</option>
-                    <option value="FEMENINO">UNION LIBRE</option>
-                    <option value="FEMENINO">DIVORCIADO</option>
+                    <option value="SOLTERO">SOLTERO</option>
+                    <option value="CASADO">CASADO</option>
+                    <option value="UNION LIBRE">UNION LIBRE</option>
+                    <option value="DIVORCIADO">DIVORCIADO</option>
                 </select>
             </div>
-            <div class="col">
-                <input type="text" class="form-control" placeholder="Ciudadania" aria-label="Ciudadania">
+            <div class="col-6 mb-2">
+                <input type="text" id="input_form_usuario_ciudadania" class="form-control" placeholder="Ciudadania" aria-label="Ciudadania">
             </div>
-            <div class="col">
-                <input type="text" class="form-control" placeholder="Instruccion" aria-label="Instruccion">
+            <div class="col-6 mb-2">
+                <input type="text" id="input_form_usuario_instruccion" class="form-control" placeholder="Instruccion" aria-label="Instruccion">
             </div>
-            <div class="col">
-                <input type="text" class="form-control" placeholder="Lugar Expedicion" aria-label="Lugar Expedicion">
+            <div class="col-6 mb-2">
+                <label for="inputEmail4" class="form-label">Fecha de Expedicion</label>
+                <input type="date" id="input_form_usuario_fecha_expedicion" class="form-control" placeholder="Fecha Expedicion" aria-label="Fecha Expedicion">
             </div>
-            <div class="col">
-                <input type="date" class="form-control" placeholder="Fecha Expedicion" aria-label="Fecha Expedicion">
+            <div class="col-6 mb-2">
+                <label for="inputEmail4" class="form-label">Fecha de Expiracion</label>
+                <input type="date" id="input_form_usuario_fecha_expiracion" class="form-control" placeholder="Fecha Expiracion" aria-label="Fecha Expiracion">
             </div>
-            <div class="col">
-                <input type="date" class="form-control" placeholder="Fecha Expiracion" aria-label="Fecha Expiracion">
-            </div>
-        </div>
-        <div class="row d-none" id="form_credencial">
-            <div class="col">
-                <input type="text" class="form-control" placeholder="Usuario" aria-label="Usuario">
-            </div>
-            <div class="col">
-                <input type="text" class="form-control" placeholder="Contrasena" aria-label="Contrasena">
-            </div>
-            <div class="col">
-                <label for="inputEmail4" class="form-label">Usuario</label>
-                <select class="form-select" aria-label="Default select example">
-                    <option selected>Open this select menu</option>
-                    <option value="MASCULINO">MARIA JOSE NOBOA</option>
-                </select>
+            <div class="col-6 mb-2">
+                <input type="text" id="input_form_usuario_lugar_expedicion" class="form-control" placeholder="Lugar Expedicion" aria-label="Lugar Expedicion">
             </div>
         </div>
-        <div class="row d-none" id="form_proveedor">
-            <div class="col">
+        <div class="row d-none bg-success rounded p-3 mt-2 mb-2 text-white" id="form_credencial">
+            <div class="col-6">
+                <input type="text" id="input_form_credencial_usuario" class="form-control" placeholder="Usuario" aria-label="Usuario">
+            </div>
+            <div class="col-6 mb-3">
+                <input type="text" id="input_form_credencial_contrasena" class="form-control" placeholder="Contrasena" aria-label="Contrasena">
+            </div>
+            <div class="col-2">
+                <button class="btn btn-primary" id="boton_form_credencial_registrar">Registrar</button>
+            </div>
+        </div>
+        <div class="row d-none bg-success rounded p-3 mt-2 mb-2 text-white" id="form_proveedor">
+            <div class="col-6 mb-2">
                 <label for="inputEmail4" class="form-label">Activo</label>
                 <select class="form-select" aria-label="Default select example">
                     <option selected>Open this select menu</option>
@@ -96,13 +130,17 @@
                     <option value="0">No</option>
                 </select>
             </div>
+            <div class="col-12">
+                <button class="btn btn-primary">Registrar</button>
+            </div>
         </div>
-        <div class="row d-none" id="form_transportista">
-            <div class="col">
+        <div class="row d-none bg-success rounded p-3 mt-2 mb-2 text-white" id="form_transportista">
+            <div class="col-6 mb-2">
+                <label for="inputEmail4" class="form-label">Fecha de vencimiento de licencia</label>
                 <input type="date" class="form-control" placeholder="Vencimiento Licencia"
                     aria-label="Vencimiento Licencia">
             </div>
-            <div class="col">
+            <div class="col-6 mb-2">
                 <label for="inputEmail4" class="form-label">Activo</label>
                 <select class="form-select" aria-label="Default select example">
                     <option selected>Open this select menu</option>
@@ -110,93 +148,161 @@
                     <option value="0">No</option>
                 </select>
             </div>
+            <div class="col-12">
+                <button class="btn btn-primary">Registrar</button>
+            </div>
         </div>
-        <div class="row d-none" id="form_vehiculo">
-            <div class="col">
+        <div class="row d-none bg-warning p-3 text-white rounded" id="form_vehiculo">
+            <div class="col-6 mb-2">
+                <label for="inputEmail4" class="form-label">Placa</label>
                 <input type="text" class="form-control" placeholder="Placa" aria-label="Placa">
             </div>
-            <div class="col">
+            <div class="col-6 mb-2">
+                <label for="inputEmail4" class="form-label">Fecha vencimiento de matricula</label>
                 <input type="date" class="form-control" placeholder="Vencimiento matricula"
                     aria-label="Vencimiento matricula">
             </div>
-            <div class="col">
-                <label for="inputEmail4" class="form-label">Activo</label>
-                <select class="form-select" aria-label="Default select example">
-                    <option selected>Open this select menu</option>
-                    <option value="1">Si</option>
-                    <option value="0">No</option>
-                </select>
-            </div>
-            <div class="col">
+            <div class="col-6 mb-2">
                 <label for="inputEmail4" class="form-label">Transportista</label>
                 <select class="form-select" aria-label="Default select example">
                     <option selected>Open this select menu</option>
                     <option value="1">Si</option>
                     <option value="0">No</option>
                 </select>
+                <a class="text-none" href="./ticketpdf.html">Registrar un nuevo Transportista</a>
             </div>
-            <div class="col">
-                <input type="text" class="form-control d-none" placeholder="Tipo Vehiculo" aria-label="Tipo Vehiculo">
+            <div class="col mb-2">
                 <label for="inputEmail4" class="form-label">Tipo Vehiculo</label>
                 <select class="form-select" aria-label="Default select example">
                     <option selected>Open this select menu</option>
                     <option value="1">Si</option>
                     <option value="0">No</option>
                 </select>
+                <a href="00">Registrar un nuevo tipo</a>
             </div>
-        </div>
-        <div class="row d-none" id="form_contaminacion">
-            <div class="col">
-                <input type="text" class="form-control" placeholder="Contaminacion" aria-label="Contaminacion">
-            </div>
-        </div>
-        <div class="row d-none" id="form_configuracion">
-            <div class="col">
-                <input type="text" class="form-control" placeholder="Linea" aria-label="Linea">
-            </div>
-            <div class="col">
-                <input type="text" class="form-control" placeholder="Proceso" aria-label="Proceso">
-            </div>
-            <div class="col">
-                <input type="text" class="form-control" placeholder="Material" aria-label="Material">
-            </div>
-            <div class="col">
-                <input type="text" class="form-control" placeholder="Tipo Material" aria-label="Tipo Material">
-            </div>
-        </div>
-        <div class="row d-none" id="form_ticket">
-            <div class="col">
-                <input type="date" class="form-control" placeholder="Fecha procesado" aria-label="Fecha procesado">
-            </div>
-            <div class="col">
-                <label for="inputEmail4" class="form-label">Procesado</label>
+            <div class="col-6 mb-2">
+                <label for="inputEmail4" class="form-label">Activo</label>
                 <select class="form-select" aria-label="Default select example">
                     <option selected>Open this select menu</option>
                     <option value="1">Si</option>
                     <option value="0">No</option>
                 </select>
             </div>
-            <div class="col">
-                <label for="inputEmail4" class="form-label">Vehiculo</label>
-                <select class="form-select" aria-label="Default select example">
-                    <option selected>Open this select menu</option>
-                    <option value="1">Si</option>
-                    <option value="0">No</option>
-                </select>
-            </div>
-            <div class="col">
-                <label for="inputEmail4" class="form-label">Proveedor</label>
-                <select class="form-select" aria-label="Default select example">
-                    <option selected>Open this select menu</option>
-                    <option value="1">Si</option>
-                    <option value="0">No</option>
-                </select>
+            <div class="col-12">
+                <button class="btn btn-primary">Registrar</button>
             </div>
         </div>
-        <div class="row" id="form_table_show">
+        <div class="row d-none bg-dark rounded p-3 text-white" id="form_tipo_contaminacion">
+            <div class="col-6 mb-2">
+                <label for="inputEmail4" class="form-label">Nombre contaminacion</label>
+                <input type="text" class="form-control" placeholder="Nombre de Contaminacion"
+                    aria-label="Nombre de Contaminacion">
+            </div>
+            <div class="col-12">
+                <button class="btn btn-primary">Registrar</button>
+            </div>
+        </div>
+        <div class="row d-none bg-dark rounded p-3 text-white" id="form_tipo_vehiculo">
+            <div class="col-6 mb-2">
+                <label for="inputEmail4" class="form-label">Nombre tipo de vehiculo</label>
+                <input type="text" class="form-control" placeholder="Nombre Tipo Vehiculo"
+                    aria-label="Nombre Tipo Vehiculo">
+            </div>
+            <div class="col-12">
+                <button class="btn btn-primary">Registrar</button>
+            </div>
+        </div>
+        <div class="row d-none bg-dark rounded p-3 text-white" id="form_linea">
+            <div class="col-6 mb-2">
+                <label for="inputEmail4" class="form-label">Nombre de la linea</label>
+                <input type="text" class="form-control" placeholder="Nombre de Linea" aria-label="Nombre de Linea">
+            </div>
+            <div class="col-12">
+                <button class="btn btn-primary">Registrar</button>
+            </div>
+        </div>
+        <div class="row d-none bg-danger rounded p-3 text-white" id="form_proceso">
+            <div class="col-6 mb-2">
+                <label for="inputEmail4" class="form-label">Nombre del proceso</label>
+                <input type="text" class="form-control" placeholder="Nombre de Proceso" aria-label="Nombre de Proceso">
+            </div>
+            <div class="col-6 mb-2">
+                <label for="inputEmail4" class="form-label">Linea</label>
+                <select class="form-select" aria-label="Default select example">
+                    <option selected>Open this select menu</option>
+                    <option value="1">Si</option>
+                    <option value="0">No</option>
+                </select>
+            </div>
+            <div class="col-12">
+                <button class="btn btn-primary">Registrar</button>
+            </div>
+        </div>
+        <div class="row d-none bg-light rounded p-3" id="form_material">
+            <div class="col-6 mb-2">
+                <label for="inputEmail4" class="form-label">Nombre del material</label>
+                <input type="text" class="form-control" placeholder="Nombre de Material"
+                    aria-label="Nombre de Material">
+            </div>
+            <div class="col-6 mb-2">
+                <label for="inputEmail4" class="form-label">Linea</label>
+                <select class="form-select" aria-label="Default select example">
+                    <option selected>Open this select menu</option>
+                    <option value="1">Si</option>
+                    <option value="0">No</option>
+                </select>
+            </div>
+            <div class="col-6 mb-2">
+                <label for="inputEmail4" class="form-label">Proceso</label>
+                <select class="form-select" aria-label="Default select example">
+                    <option selected>Open this select menu</option>
+                    <option value="1">Si</option>
+                    <option value="0">No</option>
+                </select>
+            </div>
+            <div class="col-12">
+                <button class="btn btn-primary">Registrar</button>
+            </div>
+        </div>
+        <div class="row d-none bg-secondary rounded p-2 text-white" id="form_tipo_material">
+            <div class="col-6 mb-2">
+                <label for="inputEmail4" class="form-label">Nombre de tipo de material</label>
+                <input type="text" class="form-control" placeholder="Nombre de Tipo Material"
+                    aria-label="Nombre de Tipo Material">
+            </div>
+            <div class="col-6 mb-2">
+                <label for="inputEmail4" class="form-label">Linea</label>
+                <select class="form-select" aria-label="Default select example">
+                    <option selected>Open this select menu</option>
+                    <option value="1">Si</option>
+                    <option value="0">No</option>
+                </select>
+            </div>
+            <div class="col-6 mb-2">
+                <label for="inputEmail4" class="form-label">Proceso</label>
+                <select class="form-select" aria-label="Default select example">
+                    <option selected>Open this select menu</option>
+                    <option value="1">Si</option>
+                    <option value="0">No</option>
+                </select>
+            </div>
+            <div class="col-6 mb-2">
+                <label for="inputEmail4" class="form-label">Material</label>
+                <select class="form-select" aria-label="Default select example">
+                    <option selected>Open this select menu</option>
+                    <option value="1">Si</option>
+                    <option value="0">No</option>
+                </select>
+            </div>
+            <div class="col-12">
+                <button class="btn btn-primary">Registrar</button>
+            </div>
+        </div>
+        <div class="row d-none bg-light p-3" id="seccion_table">
 
         </div>
     </div>
+    <script src="./paneladmin.js"></script>
 </body>
 
 </html>
