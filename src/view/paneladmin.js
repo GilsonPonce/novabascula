@@ -1,4 +1,5 @@
-const { getPersona, getAllPersona, insertPersona } = require('../databaseadmin');
+const { ipcRenderer } = require('electron');
+const { getPersona, getAllPersona, insertPersona, deletePersona, updatePersona, insertCredencial, updateCredencial } = require('../databaseadmin');
 
 const input_host = document.getElementById("input_host")
 const select_opcion = document.getElementById("select_opcion")
@@ -20,6 +21,7 @@ const input_form_usuario_apellidos = document.getElementById("input_form_usuario
 const input_form_usuario_fecha_nacimiento = document.getElementById("input_form_usuario_fecha_nacimiento")
 const select_form_usuario_sexo = document.getElementById("select_form_usuario_sexo")
 const select_form_usuario_estado_civil = document.getElementById("select_form_usuario_estado_civil")
+const select_form_usuario_activo = document.getElementById("select_form_usuario_activo")
 const input_form_usuario_ciudadania = document.getElementById("input_form_usuario_ciudadania")
 const input_form_usuario_instruccion = document.getElementById("input_form_usuario_instruccion")
 const input_form_usuario_fecha_expedicion = document.getElementById("input_form_usuario_fecha_expedicion")
@@ -29,6 +31,7 @@ const input_form_credencial_usuario = document.getElementById("input_form_creden
 const input_form_credencial_contrasena = document.getElementById("input_form_credencial_contrasena")
 const boton_form_credencial_registrar = document.getElementById("boton_form_credencial_registrar")
 const aviso = document.getElementById("aviso")
+let id = 0;
 
 select_opcion.addEventListener('change', habilitarForm)
 
@@ -53,7 +56,7 @@ function hiddenForms() {
 }
 
 function htmlUsuario() {
-    let html = `<div class="col"><label for="inputEmail4" class="form-label col-sm-3 mb-2">Usuario</label><div class="col-9 mb-2">
+    let html = `<div class="col-10"><label for="inputEmail4" class="form-label col-sm-3 mb-2">Usuario</label><div class="col-9 mb-2">
     <select class="form-select" onchange="formEdicionUsuario()" aria-label="Default select example" id="select_edicion_usuario">
     <option selected>Open this select menu</option>`
     getAllPersona()
@@ -64,12 +67,120 @@ function htmlUsuario() {
                 })
                 html += `</select></div>`;
                 form_edicion.innerHTML = html;
+                form_edicion.innerHTML += `<div class="col-12">
+                <button class="btn btn-danger" onclick="deleteUsuario()" id="boton_form_edicion_delete">Eliminar</button>
+                </div>`;
+                boton_form_credencial_registrar.removeAttribute('onclick')
+                boton_form_credencial_registrar.setAttribute('onclick','updateUsuario()')
             }
         })
-        form_credencial.innerHTML += `<div class="col-2">
-            <button class="btn btn-danger" id="boton_form_credencial_delete">Eliminar</button>
-        </div>`
+}
 
+function deleteUsuario(){
+    let id = document.getElementById("select_edicion_usuario").value
+    if(!isNaN(parseInt(id))){
+        deletePersona(id).then((filas_afectadas)=>{
+            if(filas_afectadas > 0){
+                htmlUsuario();
+                ipcRenderer.send('showAlert',"success","Eliminacion exitosa")
+            }   
+        }).catch((msm)=>{
+                ipcRenderer.send('showAlert',"error",msm)
+        });
+    }
+}
+
+function insertUsuario(){
+    if (
+        input_form_usuario_cedula.value != "" &&
+        input_form_usuario_nombres.value != "" &&
+        input_form_usuario_apellidos.value != "" &&
+        !isNaN(parseInt(select_form_usuario_activo.value)) &&
+        input_form_credencial_contrasena.value != "" &&
+        input_form_credencial_usuario.value != ""
+    ){
+        insertPersona({
+            cedula: input_form_usuario_cedula.value,
+            nombres: input_form_usuario_nombres.value,
+            apellidos: input_form_usuario_apellidos.value,
+            activo: parseInt(select_form_usuario_activo.value),
+            fecha_nacimiento: input_form_usuario_fecha_nacimiento.value == "" ? null : input_form_usuario_fecha_nacimiento.value,
+            sexo: select_form_usuario_sexo.value == "" ? null : select_form_usuario_sexo.value,
+            estado_civil: select_form_usuario_estado_civil.value == "" ? null : select_form_usuario_estado_civil.value,
+            ciudadania: input_form_usuario_ciudadania.value == "" ? null : input_form_usuario_ciudadania.value ,
+            instruccion: input_form_usuario_instruccion.value == "" ? null : input_form_usuario_instruccion.value,
+            lugar_expedicion: input_form_usuario_lugar_expedicion.value == "" ? null : input_form_usuario_lugar_expedicion.value,
+            fecha_expedicion: input_form_usuario_fecha_expedicion.value == "" ? null : input_form_usuario_fecha_expedicion.value,
+            fecha_expiracion: input_form_usuario_fecha_expiracion.value == "" ? null : input_form_usuario_fecha_expiracion.value
+        }).then((id_usuario)=>{
+            return insertCredencial({
+              id_persona: id_usuario,
+              user: input_form_credencial_usuario.value,
+              password_user: input_form_credencial_contrasena.value,
+              estado: parseInt(select_form_usuario_activo.value)  
+            })
+        }).catch((msm)=>{
+            ipcRenderer.send('showAlert',"error",msm)
+        }).then((id)=>{
+            if(id > 0){
+                cleanFromUsuario();
+                hiddenForms();
+                location.reload();
+                ipcRenderer.send('showAlert',"success","Ingreso exitoso")
+            }
+        }).catch((msm)=>{
+            ipcRenderer.send('showAlert',"error",msm)
+        })
+    }
+}
+
+function updateUsuario(){
+    if (
+        input_form_usuario_cedula.value != "" &&
+        input_form_usuario_nombres.value != "" &&
+        input_form_usuario_apellidos.value != "" &&
+        !isNaN(parseInt(select_form_usuario_activo.value)) &&
+        input_form_credencial_contrasena.value != "" &&
+        input_form_credencial_usuario.value != "" &&
+        !isNaN(parseInt(document.getElementById("select_edicion_usuario").value))
+    ){
+        updatePersona({
+            activo: parseInt(select_form_usuario_activo.value),
+            cedula: input_form_usuario_cedula.value,
+            nombres: input_form_usuario_nombres.value,
+            apellidos: input_form_usuario_apellidos.value,
+            fecha_nacimiento: input_form_usuario_fecha_nacimiento.value == "" ? null : input_form_usuario_fecha_nacimiento.value,
+            sexo: select_form_usuario_sexo.value == "" ? null : select_form_usuario_sexo.value,
+            estado_civil: select_form_usuario_estado_civil.value == "" ? null : select_form_usuario_estado_civil.value,
+            ciudadania: input_form_usuario_ciudadania.value == "" ? null : input_form_usuario_ciudadania.value ,
+            instruccion: input_form_usuario_instruccion.value == "" ? null : input_form_usuario_instruccion.value,
+            lugar_expedicion: input_form_usuario_lugar_expedicion.value == "" ? null : input_form_usuario_lugar_expedicion.value,
+            fecha_expedicion: input_form_usuario_fecha_expedicion.value == "" ? null : input_form_usuario_fecha_expedicion.value,
+            fecha_expiracion: input_form_usuario_fecha_expiracion.value == "" ? null : input_form_usuario_fecha_expiracion.value,
+            id_persona: parseInt(document.getElementById("select_edicion_usuario").value)
+        }).then((files)=>{
+            if(files > 0){
+                return updateCredencial({
+                    user: input_form_credencial_usuario.value,
+                    password_user: input_form_credencial_contrasena.value,
+                    estado: parseInt(select_form_usuario_activo.value),  
+                    id_persona: parseInt(document.getElementById("select_edicion_usuario").value)
+                  })
+            }
+        }).then((id)=>{
+            if(id > 0){
+                cleanFromUsuario()
+                htmlUsuario();
+                hiddenForms();
+                form_edicion.classList.remove("d-none")
+                ipcRenderer.send('showAlert',"success","Actualizacion exitosa")
+            }
+        }).catch((msm)=>{
+            ipcRenderer.send('showAlert',"error",msm)
+        })
+    }else{
+        ipcRenderer.send('showAlert',"warning","Falta algun campo necesario")
+    }
 }
 
 function cleanFromUsuario(){
@@ -86,31 +197,37 @@ function cleanFromUsuario(){
             input_form_usuario_fecha_expiracion.value = ""
             input_form_credencial_contrasena.value = ""
             input_form_credencial_usuario.value = ""
+            boton_form_credencial_registrar.removeAttribute('onclick')
+            boton_form_credencial_registrar.setAttribute('onclick','insertUsuario()')
+            boton_form_credencial_registrar.innerHTML = "Registrar"
 }
 
 function formEdicionUsuario() {
     hiddenForms();
+    form_edicion.classList.remove("d-none")
     let id = document.getElementById("select_edicion_usuario").value
-    getPersona(id)
-        .then(({cedula, nombres, apellidos, fecha_nacimiento, sexo, estado_civil, ciudadania, instruccion, lugar_expedicion, fecha_expedicion, fecha_expiracion, password_user, user }) => {
+    if(!isNaN(parseInt(id))){
+        getPersona(id)
+        .then(({cedula, nombres, apellidos, fecha_nacimiento, sexo, estado_civil, ciudadania, instruccion, lugar_expedicion, fecha_expedicion, fecha_expiracion, password_user, user, activo }) => {
             input_form_usuario_cedula.value = cedula == null ? "" : cedula
             input_form_usuario_apellidos.value = apellidos == null ? "" : apellidos
             input_form_usuario_nombres.value = nombres == null ? "" : nombres
-            input_form_usuario_fecha_nacimiento.value = fecha_nacimiento == null ? "" : fecha_nacimiento
+            input_form_usuario_fecha_nacimiento.value = fecha_nacimiento == null ? "" : fecha_nacimiento.getFullYear() + "-" + fecha_nacimiento.getMonth() + "-" + fecha_nacimiento.getDate()
             select_form_usuario_sexo.value = sexo == null ? "" : sexo
             select_form_usuario_estado_civil.value = estado_civil == null ? "" : estado_civil
             input_form_usuario_ciudadania.value = ciudadania == null ? "" : ciudadania
             input_form_usuario_instruccion.value = instruccion == null ? "" : instruccion
             input_form_usuario_lugar_expedicion.value = lugar_expedicion == null ? "" : lugar_expedicion
-            input_form_usuario_fecha_expedicion.value = fecha_expedicion == null ? "" : fecha_expedicion
-            input_form_usuario_fecha_expiracion.value = fecha_expiracion == null ? "" : fecha_expiracion
+            input_form_usuario_fecha_expedicion.value = fecha_expedicion == null ? "" : fecha_expedicion.getFullYear() +"-"+ fecha_expedicion.getMonth() + "-" + fecha_expedicion.getDate()
+            input_form_usuario_fecha_expiracion.value = fecha_expiracion == null ? "" : fecha_expiracion.getFullYear() +"-"+ fecha_expiracion.getMonth() + "-" + fecha_expiracion.getDate()
             input_form_credencial_contrasena.value = password_user == null ? "" : password_user
             input_form_credencial_usuario.value = user == null ? "" : user
+            select_form_usuario_activo.value = activo == null ? "" : activo
             form_persona.classList.remove("d-none")
             form_credencial.classList.remove("d-none")
-            form_edicion.classList.remove("d-none")
             boton_form_credencial_registrar.innerHTML = "Actualizar"
         })
+    }
 }
 
 function htmlTicketPeso() {

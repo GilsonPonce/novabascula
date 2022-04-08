@@ -72,7 +72,7 @@
                 <input type="text" id="input_form_usuario_apellidos" class="form-control" placeholder="Apellidos" aria-label="Apellidos">
             </div>
             <div class="col-6 mb-2">
-                <input type="text" id="input_form_usuario_fecha_nacimiento" class="form-control" placeholder="Fecha nacimiento" aria-label="Fecha nacimiento">
+                <input type="date" id="input_form_usuario_fecha_nacimiento" class="form-control" placeholder="Fecha nacimiento" aria-label="Fecha nacimiento">
             </div>
             <div class="col-6 mb-2">
                 <label for="inputEmail4" class="form-label">Sexo</label>
@@ -109,6 +109,13 @@
             <div class="col-6 mb-2">
                 <input type="text" id="input_form_usuario_lugar_expedicion" class="form-control" placeholder="Lugar Expedicion" aria-label="Lugar Expedicion">
             </div>
+            <div class="col-6 mb-2">
+                <select class="form-select" id="select_form_usuario_activo" aria-label="Default select example">
+                    <option selected>Open this select menu</option>
+                    <option value="1">Activo</option>
+                    <option value="0">No Activo</option>
+                </select>
+            </div>
         </div>
         <div class="row d-none bg-success rounded p-3 mt-2 mb-2 text-white" id="form_credencial">
             <div class="col-6">
@@ -118,7 +125,7 @@
                 <input type="text" id="input_form_credencial_contrasena" class="form-control" placeholder="Contrasena" aria-label="Contrasena">
             </div>
             <div class="col-2">
-                <button class="btn btn-primary" id="boton_form_credencial_registrar">Registrar</button>
+                <button class="btn btn-primary" onclick="insertUsuario()w" id="boton_form_credencial_registrar">Registrar</button>
             </div>
         </div>
         <div class="row d-none bg-success rounded p-3 mt-2 mb-2 text-white" id="form_proveedor">

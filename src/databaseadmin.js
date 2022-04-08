@@ -11,20 +11,21 @@ const connection =  mysql.createPool({
     port: 3306
 })
 
-const insertCredencial = ({id_persona,user,password_user,estado}) => {
-    $query = `insert into credencial(id_persona,user,password_user,estado) values(${id_persona},'${user}','${password_user}',${estado})`
+const insertCredencial = (objeto) => {
+    $query = `insert into credencial set ?`
     return new Promise((resolve,reject)=>{
-        connection.query($query, function (err, result) {
+        connection.query($query,objeto,function (err, result) {
             if (err) reject(err.message)
             resolve(result.insertId)
         });
     })
 }
 
-const deleteCredencial = (id_credencial) => {
-    $query = `delete from bascula.credencial where id_credencial `.connection.escape(id_credencial)
+const updateCredencial = (objeto) => {
+    $query = `update bascula.credencial set user = ?, password_user = ?, 
+    estado = ? where id_persona = ?`
     return new Promise((resolve,reject)=>{
-        connection.query($query, function (err, result) {
+        connection.query($query, Object.values(objeto) , function (err, result) {
             if (err) reject(err.message)
             resolve(result.affectedRows)
         });
@@ -39,7 +40,6 @@ const getPersona = (id_persona) => {
     return new Promise((resolve,reject)=>{
         connection.query(query, function (err, rows, fields) {
             if (err) reject(err.message)
-            console.log(rows)
             resolve(rows[0])
         });
     })
@@ -55,13 +55,10 @@ const getAllPersona = () => {
     })
 }
 
-const insertPersona = ({cedula,nombres,apellidos,fecha_nacimiento,sexo,estado_civil,ciudadania,instruccion,lugar_expedicion,fecha_expedicion,fecha_expiracion,activo}) => {
-    $query = `insert into persona (cedula,nombres,apellidos,fecha_nacimiento,sexo,estado_civil,ciudadania,
-        instruccion, lugar_expedicion, fecha_expedicion, fecha_expiracion, activo) values('${cedula}','${nombres}',
-        '${apellidos}','${fecha_nacimiento}','${sexo}','${estado_civil}','${ciudadania}','${instruccion}','${lugar_expedicion}',
-        '${fecha_expedicion}','${fecha_expiracion}','${activo}')`
+const insertPersona = (objetousuario) => {
+    $query = `insert into persona set ?`
     return new Promise((resolve,reject)=>{
-        connection.query($query, function (err, result) {
+        connection.query($query,objetousuario, function (err, result) {
             if (err) reject(err.message)
             resolve(result.insertId)
         });
@@ -69,7 +66,7 @@ const insertPersona = ({cedula,nombres,apellidos,fecha_nacimiento,sexo,estado_ci
 }
 
 const deletePersona = (id_persona) => {
-    $query = `delete from bascula.persona where id_persona = `.connection.escape(id_persona)
+    $query = `delete from bascula.persona where id_persona = `+ connection.escape(id_persona)
     return new Promise((resolve,reject)=>{
         connection.query($query, function (err, result) {
             if (err) reject(err.message)
@@ -78,16 +75,14 @@ const deletePersona = (id_persona) => {
     })
 }
 
-const updatePersona = ({id_persona,cedula,nombres,apellidos,fecha_nacimiento,sexo,estado_civil,ciudadania,instruccion,lugar_expedicion,fecha_expedicion,fecha_expiracion,activo}) => {
-    $query = `update bascula.persona set activo = `+ connection.escape(activo) + ` ,cedula = '` + connection.escape(cedula) + 
-    `' ,nombres = '`+ connection.escape(nombres) + `', apellidos = '`+ connection.escape(apellidos) +
-    `' , fecha_nacimiento = '`+ connection.escape(fecha_nacimiento) + `' ,sexo = '` + connection.escape(sexo) +
-    `' , estado_civil = '`+ connection.escape(estado_civil) + `' , ciudadania = '` + connection.escape(ciudadania) +
-    `' , instruccion = '`+ connection.escape(instruccion) + `' , lugar_expedicion = '`+ connection.escape(lugar_expedicion) +
-    `' , fecha_expedicion = '`+ connection.escape(fecha_expedicion) + `' , fecha_expiracion = '` + connection.escape(fecha_expiracion) +
-    `' where id_persona = ` + connection.escape(id_persona)
+const updatePersona = (objeto) => {
+    $query = `update persona set activo = ?, cedula = ?, 
+    nombres = ?, apellidos = ?, fecha_nacimiento = ?, sexo = ?
+    , estado_civil = ? , ciudadania = ?, instruccion = ?, lugar_expedicion = ?, 
+    fecha_expedicion = ?, fecha_expiracion = ? where id_persona = ?`
     return new Promise((resolve,reject)=>{
-        connection.query($query, function (err, result) {
+        console.log(Object.values(objeto))
+        connection.query($query, Object.values(objeto) , function (err, result) {
             if (err) reject(err.message)
             resolve(result.affectedRows)
         });
@@ -142,7 +137,7 @@ const updateProveedor = ({id_proveedor,activo}) => {
 
 module.exports = {
     insertCredencial,
-    deleteCredencial,
+    updateCredencial,
     getPersona,
     getAllPersona,
     insertPersona,
