@@ -125,53 +125,53 @@
                 <input type="text" id="input_form_credencial_contrasena" class="form-control" placeholder="Contrasena" aria-label="Contrasena">
             </div>
             <div class="col-2">
-                <button class="btn btn-primary" onclick="insertUsuario()w" id="boton_form_credencial_registrar">Registrar</button>
+                <button class="btn btn-primary" onclick="registrarUsuario()" id="boton_form_credencial_registrar">Registrar</button>
             </div>
         </div>
         <div class="row d-none bg-success rounded p-3 mt-2 mb-2 text-white" id="form_proveedor">
             <div class="col-6 mb-2">
                 <label for="inputEmail4" class="form-label">Activo</label>
-                <select class="form-select" aria-label="Default select example">
+                <select class="form-select" id="select_form_proveedor_activo" aria-label="Default select example">
                     <option selected>Open this select menu</option>
                     <option value="1">Si</option>
                     <option value="0">No</option>
                 </select>
             </div>
             <div class="col-12">
-                <button class="btn btn-primary">Registrar</button>
+                <button class="btn btn-primary" id="boton_form_proveedor" onclick="registrarProveedor()">Registrar</button>
             </div>
         </div>
         <div class="row d-none bg-success rounded p-3 mt-2 mb-2 text-white" id="form_transportista">
             <div class="col-6 mb-2">
                 <label for="inputEmail4" class="form-label">Fecha de vencimiento de licencia</label>
-                <input type="date" class="form-control" placeholder="Vencimiento Licencia"
+                <input type="date" id="input_form_transportista_fecha_vencimiento" class="form-control" placeholder="Vencimiento Licencia"
                     aria-label="Vencimiento Licencia">
             </div>
             <div class="col-6 mb-2">
                 <label for="inputEmail4" class="form-label">Activo</label>
-                <select class="form-select" aria-label="Default select example">
+                <select class="form-select" id="select_form_transportista_activo" aria-label="Default select example">
                     <option selected>Open this select menu</option>
                     <option value="1">Si</option>
                     <option value="0">No</option>
                 </select>
             </div>
             <div class="col-12">
-                <button class="btn btn-primary">Registrar</button>
+                <button class="btn btn-primary" id="boton_form_transportista" onclick="registrarTransportista()">Registrar</button>
             </div>
         </div>
         <div class="row d-none bg-warning p-3 text-white rounded" id="form_vehiculo">
             <div class="col-6 mb-2">
                 <label for="inputEmail4" class="form-label">Placa</label>
-                <input type="text" class="form-control" placeholder="Placa" aria-label="Placa">
+                <input type="text" id="input_form_vehiculo_placa" class="form-control" placeholder="Placa" aria-label="Placa">
             </div>
             <div class="col-6 mb-2">
                 <label for="inputEmail4" class="form-label">Fecha vencimiento de matricula</label>
-                <input type="date" class="form-control" placeholder="Vencimiento matricula"
+                <input type="date" id="input_form_vehiculo_fecha_vencimiento_matricula" class="form-control" placeholder="Vencimiento matricula"
                     aria-label="Vencimiento matricula">
             </div>
             <div class="col-6 mb-2">
                 <label for="inputEmail4" class="form-label">Transportista</label>
-                <select class="form-select" aria-label="Default select example">
+                <select id="select_form_vehiculo_transportista" class="form-select" aria-label="Default select example">
                     <option selected>Open this select menu</option>
                     <option value="1">Si</option>
                     <option value="0">No</option>
@@ -180,7 +180,7 @@
             </div>
             <div class="col mb-2">
                 <label for="inputEmail4" class="form-label">Tipo Vehiculo</label>
-                <select class="form-select" aria-label="Default select example">
+                <select class="form-select" id="select_form_vehiculo_tipo_vehiculo" aria-label="Default select example">
                     <option selected>Open this select menu</option>
                     <option value="1">Si</option>
                     <option value="0">No</option>
@@ -189,71 +189,71 @@
             </div>
             <div class="col-6 mb-2">
                 <label for="inputEmail4" class="form-label">Activo</label>
-                <select class="form-select" aria-label="Default select example">
+                <select class="form-select" id="select_form_vehiculo_activo" aria-label="Default select example">
                     <option selected>Open this select menu</option>
                     <option value="1">Si</option>
                     <option value="0">No</option>
                 </select>
             </div>
             <div class="col-12">
-                <button class="btn btn-primary">Registrar</button>
+                <button class="btn btn-primary" id="boton_form_vehiculo" onclick="registrarVehiculo()">Registrar</button>
             </div>
         </div>
         <div class="row d-none bg-dark rounded p-3 text-white" id="form_tipo_contaminacion">
             <div class="col-6 mb-2">
                 <label for="inputEmail4" class="form-label">Nombre contaminacion</label>
-                <input type="text" class="form-control" placeholder="Nombre de Contaminacion"
+                <input type="text" id="input_form_tipo_contaminacion_nombre" class="form-control" placeholder="Nombre de Contaminacion"
                     aria-label="Nombre de Contaminacion">
             </div>
             <div class="col-12">
-                <button class="btn btn-primary">Registrar</button>
+                <button class="btn btn-primary" id="boton_form_tipo_contaminacion" onclick="registrarContaminacion()">Registrar</button>
             </div>
         </div>
         <div class="row d-none bg-dark rounded p-3 text-white" id="form_tipo_vehiculo">
             <div class="col-6 mb-2">
                 <label for="inputEmail4" class="form-label">Nombre tipo de vehiculo</label>
-                <input type="text" class="form-control" placeholder="Nombre Tipo Vehiculo"
+                <input type="text" class="form-control" id="input_form_tipo_vehiculo_nombre" placeholder="Nombre Tipo Vehiculo"
                     aria-label="Nombre Tipo Vehiculo">
             </div>
             <div class="col-12">
-                <button class="btn btn-primary">Registrar</button>
+                <button class="btn btn-primary" id="boton_form_tipo_vehiculo" onclick="registrarTipoVehiculo()">Registrar</button>
             </div>
         </div>
         <div class="row d-none bg-dark rounded p-3 text-white" id="form_linea">
             <div class="col-6 mb-2">
                 <label for="inputEmail4" class="form-label">Nombre de la linea</label>
-                <input type="text" class="form-control" placeholder="Nombre de Linea" aria-label="Nombre de Linea">
+                <input type="text" class="form-control" id="input_form_linea_nombre" placeholder="Nombre de Linea" aria-label="Nombre de Linea">
             </div>
             <div class="col-12">
-                <button class="btn btn-primary">Registrar</button>
+                <button class="btn btn-primary" id="boton_form_linea" onclick="registrarLinea()">Registrar</button>
             </div>
         </div>
         <div class="row d-none bg-danger rounded p-3 text-white" id="form_proceso">
             <div class="col-6 mb-2">
                 <label for="inputEmail4" class="form-label">Nombre del proceso</label>
-                <input type="text" class="form-control" placeholder="Nombre de Proceso" aria-label="Nombre de Proceso">
+                <input type="text" id="input_form_proceso_nombre" class="form-control" placeholder="Nombre de Proceso" aria-label="Nombre de Proceso">
             </div>
             <div class="col-6 mb-2">
                 <label for="inputEmail4" class="form-label">Linea</label>
-                <select class="form-select" aria-label="Default select example">
+                <select class="form-select" id="select_form_proceso_linea" aria-label="Default select example">
                     <option selected>Open this select menu</option>
                     <option value="1">Si</option>
                     <option value="0">No</option>
                 </select>
             </div>
             <div class="col-12">
-                <button class="btn btn-primary">Registrar</button>
+                <button class="btn btn-primary" id="boton_form_proceso" onclick="registrarProceso()">Registrar</button>
             </div>
         </div>
         <div class="row d-none bg-light rounded p-3" id="form_material">
             <div class="col-6 mb-2">
                 <label for="inputEmail4" class="form-label">Nombre del material</label>
-                <input type="text" class="form-control" placeholder="Nombre de Material"
+                <input type="text" class="form-control" id="input_form_material_nombre" placeholder="Nombre de Material"
                     aria-label="Nombre de Material">
             </div>
             <div class="col-6 mb-2">
                 <label for="inputEmail4" class="form-label">Linea</label>
-                <select class="form-select" aria-label="Default select example">
+                <select id="select_form_material_linea" onchange="llenarSelectProceso()" class="form-select" aria-label="Default select example">
                     <option selected>Open this select menu</option>
                     <option value="1">Si</option>
                     <option value="0">No</option>
@@ -261,25 +261,25 @@
             </div>
             <div class="col-6 mb-2">
                 <label for="inputEmail4" class="form-label">Proceso</label>
-                <select class="form-select" aria-label="Default select example">
+                <select class="form-select" id="select_form_material_proceso" aria-label="Default select example">
                     <option selected>Open this select menu</option>
                     <option value="1">Si</option>
                     <option value="0">No</option>
                 </select>
             </div>
             <div class="col-12">
-                <button class="btn btn-primary">Registrar</button>
+                <button class="btn btn-primary" id="boton_form_material" onclick="registrarMaterial()">Registrar</button>
             </div>
         </div>
         <div class="row d-none bg-secondary rounded p-2 text-white" id="form_tipo_material">
             <div class="col-6 mb-2">
                 <label for="inputEmail4" class="form-label">Nombre de tipo de material</label>
-                <input type="text" class="form-control" placeholder="Nombre de Tipo Material"
+                <input type="text" class="form-control" id="input_form_tipo_material_nombre" placeholder="Nombre de Tipo Material"
                     aria-label="Nombre de Tipo Material">
             </div>
             <div class="col-6 mb-2">
                 <label for="inputEmail4" class="form-label">Linea</label>
-                <select class="form-select" aria-label="Default select example">
+                <select class="form-select" onchange="llenarSelectProceso()" id="select_form_tipo_material_linea" aria-label="Default select example">
                     <option selected>Open this select menu</option>
                     <option value="1">Si</option>
                     <option value="0">No</option>
@@ -287,7 +287,7 @@
             </div>
             <div class="col-6 mb-2">
                 <label for="inputEmail4" class="form-label">Proceso</label>
-                <select class="form-select" aria-label="Default select example">
+                <select class="form-select" id="select_form_tipo_material_proceso" onchange="llenarSelectMaterial()" aria-label="Default select example">
                     <option selected>Open this select menu</option>
                     <option value="1">Si</option>
                     <option value="0">No</option>
@@ -295,14 +295,14 @@
             </div>
             <div class="col-6 mb-2">
                 <label for="inputEmail4" class="form-label">Material</label>
-                <select class="form-select" aria-label="Default select example">
+                <select class="form-select" id="select_form_tipo_material_material" aria-label="Default select example">
                     <option selected>Open this select menu</option>
                     <option value="1">Si</option>
                     <option value="0">No</option>
                 </select>
             </div>
             <div class="col-12">
-                <button class="btn btn-primary">Registrar</button>
+                <button class="btn btn-primary" id="boton_form_tipo_material" onclick="registrarTipoMaterial()">Registrar</button>
             </div>
         </div>
         <div class="row d-none bg-light p-3" id="seccion_table">
