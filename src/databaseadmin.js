@@ -104,7 +104,7 @@ const getTransportista = (id_transportista) => {
 }
 
 const getAllTransportista = () => {
-    $query = `select  tra.id_transportista, concat(per.appelidos," ",per.nombres) as nombre
+    $query = `select  tra.id_transportista, concat(per.apellidos," ",per.nombres) as nombre
     from persona per inner join transportista tra on per.id_persona = tra.id_persona`
     return new Promise((resolve,reject)=>{
         connection.query($query, function (err, rows, fields) {

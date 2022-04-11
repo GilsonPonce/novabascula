@@ -16,7 +16,10 @@ const { getPersona,
     insertTipoContaminacion,
     getAllLinea,
     getAllProceso,
-    getAllMaterial} = require('../databaseadmin');
+    getAllMaterial,
+    getAllTransportista,
+    getAllTipoVehiculo,
+    getAllTicket} = require('../databaseadmin');
 
 const input_host = document.getElementById("input_host")
 const select_opcion = document.getElementById("select_opcion")
@@ -269,7 +272,7 @@ function registrarVehiculo() {
     ) {
         insertVehiculo({
             placa: input_form_vehiculo_placa.value,
-            vencimiento_licencia: input_form_vehiculo_fecha_vencimiento_matricula.value == "" ? null : input_form_vehiculo_fecha_vencimiento_matricula.value,
+            vencimiento_matricula: input_form_vehiculo_fecha_vencimiento_matricula.value == "" ? null : input_form_vehiculo_fecha_vencimiento_matricula.value,
             activo: parseInt(select_form_vehiculo_activo.value),
             id_transportista: parseInt(select_form_vehiculo_transportista.value),
             id_tipo_vehiculo: parseInt(select_form_vehiculo_tipo_vehiculo.value)
@@ -587,12 +590,6 @@ function llenarSelectMaterial(){
             case "EDI_TICKET_PESO":
                
                 break;
-            case "EDI_LINEA":
-
-                break;
-            case "EDI_PROCESO":
-                select_form_proceso_linea.innerHTML = html;
-                break;
             case "EDI_MATERIAL":
                 array_material.map(({id_proceso,id_material,nombre})=>{
                     if(id_proceso == select_form_material_proceso.value)  html += `<option value="${id_material}">${nombre}</option>`
@@ -604,6 +601,44 @@ function llenarSelectMaterial(){
                     if(id_proceso == select_form_tipo_material_proceso.value)  html += `<option value="${id_material}">${nombre}</option>`
                 })
                 select_form_tipo_material_material.innerHTML = html;
+                break;
+            default:
+                break;
+        }
+    })
+}
+
+function llenarSelectTransportista(){
+    let html = "<option selected>Open this select menu</option>";
+    getAllTransportista().then((array_transportista)=>{
+        array_transportista.map(({id_transportista,nombre})=>{
+            html += `<option value="${id_transportista}">${nombre}</option>`
+        })
+        switch (select_opcion.value) {
+            case "VEHICULO":
+                select_form_vehiculo_transportista.innerHTML = html;
+                break;
+            case "EDI_VEHICULO":
+    
+                break;
+            default:
+                break;
+        }
+    })
+}
+
+function llenarSelectTipoVehiculo(){
+    let html = "<option selected>Open this select menu</option>";
+    getAllTipoVehiculo().then((array_tipoVehiculo)=>{
+        array_tipoVehiculo.map(({id_tipo_vehiculo,nombre})=>{
+            html += `<option value="${id_tipo_vehiculo}">${nombre}</option>`
+        })
+        switch (select_opcion.value) {
+            case "VEHICULO":
+                select_form_vehiculo_tipo_vehiculo.innerHTML = html;
+                break;
+            case "EDI_VEHICULO":
+    
                 break;
             default:
                 break;
@@ -630,9 +665,19 @@ function htmlTicketPeso() {
 }
 
 function fillIdTicket() {
-    //select_edicion_numero_ticket
-
+    let html = "<option selected>Open this select menu</option>"
+    let procesadose = document.getElementById("select_edicion_estado_ticket").value
+    getAllTicket().then((array_tickets)=>{
+        array_tickets.map(({procesado,id_ticket})=>{
+            if( Number(procesadose) == procesado ) html += `<option value="${id_ticket}">${id_ticket}</option>`
+        });
+        document.getElementById("select_edicion_numero_ticket").innerHTML = html;
+        document.getElementById("select_edicion_numero_ticket").removeAttribute("disabled")
+    })
+    
 }
+
+
 
 function habilitarForm() {
     switch (select_opcion.value) {
@@ -658,6 +703,8 @@ function habilitarForm() {
         case "VEHICULO":
             toggleAviso("hidden");
             hiddenForms();
+            llenarSelectTransportista();
+            llenarSelectTipoVehiculo();
             form_vehiculo.classList.remove("d-none");
             break;
         case "LINEA":
