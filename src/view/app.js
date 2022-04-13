@@ -36,7 +36,7 @@ const select_forma_recepcion_entrada = document.getElementById('select_forma_rec
 const select_forma_recepcion_salida = document.getElementById('select_forma_recepcion_salida');
 const input_peso_contaminacion = document.getElementById('input_peso_contaminacion');
 const lista_contaminacion = document.getElementById('lista_contaminacion');
-
+const textarea_observacion = document.getElementById("textarea_observacion");
 let procesos;
 let materiales;
 let tipo_materiales;
@@ -160,6 +160,7 @@ function registrarPesoSalida() {
         id_tipo_material: parseInt(select_tipo_material.value),
         forma_recepcion: select_forma_recepcion_salida.value,
         peso: parseInt(input_peso.value),
+        observaciones: textarea_observacion.value == "" ? null : textarea_observacion.value,
         peso_contaminacion: parseFloat(input_peso_contaminacion.value),
         porcentaje_contaminacion: parseFloat(input_porcentaje_contaminacion.value),
         peso_total: parseFloat(p_neto_ticket.innerHTML)
@@ -349,12 +350,9 @@ function getPesoUltimoTicket(id) {
     });
 }
 
-function registrarSalida(
-    { id_ticket, tipo_peso, id_tipo_material, forma_recepcion, peso, peso_contaminacion, porcentaje_contaminacion, peso_total }
-) {
-    let sqlpeso = `insert into peso(id_ticket,tipo_peso,id_tipo_material,forma_recepcion,peso,peso_contaminacion,porcentaje_contaminacion,peso_total) 
-    values(${id_ticket},'${tipo_peso}',${id_tipo_material},'${forma_recepcion}',${peso},${peso_contaminacion},${porcentaje_contaminacion},${peso_total})`
-    getConnection().query(sqlpeso, function (err, result) {
+function registrarSalida(objeto) {
+    let sqlpeso = `insert into peso set ?`
+    getConnection().query(sqlpeso, objeto, function (err, result) {
         if (err) ipcRenderer.send('showAlert', 'error', err.message);
         registrarContaminacion(result.insertId);
         if (result && result.affectedRows > 0) ipcRenderer.send('showAlertPregunta', id_ticket)

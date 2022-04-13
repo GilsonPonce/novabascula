@@ -19,7 +19,21 @@ const { getPersona,
     getAllMaterial,
     getAllTransportista,
     getAllTipoVehiculo,
-    getAllTicket} = require('../databaseadmin');
+    getAllTicket,
+    getTicket,
+    getAllPeso,
+    deletePeso,
+    getPeso,
+    getAllContaminacion,
+    deleteContaminacion,
+    getAllTipoMaterial,
+    getAllFormaRecepcion,
+    getAllVehiculo,
+    getAllProveedor,
+    getAllTipoContaminacion,
+    deleteTicket,
+    updateTicket,
+    updatePeso } = require('../databaseadmin');
 
 const input_host = document.getElementById("input_host")
 const select_opcion = document.getElementById("select_opcion")
@@ -53,6 +67,7 @@ const select_form_material_proceso = document.getElementById("select_form_materi
 const select_form_tipo_material_proceso = document.getElementById("select_form_tipo_material_proceso")
 const select_form_tipo_material_linea = document.getElementById("select_form_tipo_material_linea")
 const select_form_tipo_material_material = document.getElementById("select_form_tipo_material_material")
+const select_form_peso_tipo_peso = document.getElementById("select_form_peso_tipo_peso")
 const input_form_usuario_ciudadania = document.getElementById("input_form_usuario_ciudadania")
 const input_form_usuario_instruccion = document.getElementById("input_form_usuario_instruccion")
 const input_form_usuario_fecha_expedicion = document.getElementById("input_form_usuario_fecha_expedicion")
@@ -69,7 +84,32 @@ const input_form_linea_nombre = document.getElementById("input_form_linea_nombre
 const input_form_proceso_nombre = document.getElementById("input_form_proceso_nombre")
 const input_form_material_nombre = document.getElementById("input_form_material_nombre")
 const input_form_tipo_material_nombre = document.getElementById("input_form_tipo_material_nombre")
+const input_form_peso_id_peso = document.getElementById("input_form_peso_id_peso")
+const input_form_peso_peso = document.getElementById("input_form_peso_peso")
+const input_form_peso_contaminacion = document.getElementById("input_form_peso_contaminacion")
+const input_form_peso_porcentaje_contaminacion = document.getElementById("input_form_peso_porcentaje_contaminacion")
+const input_form_peso_total = document.getElementById("input_form_peso_total")
+const input_form_peso_fecha = document.getElementById("input_form_peso_fecha")
+const select_form_peso_linea = document.getElementById("select_form_peso_linea")
+const select_form_peso_proceso = document.getElementById("select_form_peso_proceso")
+const select_form_peso_material = document.getElementById("select_form_peso_material")
+const select_form_peso_tipo_material = document.getElementById("select_form_peso_tipo_material")
+const select_form_peso_contaminacion = document.getElementById("select_form_peso_contaminacion")
+const input_form_ticket_fecha = document.getElementById("input_form_ticket_fecha")
+const select_form_ticket_procesado = document.getElementById("select_form_ticket_procesado")
+const input_form_ticket_fecha_procesado = document.getElementById("input_form_ticket_fecha_procesado")
+const select_form_ticket_transportista = document.getElementById("select_form_ticket_transportista")
+const select_form_ticket_vehiculo = document.getElementById("select_form_ticket_vehiculo")
+const select_form_ticket_proveedor = document.getElementById("select_form_ticket_proveedor")
+const select_form_peso_forma_recepcion = document.getElementById("select_form_peso_forma_recepcion")
+const texttarea_form_ticket_observaciones = document.getElementById("texttarea_form_ticket_observaciones")
+const body_table_form_ticket_peso = document.getElementById("body_table_form_ticket_peso")
+const lista_form_peso_contaminaciones = document.getElementById("lista_form_peso_contaminaciones")
 const boton_form_credencial_registrar = document.getElementById("boton_form_credencial_registrar")
+const boton_form_peso = document.getElementById("boton_form_peso")
+const boton_form_ticket = document.getElementById("boton_form_ticket")
+const boton_form_peso_contaminacion = document.getElementById("boton_form_peso_contaminacion")
+const boton_form_peso_retroceder = document.getElementById("boton_form_peso_retroceder")
 const aviso = document.getElementById("aviso")
 let id = 0;
 
@@ -93,6 +133,8 @@ function hiddenForms() {
     form_tipo_vehiculo.classList.add("d-none")
     form_tipo_contaminacion.classList.add("d-none")
     form_edicion.classList.add("d-none")
+    form_ticket.classList.add("d-none")
+    form_peso.classList.add("d-none")
 }
 
 function htmlUsuario() {
@@ -357,8 +399,8 @@ function registrarProceso() {
     }
 }
 
-function registrarMaterial(){
-    if(
+function registrarMaterial() {
+    if (
         input_form_material_nombre.value != "" &&
         !isNaN(parseInt(select_form_material_proceso.value))
     ) {
@@ -376,7 +418,7 @@ function registrarMaterial(){
     }
 }
 
-function registrarTipoMaterial(){
+function registrarTipoMaterial() {
     if (
         input_form_tipo_material_nombre.value != "" &&
         !isNaN(parseInt(select_form_tipo_material_material.value))
@@ -473,14 +515,14 @@ function formEdicionUsuario() {
                 input_form_usuario_cedula.value = cedula == null ? "" : cedula
                 input_form_usuario_apellidos.value = apellidos == null ? "" : apellidos
                 input_form_usuario_nombres.value = nombres == null ? "" : nombres
-                input_form_usuario_fecha_nacimiento.value = fecha_nacimiento == null ? "" : fecha_nacimiento.getFullYear() + "-" + fecha_nacimiento.getMonth() + "-" + fecha_nacimiento.getDate()
+                input_form_usuario_fecha_nacimiento.value = fecha_nacimiento == null ? "" : fecha_nacimiento.getFullYear() + "-" + ("0"+(fecha_nacimiento.getMonth()+1)).slice(-2) + "-" + ("0"+fecha_nacimiento.getDate()).slice(-2)
                 select_form_usuario_sexo.value = sexo == null ? "" : sexo
                 select_form_usuario_estado_civil.value = estado_civil == null ? "" : estado_civil
                 input_form_usuario_ciudadania.value = ciudadania == null ? "" : ciudadania
                 input_form_usuario_instruccion.value = instruccion == null ? "" : instruccion
                 input_form_usuario_lugar_expedicion.value = lugar_expedicion == null ? "" : lugar_expedicion
-                input_form_usuario_fecha_expedicion.value = fecha_expedicion == null ? "" : fecha_expedicion.getFullYear() + "-" + fecha_expedicion.getMonth() + "-" + fecha_expedicion.getDate()
-                input_form_usuario_fecha_expiracion.value = fecha_expiracion == null ? "" : fecha_expiracion.getFullYear() + "-" + fecha_expiracion.getMonth() + "-" + fecha_expiracion.getDate()
+                input_form_usuario_fecha_expedicion.value = fecha_expedicion == null ? "" : fecha_expedicion.getFullYear() + "-" + ("0"+(fecha_expedicion.getMonth()+1)).slice(-2) + "-" + ("0"+fecha_expedicion.getDate()).slice(-2)
+                input_form_usuario_fecha_expiracion.value = fecha_expiracion == null ? "" : fecha_expiracion.getFullYear() + "-" + ("0"+(fecha_expiracion.getMonth()+1)).slice(-2) + "-" + ("0"+fecha_expiracion.getDate()).slice(-2)
                 input_form_credencial_contrasena.value = password_user == null ? "" : password_user
                 input_form_credencial_usuario.value = user == null ? "" : user
                 select_form_usuario_activo.value = activo == null ? "" : activo
@@ -491,10 +533,10 @@ function formEdicionUsuario() {
     }
 }
 
-function llenarSelectLinea(){
+function llenarSelectLinea() {
     let html = "<option selected>Open this select menu</option>";
-    getAllLinea().then((array_lineas)=>{
-        array_lineas.map(({id_linea,nombre})=>{
+    getAllLinea().then((array_lineas) => {
+        array_lineas.map(({ id_linea, nombre }) => {
             html += `<option value="${id_linea}">${nombre}</option>`
         });
         switch (select_opcion.value) {
@@ -508,7 +550,7 @@ function llenarSelectLinea(){
                 select_form_tipo_material_linea.innerHTML = html;
                 break;
             case "EDI_TICKET_PESO":
-               
+                select_form_peso_linea.innerHTML = html;
                 break;
             case "EDI_LINEA":
 
@@ -528,24 +570,33 @@ function llenarSelectLinea(){
     })
 }
 
-function llenarSelectProceso(){
+function llenarSelectProceso() {
     let html = "<option selected>Open this select menu</option>";
-    getAllProceso().then((array_procesos)=>{
+    getAllProceso().then((array_procesos) => {
         switch (select_opcion.value) {
             case "MATERIAL":
-                array_procesos.map(({id_proceso,id_linea,nombre})=>{
-                    if(id_linea == select_form_material_linea.value)  html += `<option value="${id_proceso}">${nombre}</option>`
+                array_procesos.map(({ id_proceso, id_linea, nombre }) => {
+                    if (id_linea == select_form_material_linea.value) html += `<option value="${id_proceso}">${nombre}</option>`
                 })
                 select_form_material_proceso.innerHTML = html;
                 break;
             case "TIPO_MATERIAL":
-                array_procesos.map(({id_proceso,id_linea,nombre})=>{
-                    if(id_linea == select_form_tipo_material_linea.value)  html += `<option value="${id_proceso}">${nombre}</option>`
+                array_procesos.map(({ id_proceso, id_linea, nombre }) => {
+                    if (id_linea == select_form_tipo_material_linea.value) html += `<option value="${id_proceso}">${nombre}</option>`
                 })
                 select_form_tipo_material_proceso.innerHTML = html;
                 break;
             case "EDI_TICKET_PESO":
-               
+                array_procesos.map(({ id_proceso, id_linea, nombre }) => {
+                    if (!isNaN(Number(select_form_peso_linea.value))) {
+                        select_form_peso_material.setAttribute("disabled", "")
+                        select_form_peso_tipo_material.setAttribute("disabled", "")
+                        if (id_linea == Number(select_form_peso_linea.value)) html += `<option value="${id_proceso}">${nombre}</option>`
+                    } else {
+                        html += `<option value="${id_proceso}">${nombre}</option>`
+                    }
+                })
+                select_form_peso_proceso.innerHTML = html;
                 break;
             case "EDI_LINEA":
 
@@ -554,14 +605,14 @@ function llenarSelectProceso(){
                 select_form_proceso_linea.innerHTML = html;
                 break;
             case "EDI_MATERIAL":
-                array_procesos.map(({id_proceso,id_linea,nombre})=>{
-                    if(id_linea == select_form_material_linea.value)  html += `<option value="${id_proceso}">${nombre}</option>`
+                array_procesos.map(({ id_proceso, id_linea, nombre }) => {
+                    if (id_linea == select_form_material_linea.value) html += `<option value="${id_proceso}">${nombre}</option>`
                 })
                 select_form_material_linea.innerHTML = html;
                 break;
             case "EDI_TIPO_MATERIAL":
-                array_procesos.map(({id_proceso,id_linea,nombre})=>{
-                    if(id_linea == select_form_tipo_material_linea.value)  html += `<option value="${id_proceso}">${nombre}</option>`
+                array_procesos.map(({ id_proceso, id_linea, nombre }) => {
+                    if (id_linea == select_form_tipo_material_linea.value) html += `<option value="${id_proceso}">${nombre}</option>`
                 })
                 select_form_tipo_material_linea.innerHTML = html;
                 break;
@@ -571,34 +622,43 @@ function llenarSelectProceso(){
     })
 }
 
-function llenarSelectMaterial(){
+function llenarSelectMaterial() {
     let html = "<option selected>Open this select menu</option>";
-    getAllMaterial().then((array_material)=>{
+    getAllMaterial().then((array_material) => {
         switch (select_opcion.value) {
             case "MATERIAL":
-                array_material.map(({id_proceso,id_material,nombre})=>{
-                    if(id_proceso == select_form_material_proceso.value)  html += `<option value="${id_material}">${nombre}</option>`
+                array_material.map(({ id_proceso, id_material, nombre }) => {
+                    if (id_proceso == select_form_material_proceso.value) html += `<option value="${id_material}">${nombre}</option>`
                 })
                 select_form_material_material.innerHTML = html;
                 break;
             case "TIPO_MATERIAL":
-                array_material.map(({id_proceso,id_material,nombre})=>{
-                    if(id_proceso == select_form_tipo_material_proceso.value)  html += `<option value="${id_material}">${nombre}</option>`
+                array_material.map(({ id_proceso, id_material, nombre }) => {
+                    if (id_proceso == select_form_tipo_material_proceso.value) html += `<option value="${id_material}">${nombre}</option>`
                 })
                 select_form_tipo_material_material.innerHTML = html;
                 break;
             case "EDI_TICKET_PESO":
-               
+                array_material.map(({ id_material, id_proceso, nombre }) => {
+                    if (!isNaN(Number(select_form_peso_proceso.value))) {
+                        select_form_peso_material.removeAttribute("disabled", "")
+                        select_form_peso_tipo_material.setAttribute("disabled", "")
+                        if (id_proceso == Number(select_form_peso_proceso.value)) html += `<option value="${id_material}">${nombre}</option>`
+                    } else {
+                        html += `<option value="${id_material}">${nombre}</option>`
+                    }
+                })
+                select_form_peso_material.innerHTML = html;
                 break;
             case "EDI_MATERIAL":
-                array_material.map(({id_proceso,id_material,nombre})=>{
-                    if(id_proceso == select_form_material_proceso.value)  html += `<option value="${id_material}">${nombre}</option>`
+                array_material.map(({ id_proceso, id_material, nombre }) => {
+                    if (id_proceso == select_form_material_proceso.value) html += `<option value="${id_material}">${nombre}</option>`
                 })
                 select_form_material_material.innerHTML = html;
                 break;
             case "EDI_TIPO_MATERIAL":
-                array_material.map(({id_proceso,id_material,nombre})=>{
-                    if(id_proceso == select_form_tipo_material_proceso.value)  html += `<option value="${id_material}">${nombre}</option>`
+                array_material.map(({ id_proceso, id_material, nombre }) => {
+                    if (id_proceso == select_form_tipo_material_proceso.value) html += `<option value="${id_material}">${nombre}</option>`
                 })
                 select_form_tipo_material_material.innerHTML = html;
                 break;
@@ -608,10 +668,38 @@ function llenarSelectMaterial(){
     })
 }
 
-function llenarSelectTransportista(){
+function llenarSelectTipoMaterial() {
     let html = "<option selected>Open this select menu</option>";
-    getAllTransportista().then((array_transportista)=>{
-        array_transportista.map(({id_transportista,nombre})=>{
+    getAllTipoMaterial().then((array_tipo_material) => {
+        switch (select_opcion.value) {
+            case "EDI_TICKET_PESO":
+                array_tipo_material.map(({ id_tipo_material, id_material, nombre }) => {
+                    if (!isNaN(Number(select_form_peso_material.value))) {
+                        select_form_peso_tipo_material.removeAttribute("disabled", "")
+                        if (id_material == Number(select_form_peso_material.value)) html += `<option value="${id_tipo_material}">${nombre}</option>`
+                    } else {
+                        html += `<option value="${id_tipo_material}">${nombre}</option>`
+                    }
+
+                })
+                select_form_peso_tipo_material.innerHTML = html;
+                break;
+            case "EDI_MATERIAL":
+
+                break;
+            case "EDI_TIPO_MATERIAL":
+
+                break;
+            default:
+                break;
+        }
+    })
+}
+
+function llenarSelectTransportista() {
+    let html = "<option selected>Open this select menu</option>";
+    getAllTransportista().then((array_transportista) => {
+        array_transportista.map(({ id_transportista, nombre }) => {
             html += `<option value="${id_transportista}">${nombre}</option>`
         })
         switch (select_opcion.value) {
@@ -619,7 +707,10 @@ function llenarSelectTransportista(){
                 select_form_vehiculo_transportista.innerHTML = html;
                 break;
             case "EDI_VEHICULO":
-    
+
+                break;
+            case "EDI_TICKET_PESO":
+                select_form_ticket_transportista.innerHTML = html;
                 break;
             default:
                 break;
@@ -627,10 +718,42 @@ function llenarSelectTransportista(){
     })
 }
 
-function llenarSelectTipoVehiculo(){
+function llenarSelectProveedor() {
     let html = "<option selected>Open this select menu</option>";
-    getAllTipoVehiculo().then((array_tipoVehiculo)=>{
-        array_tipoVehiculo.map(({id_tipo_vehiculo,nombre})=>{
+    getAllProveedor().then((array_proveedor) => {
+        array_proveedor.map(({ id_proveedor, nombre }) => {
+            html += `<option value="${id_proveedor}">${nombre}</option>`
+        })
+        switch (select_opcion.value) {
+            case "EDI_TICKET_PESO":
+                select_form_ticket_proveedor.innerHTML = html;
+                break;
+            default:
+                break;
+        }
+    })
+}
+
+function llenarSelectTipoContaminacion() {
+    let html = "<option selected>Open this select menu</option>";
+    getAllTipoContaminacion().then((array_tipos) => {
+        array_tipos.map(({ id_tipo_contaminacion, nombre }) => {
+            html += `<option value="${id_tipo_contaminacion}">${nombre}</option>`
+        })
+        switch (select_opcion.value) {
+            case "EDI_TICKET_PESO":
+                select_form_peso_contaminacion.innerHTML = html;
+                break;
+            default:
+                break;
+        }
+    })
+}
+
+function llenarSelectTipoVehiculo() {
+    let html = "<option selected>Open this select menu</option>";
+    getAllTipoVehiculo().then((array_tipoVehiculo) => {
+        array_tipoVehiculo.map(({ id_tipo_vehiculo, nombre }) => {
             html += `<option value="${id_tipo_vehiculo}">${nombre}</option>`
         })
         switch (select_opcion.value) {
@@ -638,7 +761,41 @@ function llenarSelectTipoVehiculo(){
                 select_form_vehiculo_tipo_vehiculo.innerHTML = html;
                 break;
             case "EDI_VEHICULO":
-    
+
+                break;
+            default:
+                break;
+        }
+    })
+}
+
+
+
+function llenarSelectFormaRecepcion() {
+    let html = "<option selected>Open this select menu</option>";
+    getAllFormaRecepcion().then((array_formas) => {
+        array_formas.map(({ id_forma_recepcion, nombre }) => {
+            html += `<option value="${nombre}">${nombre}</option>`
+        })
+        switch (select_opcion.value) {
+            case "EDI_TICKET_PESO":
+                select_form_peso_forma_recepcion.innerHTML = html;
+                break;
+            default:
+                break;
+        }
+    })
+}
+
+function llenarSelectVehiculo() {
+    let html = "<option selected>Open this select menu</option>";
+    getAllVehiculo().then((array_vehiculos) => {
+        array_vehiculos.map(({ id_vehiculo, placa }) => {
+            html += `<option value="${id_vehiculo}">${placa}</option>`
+        })
+        switch (select_opcion.value) {
+            case "EDI_TICKET_PESO":
+                select_form_ticket_vehiculo.innerHTML = html;
                 break;
             default:
                 break;
@@ -655,7 +812,7 @@ function htmlTicketPeso() {
         </select>
     </div>`;
     html += `<label for="inputEmail4" class="form-label col-sm-3">Nro. Ticket</label><div class="col-9">
-    <select class="form-select" aria-label="Default select example" id="select_edicion_numero_ticket" disabled>
+    <select class="form-select" aria-label="Default select example" onchange="htmlUpdateTicket()" id="select_edicion_numero_ticket" disabled>
         <option selected>Open this select menu</option>
         <option value="1">PROCESADO</option>
         <option value="0">NO PROCESADO</option>
@@ -667,15 +824,267 @@ function htmlTicketPeso() {
 function fillIdTicket() {
     let html = "<option selected>Open this select menu</option>"
     let procesadose = document.getElementById("select_edicion_estado_ticket").value
-    getAllTicket().then((array_tickets)=>{
-        array_tickets.map(({procesado,id_ticket})=>{
-            if( Number(procesadose) == procesado ) html += `<option value="${id_ticket}">${id_ticket}</option>`
+    getAllTicket().then((array_tickets) => {
+        array_tickets.map(({ procesado, id_ticket }) => {
+            if (Number(procesadose) == procesado) html += `<option value="${id_ticket}">${id_ticket}</option>`
         });
         document.getElementById("select_edicion_numero_ticket").innerHTML = html;
         document.getElementById("select_edicion_numero_ticket").removeAttribute("disabled")
     })
-    
+
 }
+
+function htmlUpdateTicket() {
+    hiddenForms();
+    let id_ticket_select = document.getElementById("select_edicion_numero_ticket").value
+    if (!isNaN(Number(id_ticket_select))) {
+        form_ticket.classList.remove("d-none");
+        form_edicion.classList.remove("d-none")
+        getTicket(id_ticket_select).then((array_ticket) => {
+            array_ticket.map(({ fecha_ticket, observaciones, procesado, fecha_procesado, id_vehiculo, id_proveedor }) => {
+                input_form_ticket_fecha.value = fecha_ticket.getFullYear() + "-" + ('0' + (fecha_ticket.getMonth() + 1)).slice(-2) + "-" + ('0' + fecha_ticket.getDate()).slice(-2) + "T" + ("0" + fecha_ticket.getHours()).slice(-2) + ":" + ("0" + fecha_ticket.getMinutes()).slice(-2) + ":" + ("0" + fecha_ticket.getSeconds()).slice(-2);
+                select_form_ticket_procesado.value = procesado
+                input_form_ticket_fecha_procesado.value = fecha_procesado == null ? "" : fecha_procesado.getFullYear() + "-" + ('0' + (fecha_procesado.getMonth() + 1)).slice(-2) + "-" + ('0' + fecha_procesado.getDate()).slice(-2) + "T" + ("0" + fecha_procesado.getHours()).slice(-2) + ":" + ("0" + fecha_procesado.getMinutes()).slice(-2) + ":" + ("0" + fecha_procesado.getSeconds()).slice(-2);;
+                select_form_ticket_vehiculo.value = id_vehiculo
+                select_form_ticket_proveedor.value = id_proveedor
+                texttarea_form_ticket_observaciones.value = observaciones
+            });
+
+            llenarPesos();
+        }).catch((msm) => {
+            ipcRenderer.send('showAlert', "danger", msm)
+        })
+    }
+}
+
+function llenarPesos() {
+    let html = ""
+    let id_ticket_select = document.getElementById("select_edicion_numero_ticket").value
+    getAllPeso().then((array_pesos) => {
+        array_pesos.map(({ id_peso, tipo_peso, peso, peso_contaminacion, porcentaje_contaminacion, peso_total, fecha_hora, id_ticket }) => {
+            if (Number(id_ticket_select) == id_ticket) {
+                html += `<tr>
+                    <th scope="row">${id_peso}</th>
+                    <td>${tipo_peso}</td>
+                    <td>${peso}</td>
+                    <td>${peso_contaminacion == null ? 0 : peso_contaminacion}</td>
+                    <td>${porcentaje_contaminacion == null ? 0 : porcentaje_contaminacion}</td>
+                    <td>${peso_total == null ? 0 : peso_total}</td>
+                    <td><button class="btn btn-warning" onclick=" htmlupdatePeso(${id_peso})"> @ </button></td>
+                    <td><button class="btn btn-danger" onclick="eliminarPeso(${id_peso})"> X </button></td>
+                   </tr>`
+            }
+        })
+        body_table_form_ticket_peso.innerHTML = html
+    }).catch((msm) => {
+        ipcRenderer.send('showAlert', "danger", msm)
+    })
+}
+
+function eliminarPeso(id) {
+    deletePeso(id).then((filas_afectadas) => {
+        if (filas_afectadas > 0) ipcRenderer.send('showAlert', "success", "Eliminacion exitosa")
+        llenarPesos();
+    }).catch((msm) => {
+        ipcRenderer.send('showAlert', "danger", msm)
+    })
+}
+
+function htmlupdatePeso(id) {
+    hiddenForms();
+    form_peso.classList.remove("d-none")
+    form_edicion.classList.remove("d-none")
+    getPeso(id).then((array_peso) => {
+        array_peso.map(({ id_peso, id_linea, id_proceso, id_material, tipo_peso, forma_recepcion, peso, peso_contaminacion, porcentaje_contaminacion, peso_total, fecha_hora, id_ticket, id_tipo_material }) => {
+            input_form_peso_id_peso.value = id_peso
+            select_form_peso_tipo_peso.value = tipo_peso
+            select_form_peso_forma_recepcion.value = forma_recepcion
+            input_form_peso_peso.value = peso
+            input_form_peso_contaminacion.value = peso_contaminacion == null ? 0 : peso_contaminacion
+            input_form_peso_porcentaje_contaminacion.value = porcentaje_contaminacion == null ? 0 : porcentaje_contaminacion
+            input_form_peso_total.value = peso_total == null ? 0 : peso_total
+            input_form_peso_fecha.value = fecha_hora.getFullYear() + "-" + ('0' + (fecha_hora.getMonth() + 1)).slice(-2) + "-" + ("0" + fecha_hora.getDate()).slice(-2) + "T" + ("0" + fecha_hora.getHours()).slice(-2) + ":" + ("0" + fecha_hora.getMinutes()).slice(-2) + ":" + ("0" + fecha_hora.getSeconds()).slice(-2);
+            if (tipo_peso == "ENTRADA") {
+                select_form_peso_linea.setAttribute("disabled", "")
+                select_form_peso_proceso.setAttribute("disabled", "")
+                select_form_peso_material.setAttribute("disabled", "")
+                select_form_peso_tipo_material.setAttribute("disabled", "")
+                input_form_peso_contaminacion.setAttribute("disabled", "")
+                input_form_peso_porcentaje_contaminacion.setAttribute("disabled", "")
+                input_form_peso_total.setAttribute("disabled", "")
+                select_form_peso_contaminacion.setAttribute("disabled", "")
+                boton_form_peso_contaminacion.setAttribute("disabled", "")
+            } else {
+                select_form_peso_linea.removeAttribute("disabled")
+                select_form_peso_proceso.removeAttribute("disabled")
+                select_form_peso_material.removeAttribute("disabled")
+                select_form_peso_tipo_material.removeAttribute("disabled")
+                input_form_peso_contaminacion.removeAttribute("disabled", "")
+                input_form_peso_porcentaje_contaminacion.removeAttribute("disabled", "")
+                input_form_peso_total.removeAttribute("disabled", "")
+                select_form_peso_contaminacion.removeAttribute("disabled", "")
+                boton_form_peso_contaminacion.removeAttribute("disabled", "")
+            }
+            select_form_peso_tipo_material.value = id_tipo_material
+            select_form_peso_linea.value = id_linea
+            select_form_peso_proceso.value = id_proceso
+            select_form_peso_material.value = id_material
+        })
+        form_peso.classList.remove("d-none")
+        llenarContaminacion();
+    }).catch((msm) => {
+        if (msm) ipcRenderer.send('showAlert', "danger", msm.toString())
+        if (!msm) ipcRenderer.send('showAlert', "danger", "Hubo problemas al cargar la info del peso")
+    })
+}
+
+function llenarContaminacion() {
+    let id = input_form_peso_id_peso.value
+    let html = ""
+    getAllContaminacion().then((array_contaminaciones) => {
+        array_contaminaciones.map(({ id_peso, id_contaminacion, nombre }) => {
+            if (id_peso == id) {
+                html += `
+                <a href="#" class="list-group-item list-group-item-action" onclick="eliminarContaminacion(${id_contaminacion})" aria-current="true">
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    ${nombre}
+                    <span class="badge bg-danger rounded-pill">-</span>
+                  </li>
+               </a>`
+            }
+        })
+        lista_form_peso_contaminaciones.innerHTML = html
+    }).catch((msm) => {
+        ipcRenderer.send('showAlert', "danger", msm.toString())
+    })
+}
+
+function agregarContaminacion() {
+    if (!isNaN(Number(select_form_peso_contaminacion.value)) && !isNaN(Number(input_form_peso_id_peso.value))) {
+        insertContaminacion({
+            id_tipo_contaminacion: Number(select_form_peso_contaminacion.value),
+            id_peso: Number(input_form_peso_id_peso.value)
+        }).then((filas_afectadas) => {
+            if (filas_afectadas > 0) {
+                llenarContaminacion();
+            }
+        }).catch((msm) => {
+            ipcRenderer.send('showAlert', "danger", msm.toString())
+        })
+    } else {
+        ipcRenderer.send('showAlert', "warning", "Escoja un tipo de contaminacion")
+    }
+
+}
+
+function eliminarContaminacion(id) {
+    deleteContaminacion(id).then((filas_afectadas) => {
+        if (filas_afectadas > 0) llenarContaminacion()
+    }).catch((msm) => {
+        ipcRenderer.send('showAlert', "danger", msm.toString())
+    })
+}
+
+function desbloquearConfi() {
+    if (select_form_peso_tipo_peso.value == "SALIDA") {
+        select_form_peso_linea.removeAttribute("disabled")
+        select_form_peso_proceso.removeAttribute("disabled")
+        select_form_peso_material.removeAttribute("disabled")
+        select_form_peso_tipo_material.removeAttribute("disabled")
+        input_form_peso_contaminacion.removeAttribute("disabled", "")
+        input_form_peso_porcentaje_contaminacion.removeAttribute("disabled", "")
+        input_form_peso_total.removeAttribute("disabled", "")
+        select_form_peso_contaminacion.removeAttribute("disabled", "")
+        boton_form_peso_contaminacion.removeAttribute("disabled", "")
+    } else {
+        select_form_peso_linea.setAttribute("disabled", "")
+        select_form_peso_proceso.setAttribute("disabled", "")
+        select_form_peso_material.setAttribute("disabled", "")
+        select_form_peso_tipo_material.setAttribute("disabled", "")
+        input_form_peso_contaminacion.setAttribute("disabled", "")
+        input_form_peso_porcentaje_contaminacion.setAttribute("disabled", "")
+        input_form_peso_total.setAttribute("disabled", "")
+        select_form_peso_contaminacion.setAttribute("disabled", "")
+        boton_form_peso_contaminacion.setAttribute("disabled", "")
+    }
+}
+
+function actualizarTicket() {
+    if (
+        !isNaN(Number(select_form_ticket_procesado.value)) &&
+        !isNaN(Number(document.getElementById("select_edicion_numero_ticket").value)) &&
+        !isNaN(Number(select_form_ticket_vehiculo.value)) &&
+        !isNaN(Number(select_form_ticket_proveedor.value))
+    ) {
+        updateTicket({
+            fecha_ticket: input_form_ticket_fecha.value,
+            observaciones: texttarea_form_ticket_observaciones.value == "" ? null : texttarea_form_ticket_observaciones.value,
+            procesado: Number(select_form_ticket_procesado.value),
+            fecha_procesado: input_form_ticket_fecha_procesado.value,
+            id_vehiculo: Number(select_form_ticket_vehiculo.value),
+            id_proveedor: Number(select_form_ticket_proveedor.value),
+            id_empresa: 1,
+            id_ticket: Number(document.getElementById("select_edicion_numero_ticket").value)
+        }).then((filas_afectadas) => {
+            if (filas_afectadas > 0) ipcRenderer.send('showAlert', "success", "Ticket actualizado")
+            htmlUpdateTicket();
+        }).catch((msm) => {
+            if (msm) ipcRenderer.send('showAlert', "Error", msm)
+            if (!msm) ipcRenderer.send('showAlert', "Error", "No se pudo actualizar el ticket")
+        })
+    } else {
+        ipcRenderer.send('showAlert', "warning", "Campos vacios")
+    }
+}
+
+function reimpresion() {
+    if (!isNaN(Number(document.getElementById("select_edicion_numero_ticket").value))) {
+        ipcRenderer.send('reimprimir', Number(document.getElementById("select_edicion_numero_ticket").value))
+    } else {
+        ipcRenderer.send('showAlert', "warning", "Ticket no escojido")
+    }
+}
+
+function eliminarTicket() {
+    let id = Number(document.getElementById("select_edicion_numero_ticket").value)
+    deleteTicket(id).then((filas_afectadas) => {
+        if (filas_afectadas > 0) ipcRenderer.send('showAlert', "success", "Eliminacion exitosa")
+        location.reload();
+    }).catch((msm) => {
+        ipcRenderer.send('showAlert', "danger", msm)
+    })
+}
+
+function actualizarPeso() {
+    if (
+        select_form_peso_tipo_peso.value != "" &&
+        select_form_peso_forma_recepcion.value != "" &&
+        !isNaN(Number(input_form_peso_peso.value)) &&
+        !isNaN(Number(select_form_peso_tipo_material.value)) &&
+        !isNaN(Number(document.getElementById("select_edicion_numero_ticket").value)) &&
+        input_form_peso_fecha.value != "" &&
+        !isNaN(Number(input_form_peso_id_peso.value))
+    ) {
+        updatePeso({
+            tipo_peso: select_form_peso_tipo_peso.value,
+            forma_recepcion: select_form_peso_forma_recepcion.value,
+            peso: Number(input_form_peso_peso.value),
+            peso_contaminacion: input_form_peso_contaminacion.value == "" ? 0 : input_form_peso_contaminacion.value,
+            porcentaje_contaminacion: input_form_peso_porcentaje_contaminacion.value == "" ? 0 : input_form_peso_porcentaje_contaminacion.value,
+            peso_total: input_form_peso_total.value == "" ? 0 : input_form_peso_total.value,
+            fecha_hora: input_form_peso_fecha.value,
+            id_ticket: Number(document.getElementById("select_edicion_numero_ticket").value),
+            id_tipo_material: Number(select_form_peso_tipo_material.value),
+            id_peso: Number(input_form_peso_id_peso.value)
+        }).then((filas_afectadas) => {
+            if (filas_afectadas > 0) ipcRenderer.send('showAlert', "success", "Peso actualizado exitosamente")
+            htmlUpdateTicket();
+        }).catch((msm) => {
+            ipcRenderer.send('showAlert', "danger", msm)
+        })
+    }
+}
+
 
 
 
@@ -744,6 +1153,15 @@ function habilitarForm() {
             toggleAviso("hidden");
             hiddenForms();
             htmlTicketPeso();
+            llenarSelectLinea();
+            llenarSelectMaterial();
+            llenarSelectProceso();
+            llenarSelectTipoMaterial();
+            llenarSelectFormaRecepcion();
+            llenarSelectTransportista();
+            llenarSelectVehiculo();
+            llenarSelectProveedor();
+            llenarSelectTipoContaminacion();
             form_edicion.classList.remove("d-none")
             break;
         case "EDI_USUARIO":

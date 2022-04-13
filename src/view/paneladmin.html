@@ -306,7 +306,190 @@
             </div>
         </div>
         <div class="row d-none bg-light p-3" id="form_ticket">
-            
+            <div class="col-6 mb-2">
+                <label for="inputEmail4" class="form-label">Fecha de ingreso</label>
+                <input type="datetime-local" class="form-control"  min="1997-01-01" max="2030-12-31" id="input_form_ticket_fecha" placeholder="Fecha de ingreso" aria-label="Fecha de ingreso">
+            </div>
+            <div class="col-6 mb-2">
+                <label for="inputEmail4" class="form-label">Procesado</label>
+                <select id="select_form_ticket_procesado" class="form-select" aria-label="Default select example">
+                    <option selected>Open this select menu</option>
+                    <option value="1">Si</option>
+                    <option value="0">No</option>
+                </select>
+            </div>
+            <div class="col-6 mb-2">
+                <label for="inputEmail4" class="form-label">Fecha de procesado</label>
+                <input type="datetime-local" class="form-control" id="input_form_ticket_fecha_procesado" placeholder="Fecha de procesado" aria-label="Fecha de procesado">
+            </div>
+            <div class="col-6 mb-2">
+                <label for="inputEmail4" class="form-label">Transportista</label>
+                <select id="select_form_ticket_transportista" class="form-select" aria-label="Default select example">
+                    <option selected>Open this select menu</option>
+                    <option value="1">Si</option>
+                    <option value="0">No</option>
+                </select>
+            </div>
+            <div class="col-6 mb-2">
+                <label for="inputEmail4" class="form-label">Vehiculo</label>
+                <select id="select_form_ticket_vehiculo" class="form-select" aria-label="Default select example">
+                    <option selected>Open this select menu</option>
+                    <option value="1">Si</option>
+                    <option value="0">No</option>
+                </select>
+            </div>
+            <div class="col-6 mb-2">
+                <label for="inputEmail4" class="form-label">Proveedor</label>
+                <select id="select_form_ticket_proveedor" class="form-select" aria-label="Default select example">
+                    <option selected>Open this select menu</option>
+                    <option value="1">Si</option>
+                    <option value="0">No</option>
+                </select>
+            </div>
+            <div class="col-12 mb-2">
+                <label for="texttarea_form_ticket_observaciones" class="form-label">Observaciones</label>
+                <textarea class="form-control" id="texttarea_form_ticket_observaciones"  rows="2"></textarea>
+            </div>
+            <div class="col-12">
+                <div class="row">
+                   <div class="col-12 mb-2">
+                       <h6 class="mb-3">Lista de pesos del ticket</h6>
+                    <table class="table table-dark table-hover">
+                        <thead>
+                            <tr>
+                              <th scope="col">#</th>
+                              <th scope="col">TIPO PESO</th>
+                              <th scope="col">PESO</th>
+                              <th scope="col">PESO CONTA</th>
+                              <th scope="col">% CONTA</th>
+                              <th scope="col">KG TOTAL</th>
+                              <th scope="col">EDIT</th>
+                              <th scope="col">DEL</th>
+                            </tr>
+                          </thead>
+                          <tbody id="body_table_form_ticket_peso">
+                            <tr>
+                              <th scope="row">1</th>
+                              <td>Mark</td>
+                              <td>Otto</td>
+                              <td>@mdo</td>
+                              <td>Mark</td>
+                              <td>Otto</td>
+                              <td>@mdo</td>
+                              <td>@mdo</td>
+                            </tr>
+                          </tbody>
+                       </table> 
+                   </div>
+                </div>
+            </div>
+            <div class="col-2 mb-2">
+                <button class="btn btn-success" onclick="actualizarTicket()" id="boton_form_ticket">Actualizar</button>
+             </div>
+             <div class="col-2 mb-2">
+                <button class="btn btn-danger" onclick="eliminarTicket()" id="boton_form_ticket_eliminar">Eliminar</button>
+             </div>
+             <div class="col-2 mb-2">
+                <button class="btn btn-info" onclick="reimpresion()" id="boton_form_ticket_reemprimir">Reemprimir</button>
+             </div>
+        </div>
+        <div class="row d-none bg-light p-3" id="form_peso">
+            <div class="col-6 mb-2">
+                <label for="inputEmail4" class="form-label">Id Peso</label>
+                <input type="text" class="form-control" id="input_form_peso_id_peso" placeholder="Id Peso" aria-label="Id Peso" disabled>
+            </div>
+            <div class="col-6 mb-2">
+                <label for="inputEmail4" class="form-label">Tipo de peso</label>
+                <select onchange="desbloquearConfi()" id="select_form_peso_tipo_peso" class="form-select" aria-label="Default select example">
+                    <option selected>Open this select menu</option>
+                    <option value="ENTRADA">ENTRADA</option>
+                    <option value="SALIDA">SALIDA</option>
+                </select>
+            </div>
+            <div class="col-6 mb-2">
+                <label for="inputEmail4" class="form-label">Forma de recepcion</label>
+                <select id="select_form_peso_forma_recepcion" class="form-select" aria-label="Default select example">
+                    <option selected>Open this select menu</option>
+                    <option value="ENTRADA">ENTRADA</option>
+                    <option value="SALIDA">SALIDA</option>
+                </select>
+            </div>
+            <div class="col-6 mb-2">
+                <label for="inputEmail4" class="form-label">Peso</label>
+                <input type="text" class="form-control" id="input_form_peso_peso" placeholder="Peso" aria-label="Peso">
+            </div>
+            <div class="col-6 mb-2">
+                <label for="inputEmail4" class="form-label">Peso contaminacion</label>
+                <input type="text" class="form-control" id="input_form_peso_contaminacion" placeholder="Peso contaminacion" aria-label="Peso contaminacion">
+            </div>
+            <div class="col-6 mb-2">
+                <label for="inputEmail4" class="form-label">Porcentaje de contaminacion</label>
+                <input type="text" class="form-control" id="input_form_peso_porcentaje_contaminacion" placeholder="Porcentaje de contaminacion" aria-label="Porcentaje de contaminacion">
+            </div>
+            <div class="col-6 mb-2">
+                <label for="inputEmail4" class="form-label">Peso total</label>
+                <input type="text" class="form-control" id="input_form_peso_total" placeholder="Peso total" aria-label="Peso total">
+            </div> <div class="col-6 mb-2">
+                <label for="inputEmail4" class="form-label">fecha y hora del peso</label>
+                <input type="datetime-local" class="form-control" id="input_form_peso_fecha" placeholder="Fecha y hora del peso" aria-label="Fecha y hora del peso">
+            </div>
+            <div class="col-6 mb-2">
+                <label for="inputEmail4" class="form-label">Linea</label>
+                <select class="form-select" onchange="llenarSelectProceso()" id="select_form_peso_linea" aria-label="Default select example">
+                    <option selected>Open this select menu</option>
+                    <option value="1">Si</option>
+                    <option value="0">No</option>
+                </select>
+            </div>
+            <div class="col-6 mb-2">
+                <label for="inputEmail4" class="form-label">Proceso</label>
+                <select class="form-select" id="select_form_peso_proceso" onchange="llenarSelectMaterial()" aria-label="Default select example">
+                    <option selected>Open this select menu</option>
+                    <option value="1">Si</option>
+                    <option value="0">No</option>
+                </select>
+            </div>
+            <div class="col-6 mb-2">
+                <label for="inputEmail4" class="form-label">Material</label>
+                <select class="form-select" id="select_form_peso_material" onchange="llenarSelectTipoMaterial()" aria-label="Default select example">
+                    <option selected>Open this select menu</option>
+                    <option value="1">Si</option>
+                    <option value="0">No</option>
+                </select>
+            </div>
+            <div class="col-6 mb-2">
+                <label for="inputEmail4" class="form-label">Tipo de Material</label>
+                <select class="form-select" id="select_form_peso_tipo_material" aria-label="Default select example">
+                    <option selected>Open this select menu</option>
+                    <option value="1">Si</option>
+                    <option value="0">No</option>
+                </select>
+            </div>
+            <div class="col-12 mb-2">
+                <div class="input-group mt-3">
+                    <select class="form-select" id="select_form_peso_contaminacion" aria-label="Example select with button addon">
+                        
+                    </select>
+                    <button class="btn btn-outline-secondary" id="boton_form_peso_contaminacion" type="button" onclick="agregarContaminacion()">Agregar</button>
+                  </div>
+            </div>
+            <div class="col-12 mb-2">
+               <div class="list-group" id="lista_form_peso_contaminaciones">
+                   <a href="#" class="list-group-item list-group-item-action active" aria-current="true">
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        A list item
+                        <span class="badge bg-primary rounded-pill">-</span>
+                      </li>
+                   </a>
+               </div>
+            </div>
+            <div class="col-2 mb-2">
+               <button class="btn btn-success" id="boton_form_peso" onclick="actualizarPeso()">Actualizar</button>
+            </div>
+            <div class="col-2 mb-2">
+                <button class="btn btn-warning" id="boton_form_peso_retroceder" onclick="htmlUpdateTicket()">Retroceder</button>
+             </div>
+
         </div>
         <div class="row d-none bg-light p-3" id="seccion_table">
 

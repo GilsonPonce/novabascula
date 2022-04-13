@@ -22,7 +22,10 @@ function llenarTabla() {
                     </tr>`
         });
         body_table.innerHTML = html;
-    }).catch( mensaje => ipcRenderer.send('showAlert', 'error', mensaje))
+    }).catch( (mensaje) => {
+        ipcRenderer.send('showAlert', 'error', mensaje)
+        mostrarVentanaPesaje();
+    })
 }
 
 

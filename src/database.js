@@ -9,7 +9,7 @@ function getConnection() {
 const infoticket = (id) => {
     let queryticket = `
     select
-    tic.id_ticket, tic.fecha_ticket, tic.fecha_procesado, veh.placa , pro.nombre as proveedor, tran.cedula ,tran.nombre as transportista
+    tic.id_ticket, tic.fecha_ticket, tic.fecha_procesado, tic.observaciones, veh.placa , pro.nombre as proveedor, tran.cedula ,tran.nombre as transportista
     from 
     (select prov.id_proveedor,concat(per.apellidos,' ',per.nombres) as nombre from persona per inner join proveedor prov on per.id_persona = prov.id_persona ) pro,
     (select trans.id_transportista, per.cedula,  concat(per.apellidos,' ',per.nombres) as nombre from persona per inner join transportista trans on per.id_persona = trans.id_persona ) tran,

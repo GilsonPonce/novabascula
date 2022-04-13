@@ -137,6 +137,10 @@ function infoImpresion(id) {
                                     <td>${infoticket.cedula}</td>
                                 </tr>
                                 <tr>
+                                    <th class="">Observacion</th>
+                                    <td class="">${infoticket.observaciones == null ? "" : infoticket.observaciones}</td>
+                                </tr>
+                                <tr>
                                     <th class="">Proveedor/Cliente</th>
                                     <td class="">${infoticket.proveedor}</td>
                                 </tr>
@@ -751,6 +755,9 @@ ipcMain.on('getInfoTicket', (event, id) => {
 })
 ipcMain.on('imprimir', (event, id) => {
     imprimirTicket();
+})
+ipcMain.on('reimprimir',(event,id)=>{
+    infoImpresion(id);
 })
 
 

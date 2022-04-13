@@ -158,7 +158,7 @@ const getProveedor = (id_proveedor) => {
 }
 
 const getAllProveedor = () => {
-    $query = `select  pro.id_proveedor, concat(per.appelidos," ",per.nombres) as nombre
+    $query = `select  pro.id_proveedor, concat(per.apellidos," ",per.nombres) as nombre
     from persona per inner join proveedor pro on per.id_persona = pro.id_persona`
     return new Promise((resolve,reject)=>{
         connection.query($query, function (err, rows, fields) {
@@ -211,7 +211,7 @@ const getVehiculo = (id) => {
 }
 
 const getAllVehiculo = () => {
-    $query = `select id_vehiculo, placa from vehiculo`
+    $query = `select id_vehiculo, placa, id_transportista from vehiculo`
     return new Promise((resolve,reject)=>{
         connection.query($query, function (err, rows, fields) {
             if (err) reject(err.message)
@@ -555,9 +555,12 @@ const updateTicket = (objeto) => {
 }
 
 const getPeso = (id) => {
-    $query = `select id_peso, tipo_peso, forma_recepcion, peso, peso_contaminacion, porcentaje_contaminacion,
-    peso_total, fecha_hora, id_ticket, id_tipo_material 
-    from peso where id_peso = `+connection.escape(id)
+    $query = `select pe.id_peso, pe.tipo_peso, pe.forma_recepcion, pe.peso, pe.peso_contaminacion, pe.porcentaje_contaminacion,
+    pe.peso_total, pe.fecha_hora, pe.id_ticket, pe.id_tipo_material, ma.id_material, pro.id_proceso,  li.id_linea
+    from peso pe inner join tipomaterial tpm on tpm.id_tipo_material = pe.id_tipo_material
+    inner join material ma on ma.id_material = tpm.id_tipo_material
+    inner join proceso pro on pro.id_proceso = ma.id_proceso
+    inner join linea li on li.id_linea = pro.id_linea where id_peso = `+connection.escape(id)
     return new Promise((resolve,reject)=>{
         connection.query($query, function (err, rows, fields) {
             if (err) reject(err.message)
@@ -620,7 +623,7 @@ const getContaminacion = (id) => {
 }
 
 const getAllContaminacion = () => {
-    $query = `select id_contaminacion, id_tipo_contaminacion, id_peso from contaminacion`
+    $query = `select con.id_contaminacion, con.id_tipo_contaminacion, con.id_peso, tcon.nombre from contaminacion con inner join tipocontaminacion tcon on tcon.id_tipo_contaminacion = con.id_tipo_contaminacion`
     return new Promise((resolve,reject)=>{
         connection.query($query, function (err, rows, fields) {
             if (err) reject(err.message)
@@ -701,6 +704,56 @@ const insertTipoContaminacion = (objeto) => {
 
 const updateTipoContaminacion = (objeto) => {
     $query = `update tipocontaminacion set nombre = ? where id_tipo_contaminacion = ?`
+    return new Promise((resolve,reject)=>{
+        connection.query($query, Object.values(objeto),function (err, result) {
+            if (err) reject(err.message)
+            resolve(result.affectedRows)
+        });
+    })
+}
+
+const getFormaRecepcion = (id) => {
+    $query = `select id_forma_recepcion, nombre from formarecepcion where id_forma_recepcion = `+connection.escape(id)
+    return new Promise((resolve,reject)=>{
+        connection.query($query, function (err, rows, fields) {
+            if (err) reject(err.message)
+            resolve(rows)
+        });
+    })
+}
+
+const getAllFormaRecepcion = () => {
+    $query = `select id_forma_recepcion, nombre from formarecepcion`
+    return new Promise((resolve,reject)=>{
+        connection.query($query, function (err, rows, fields) {
+            if (err) reject(err.message)
+            resolve(rows)
+        });
+    })
+}
+
+const deleteFormaRecepcion = (id) => {
+    $query = `delete from formarecepcion where id_forma_recepcion = ` + connection.escape(id)
+    return new Promise((resolve,reject)=>{
+        connection.query($query, function (err, result) {
+            if (err) reject(err.message)
+            resolve(result.affectedRows)
+        });
+    })
+}
+
+const insertFormaRecepcion = (objeto) => {
+    $query = `insert into formarecepcion set ?`
+    return new Promise((resolve,reject)=>{
+        connection.query($query,objeto, function (err, result) {
+            if (err) reject(err.message)
+            resolve(result.insertId)
+        });
+    })
+} 
+
+const updateFormaRecepcion = (objeto) => {
+    $query = `update formarecepcion set nombre = ? where id_forma_recepcion = ?`
     return new Promise((resolve,reject)=>{
         connection.query($query, Object.values(objeto),function (err, result) {
             if (err) reject(err.message)
@@ -834,4 +887,9 @@ module.exports = {
     insertEmpresa,
     updateEmpresa,
     deleteEmpresa,
+    getFormaRecepcion,
+    getAllFormaRecepcion,
+    insertFormaRecepcion,
+    updateFormaRecepcion,
+    deleteFormaRecepcion,
  }
