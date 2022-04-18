@@ -51,7 +51,7 @@ SerialPort.list()
     .then((ports) => {
         // LISTA DE PUERTOS
         //console.log(ports)
-        if (ports.length == 0) //ipcRenderer.send('showAlert', 'No hay puertos disponibles');
+        if (ports.length == 0) console.log("No hay puertos disponibles")
             ports.forEach(({ manufacturer, path, productId }) => {
                 if (manufacturer == manufacture || productId == IdProduct) {
                     console.log(`PUERTO ${path} CUMPLE CON ESPECIFICACIONES`)
@@ -160,7 +160,6 @@ function registrarPesoSalida() {
         id_tipo_material: parseInt(select_tipo_material.value),
         forma_recepcion: select_forma_recepcion_salida.value,
         peso: parseInt(input_peso.value),
-        observaciones: textarea_observacion.value == "" ? null : textarea_observacion.value,
         peso_contaminacion: parseFloat(input_peso_contaminacion.value),
         porcentaje_contaminacion: parseFloat(input_porcentaje_contaminacion.value),
         peso_total: parseFloat(p_neto_ticket.innerHTML)
@@ -355,7 +354,7 @@ function registrarSalida(objeto) {
     getConnection().query(sqlpeso, objeto, function (err, result) {
         if (err) ipcRenderer.send('showAlert', 'error', err.message);
         registrarContaminacion(result.insertId);
-        if (result && result.affectedRows > 0) ipcRenderer.send('showAlertPregunta', id_ticket)
+        if (result && result.affectedRows > 0) ipcRenderer.send('showAlertPregunta', objeto.id_ticket)
     })
 }
 

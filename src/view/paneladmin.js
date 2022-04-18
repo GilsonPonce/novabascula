@@ -33,7 +33,18 @@ const { getPersona,
     getAllTipoContaminacion,
     deleteTicket,
     updateTicket,
-    updatePeso } = require('../databaseadmin');
+    updatePeso,
+    insertProveedor,
+    insertTransportista,
+    deleteProveedor,
+    getProveedor,
+    updateProveedor,
+    getTransportista,
+    updateTransportista,
+    deleteTransportista,
+    updateVehiculo,
+    deleteVehiculo,
+    getVehiculo } = require('../databaseadmin');
 
 const input_host = document.getElementById("input_host")
 const select_opcion = document.getElementById("select_opcion")
@@ -110,6 +121,8 @@ const boton_form_peso = document.getElementById("boton_form_peso")
 const boton_form_ticket = document.getElementById("boton_form_ticket")
 const boton_form_peso_contaminacion = document.getElementById("boton_form_peso_contaminacion")
 const boton_form_peso_retroceder = document.getElementById("boton_form_peso_retroceder")
+const boton_form_proveedor = document.getElementById("boton_form_proveedor");
+const boton_form_transportista = document.getElementById("boton_form_transportista");
 const aviso = document.getElementById("aviso")
 let id = 0;
 
@@ -158,6 +171,120 @@ function htmlUsuario() {
         })
 }
 
+function htmlEditarProveedor() {
+    let html = `<div class="col-10"><label for="inputEmail4" class="form-label col-sm-3 mb-2">Proveedor</label><div class="col-9 mb-2">
+    <select class="form-select" onchange="formEdicionProveedor()" aria-label="Default select example" id="select_edicion_proveedor">
+    <option value="" selected>Open this select menu</option>`
+    getAllProveedor()
+        .then((proveedor) => {
+            if (proveedor.length > 0) {
+                proveedor.map(({ id_proveedor, nombre }) => {
+                    html += `<option value="${id_proveedor}">${nombre}</option>`
+                })
+                html += `</select></div>`;
+                form_edicion.innerHTML = html;
+                form_edicion.innerHTML += `<div class="col-12">
+                <button class="btn btn-danger" onclick="eliminarProveedor()" id="boton_form_edicion_delete">Eliminar</button>
+                </div>`;
+                boton_form_proveedor.removeAttribute('onclick')
+                boton_form_proveedor.setAttribute('onclick', 'actualizarProveedor()')
+                boton_form_proveedor.innerHTML = "Actualizar"
+            }
+        })
+}
+
+function htmlEditarTransportista() {
+    let html = `<div class="col-10"><label for="inputEmail4" class="form-label col-sm-3 mb-2">Transportista</label><div class="col-9 mb-2">
+    <select class="form-select" onchange="formEdicionTransportista()" aria-label="Default select example" id="select_edicion_transportista">
+    <option value="" selected>Open this select menu</option>`
+    getAllTransportista()
+        .then((transportista) => {
+            if (transportista.length > 0) {
+                transportista.map(({ id_transportista, nombre }) => {
+                    html += `<option value="${id_transportista}">${nombre}</option>`
+                })
+                html += `</select></div>`;
+                form_edicion.innerHTML = html;
+                form_edicion.innerHTML += `<div class="col-12">
+                <button class="btn btn-danger" onclick="eliminarTransportista()" id="boton_form_edicion_delete">Eliminar</button>
+                </div>`;
+                boton_form_transportista.removeAttribute('onclick')
+                boton_form_transportista.setAttribute('onclick', 'actualizarTransportista()')
+                boton_form_transportista.innerHTML = "Actualizar"
+            }
+        })
+}
+
+function htmlEditarVehiculo() {
+    let html = `<div class="col-10"><label for="inputEmail4" class="form-label col-sm-3 mb-2">Vehiculo</label><div class="col-9 mb-2">
+    <select class="form-select" onchange="formEdicionVehiculo()" aria-label="Default select example" id="select_edicion_vehiculo">
+    <option value="" selected>Open this select menu</option>`
+    getAllVehiculo()
+        .then((vehiculo) => {
+            if (vehiculo.length > 0) {
+                vehiculo.map(({ id_vehiculo, placa }) => {
+                    html += `<option value="${id_vehiculo}">${placa}</option>`
+                })
+                html += `</select></div>`;
+                form_edicion.innerHTML = html;
+                form_edicion.innerHTML += `<div class="col-12">
+                <button class="btn btn-danger" onclick="eliminarVehiculo()" id="boton_edicion_eliminar">Eliminar</button>
+                </div>`;
+                boton_form_vehiculo.removeAttribute('onclick')
+                boton_form_vehiculo.setAttribute('onclick', 'actualizarVehiculo()')
+                boton_form_vehiculo.innerHTML = "Actualizar"
+            }
+        })
+}
+
+function eliminarProveedor() {
+    let id = document.getElementById("select_edicion_proveedor").value
+    if (!isNaN(parseInt(id))) {
+        deleteProveedor(id).then((filas_afectadas) => {
+            if (filas_afectadas > 0) {
+                hiddenForms();
+                htmlEditarProveedor()
+                form_edicion.classList.remove("d-none")
+                ipcRenderer.send('showAlert', "success", "Eliminacion exitosa")
+            }
+        }).catch((msm) => {
+            ipcRenderer.send('showAlert', "error", msm.toString())
+        });
+    }
+}
+
+function eliminarTransportista() {
+    let id = document.getElementById("select_edicion_transportista").value
+    if (!isNaN(parseInt(id))) {
+        deleteTransportista(id).then((filas_afectadas) => {
+            if (filas_afectadas > 0) {
+                hiddenForms();
+                htmlEditarTransportista()
+                form_edicion.classList.remove("d-none")
+                ipcRenderer.send('showAlert', "success", "Eliminacion exitosa")
+            }
+        }).catch((msm) => {
+            ipcRenderer.send('showAlert', "error", msm.toString())
+        });
+    }
+}
+
+function eliminarVehiculo() {
+    let id = document.getElementById("select_edicion_vehiculo").value
+    if (!isNaN(parseInt(id))) {
+        deleteVehiculo(id).then((filas_afectadas) => {
+            if (filas_afectadas > 0) {
+                hiddenForms();
+                htmlEditarVehiculo()
+                form_edicion.classList.remove("d-none")
+                ipcRenderer.send('showAlert', "success", "Eliminacion exitosa")
+            }
+        }).catch((msm) => {
+            ipcRenderer.send('showAlert', "error", msm.toString())
+        });
+    }
+}
+
 function deleteUsuario() {
     let id = document.getElementById("select_edicion_usuario").value
     if (!isNaN(parseInt(id))) {
@@ -167,7 +294,7 @@ function deleteUsuario() {
                 ipcRenderer.send('showAlert', "success", "Eliminacion exitosa")
             }
         }).catch((msm) => {
-            ipcRenderer.send('showAlert', "error", msm)
+            ipcRenderer.send('showAlert', "error", msm.toString())
         });
     }
 }
@@ -202,16 +329,14 @@ function registrarUsuario() {
                 estado: parseInt(select_form_usuario_activo.value)
             })
         }).catch((msm) => {
-            ipcRenderer.send('showAlert', "error", msm)
+            ipcRenderer.send('showAlert', "error", msm.toString())
         }).then((id) => {
             if (id > 0) {
-                cleanFromUsuario();
-                hiddenForms();
                 location.reload();
                 ipcRenderer.send('showAlert', "success", "Ingreso exitoso")
             }
         }).catch((msm) => {
-            ipcRenderer.send('showAlert', "error", msm)
+            ipcRenderer.send('showAlert', "error", msm.toString())
         })
     } else {
         ipcRenderer.send('showAlert', "warning", "Faltan campos por llenar!")
@@ -245,16 +370,14 @@ function registrarProveedor() {
                 activo: parseInt(select_form_proveedor_activo.value)
             })
         }).catch((msm) => {
-            ipcRenderer.send('showAlert', "error", msm)
+            ipcRenderer.send('showAlert', "error", msm.toString())
         }).then((id) => {
             if (id > 0) {
-                cleanFromUsuario();
-                hiddenForms();
                 location.reload();
                 ipcRenderer.send('showAlert', "success", "Ingreso exitoso")
             }
         }).catch((msm) => {
-            ipcRenderer.send('showAlert', "error", msm)
+            ipcRenderer.send('showAlert', "error", msm.toString())
         })
     } else {
         ipcRenderer.send('showAlert', "warning", "Faltan campos por llenar!")
@@ -283,22 +406,20 @@ function registrarTransportista() {
             fecha_expedicion: input_form_usuario_fecha_expedicion.value == "" ? null : input_form_usuario_fecha_expedicion.value,
             fecha_expiracion: input_form_usuario_fecha_expiracion.value == "" ? null : input_form_usuario_fecha_expiracion.value
         }).then((id_usuario) => {
-            return insertProveedor({
+            return insertTransportista({
                 vencimiento_licencia: input_form_transportista_fecha_vencimiento.value == "" ? null : input_form_transportista_fecha_vencimiento.value,
                 activo: parseInt(select_form_transportista_activo.value),
                 id_persona: id_usuario
             })
         }).catch((msm) => {
-            ipcRenderer.send('showAlert', "error", msm)
+            ipcRenderer.send('showAlert', "error", msm.toString())
         }).then((id) => {
             if (id > 0) {
-                cleanFromUsuario();
-                hiddenForms();
                 location.reload();
                 ipcRenderer.send('showAlert', "success", "Ingreso exitoso")
             }
         }).catch((msm) => {
-            ipcRenderer.send('showAlert', "error", msm)
+            ipcRenderer.send('showAlert', "error", msm.toString())
         })
     } else {
         ipcRenderer.send('showAlert', "warning", "Faltan campos por llenar!")
@@ -322,7 +443,7 @@ function registrarVehiculo() {
             if (id_insertado > 0) ipcRenderer.send('showAlert', "success", "Ingreso exitoso")
             location.reload();
         }).catch((msm) => {
-            ipcRenderer.send('showAlert', "error", msm)
+            ipcRenderer.send('showAlert', "error", msm.toString())
         })
     } else {
         ipcRenderer.send('showAlert', "warning", "Faltan campos por llenar!")
@@ -338,7 +459,7 @@ function registrarContaminacion() {
                 if (id_insertado > 0) ipcRenderer.send('showAlert', "success", "Ingreso exitoso")
                 location.reload();
             }).catch((msm) => {
-                ipcRenderer.send('showAlert', "error", msm)
+                ipcRenderer.send('showAlert', "error", msm.toString())
             })
     } else {
         input_form_tipo_contaminacion_nombre.focus()
@@ -355,7 +476,7 @@ function registrarTipoVehiculo() {
                 if (id_insertado > 0) ipcRenderer.send('showAlert', "success", "Ingreso exitoso")
                 location.reload();
             }).catch((msm) => {
-                ipcRenderer.send('showAlert', "error", msm)
+                ipcRenderer.send('showAlert', "error", msm.toString())
             })
     } else {
         input_form_tipo_vehiculo_nombre.focus()
@@ -372,7 +493,7 @@ function registrarLinea() {
                 if (id_insertado > 0) ipcRenderer.send('showAlert', "success", "Ingreso exitoso")
                 location.reload();
             }).catch((msm) => {
-                ipcRenderer.send('showAlert', "error", msm)
+                ipcRenderer.send('showAlert', "error", msm.toString())
             })
     } else {
         input_form_linea_nombre.focus()
@@ -392,7 +513,7 @@ function registrarProceso() {
             if (id_insertado > 0) ipcRenderer.send('showAlert', "success", "Ingreso exitoso")
             location.reload();
         }).catch((msm) => {
-            ipcRenderer.send('showAlert', "error", msm)
+            ipcRenderer.send('showAlert', "error", msm.toString())
         })
     } else {
         ipcRenderer.send('showAlert', "warning", "Faltan campos que llenar! Campeon")
@@ -411,7 +532,7 @@ function registrarMaterial() {
             if (id_insertado > 0) ipcRenderer.send('showAlert', "success", "Ingreso exitoso")
             location.reload();
         }).catch((msm) => {
-            ipcRenderer.send('showAlert', "error", msm)
+            ipcRenderer.send('showAlert', "error", msm.toString())
         });
     } else {
         ipcRenderer.send('showAlert', "warning", "Faltan campos que llenar! Tilin")
@@ -430,7 +551,7 @@ function registrarTipoMaterial() {
             if (id_insertado > 0) ipcRenderer.send('showAlert', "success", "Ingreso exitoso")
             location.reload();
         }).catch((msm) => {
-            ipcRenderer.send('showAlert', "error", msm)
+            ipcRenderer.send('showAlert', "error", msm.toString())
         })
     } else {
         ipcRenderer.send('showAlert', "warning", "Faltan campos que llenar! Tilin")
@@ -479,12 +600,157 @@ function updateUsuario() {
                 ipcRenderer.send('showAlert', "success", "Actualizacion exitosa")
             }
         }).catch((msm) => {
-            ipcRenderer.send('showAlert', "error", msm)
+            ipcRenderer.send('showAlert', "error", msm.toString())
         })
     } else {
         ipcRenderer.send('showAlert', "warning", "Falta algun campo necesario")
     }
 }
+
+function actualizarProveedor() {
+    if (
+        input_form_usuario_cedula.value != "" &&
+        input_form_usuario_nombres.value != "" &&
+        input_form_usuario_apellidos.value != "" &&
+        !isNaN(parseInt(select_form_usuario_activo.value)) &&
+        !isNaN(parseInt(select_form_proveedor_activo.value)) &&
+        !isNaN(parseInt(document.getElementById("select_edicion_proveedor").value))
+    ) {
+        getProveedor(document.getElementById("select_edicion_proveedor").value)
+            .then((rows) => {
+                let { id_persona } = rows[0]
+
+                return updatePersona({
+                    activo: parseInt(select_form_usuario_activo.value),
+                    cedula: input_form_usuario_cedula.value,
+                    nombres: input_form_usuario_nombres.value,
+                    apellidos: input_form_usuario_apellidos.value,
+                    fecha_nacimiento: input_form_usuario_fecha_nacimiento.value == "" ? null : input_form_usuario_fecha_nacimiento.value,
+                    sexo: select_form_usuario_sexo.value == "" ? null : select_form_usuario_sexo.value,
+                    estado_civil: select_form_usuario_estado_civil.value == "" ? null : select_form_usuario_estado_civil.value,
+                    ciudadania: input_form_usuario_ciudadania.value == "" ? null : input_form_usuario_ciudadania.value,
+                    instruccion: input_form_usuario_instruccion.value == "" ? null : input_form_usuario_instruccion.value,
+                    lugar_expedicion: input_form_usuario_lugar_expedicion.value == "" ? null : input_form_usuario_lugar_expedicion.value,
+                    fecha_expedicion: input_form_usuario_fecha_expedicion.value == "" ? null : input_form_usuario_fecha_expedicion.value,
+                    fecha_expiracion: input_form_usuario_fecha_expiracion.value == "" ? null : input_form_usuario_fecha_expiracion.value,
+                    id_persona: id_persona
+                })
+
+
+            }).catch((msm) => {
+                ipcRenderer.send('showAlert', "error", msm.toString())
+            }).then((files) => {
+                if (files > 0) {
+                    return updateProveedor({
+                        activo: parseInt(select_form_proveedor_activo.value),
+                        id_proveedor: parseInt(document.getElementById("select_edicion_proveedor").value)
+                    })
+                }
+            }).catch((msm) => {
+                ipcRenderer.send('showAlert', "error", msm.toString())
+            }).then((id) => {
+                if (id > 0) {
+                    cleanFromUsuario()
+                    htmlEditarProveedor()
+                    hiddenForms();
+                    form_edicion.classList.remove("d-none")
+                    ipcRenderer.send('showAlert', "success", "Actualizacion exitosa")
+                }
+            }).catch((msm) => {
+                ipcRenderer.send('showAlert', "error", msm.toString())
+            })
+    } else {
+        ipcRenderer.send('showAlert', "warning", "Falta algun campo necesario")
+    }
+}
+
+function actualizarTransportista() {
+    if (
+        input_form_usuario_cedula.value != "" &&
+        input_form_usuario_nombres.value != "" &&
+        input_form_usuario_apellidos.value != "" &&
+        !isNaN(parseInt(select_form_usuario_activo.value)) &&
+        !isNaN(parseInt(select_form_transportista_activo.value)) &&
+        !isNaN(parseInt(document.getElementById("select_edicion_transportista").value))
+    ) {
+        getTransportista(document.getElementById("select_edicion_transportista").value)
+            .then((rows) => {
+                let { id_persona } = rows[0]
+                return updatePersona({
+                    activo: parseInt(select_form_usuario_activo.value),
+                    cedula: input_form_usuario_cedula.value,
+                    nombres: input_form_usuario_nombres.value,
+                    apellidos: input_form_usuario_apellidos.value,
+                    fecha_nacimiento: input_form_usuario_fecha_nacimiento.value == "" ? null : input_form_usuario_fecha_nacimiento.value,
+                    sexo: select_form_usuario_sexo.value == "" ? null : select_form_usuario_sexo.value,
+                    estado_civil: select_form_usuario_estado_civil.value == "" ? null : select_form_usuario_estado_civil.value,
+                    ciudadania: input_form_usuario_ciudadania.value == "" ? null : input_form_usuario_ciudadania.value,
+                    instruccion: input_form_usuario_instruccion.value == "" ? null : input_form_usuario_instruccion.value,
+                    lugar_expedicion: input_form_usuario_lugar_expedicion.value == "" ? null : input_form_usuario_lugar_expedicion.value,
+                    fecha_expedicion: input_form_usuario_fecha_expedicion.value == "" ? null : input_form_usuario_fecha_expedicion.value,
+                    fecha_expiracion: input_form_usuario_fecha_expiracion.value == "" ? null : input_form_usuario_fecha_expiracion.value,
+                    id_persona: id_persona
+                })
+            }).catch((msm) => {
+                ipcRenderer.send('showAlert', "error", msm.toString())
+            }).then((files) => {
+                if (files > 0) {
+                    return updateTransportista({
+                        activo: parseInt(select_form_transportista_activo.value),
+                        vencimiento_licencia: input_form_transportista_fecha_vencimiento.value == "" ? null : input_form_transportista_fecha_vencimiento.value,
+                        id_transportista: parseInt(document.getElementById("select_edicion_transportista").value)
+                    })
+                }
+            }).catch((msm) => {
+                ipcRenderer.send('showAlert', "error", msm.toString())
+            }).then((id) => {
+                if (id > 0) {
+                    cleanFromUsuario()
+                    htmlEditarTransportista()
+                    hiddenForms();
+                    form_edicion.classList.remove("d-none")
+                    ipcRenderer.send('showAlert', "success", "Actualizacion exitosa")
+                }
+            }).catch((msm) => {
+                ipcRenderer.send('showAlert', "error", msm.toString())
+            })
+    } else {
+        ipcRenderer.send('showAlert', "warning", "Falta algun campo necesario")
+    }
+}
+
+
+function actualizarVehiculo() {
+    if (
+        input_form_vehiculo_placa.value != "" &&
+        !isNaN(parseInt(select_form_vehiculo_activo.value)) &&
+        !isNaN(parseInt(select_form_vehiculo_transportista.value)) &&
+        !isNaN(parseInt(select_form_vehiculo_tipo_vehiculo.value)) &&
+        !isNaN(parseInt(document.getElementById("select_edicion_vehiculo").value))
+    ) {
+        updateVehiculo({
+            placa:  input_form_vehiculo_placa.value, 
+            vencimiento_matricula: input_form_vehiculo_fecha_vencimiento_matricula.value == "" ? null : input_form_vehiculo_fecha_vencimiento_matricula.value, 
+            activo: parseInt(select_form_vehiculo_activo.value), 
+            id_transportista: parseInt(select_form_vehiculo_transportista.value), 
+            id_tipo_vehiculo: parseInt(select_form_vehiculo_tipo_vehiculo.value),
+            id_vehiculo: parseInt(document.getElementById("select_edicion_vehiculo").value)
+        }).then((filas_afectadas)=>{
+            if(filas_afectadas > 0){
+                hiddenForms()
+                htmlEditarVehiculo()
+                form_edicion.classList.remove("d-none")
+                ipcRenderer.send('showAlert', "success", "Actualizacion exitosa")
+            } 
+        }).catch((msm) => {
+            ipcRenderer.send('showAlert', "error", msm.toString())
+        })
+
+    } else {
+        ipcRenderer.send('showAlert', "warning", "Falta algun campo necesario")
+    }
+}
+
 
 function cleanFromUsuario() {
     input_form_usuario_cedula.value = ""
@@ -500,9 +766,6 @@ function cleanFromUsuario() {
     input_form_usuario_fecha_expiracion.value = ""
     input_form_credencial_contrasena.value = ""
     input_form_credencial_usuario.value = ""
-    boton_form_credencial_registrar.removeAttribute('onclick')
-    boton_form_credencial_registrar.setAttribute('onclick', 'insertUsuario()')
-    boton_form_credencial_registrar.innerHTML = "Registrar"
 }
 
 function formEdicionUsuario() {
@@ -515,14 +778,14 @@ function formEdicionUsuario() {
                 input_form_usuario_cedula.value = cedula == null ? "" : cedula
                 input_form_usuario_apellidos.value = apellidos == null ? "" : apellidos
                 input_form_usuario_nombres.value = nombres == null ? "" : nombres
-                input_form_usuario_fecha_nacimiento.value = fecha_nacimiento == null ? "" : fecha_nacimiento.getFullYear() + "-" + ("0"+(fecha_nacimiento.getMonth()+1)).slice(-2) + "-" + ("0"+fecha_nacimiento.getDate()).slice(-2)
+                input_form_usuario_fecha_nacimiento.value = fecha_nacimiento == null ? "" : fecha_nacimiento.getFullYear() + "-" + ("0" + (fecha_nacimiento.getMonth() + 1)).slice(-2) + "-" + ("0" + fecha_nacimiento.getDate()).slice(-2)
                 select_form_usuario_sexo.value = sexo == null ? "" : sexo
                 select_form_usuario_estado_civil.value = estado_civil == null ? "" : estado_civil
                 input_form_usuario_ciudadania.value = ciudadania == null ? "" : ciudadania
                 input_form_usuario_instruccion.value = instruccion == null ? "" : instruccion
                 input_form_usuario_lugar_expedicion.value = lugar_expedicion == null ? "" : lugar_expedicion
-                input_form_usuario_fecha_expedicion.value = fecha_expedicion == null ? "" : fecha_expedicion.getFullYear() + "-" + ("0"+(fecha_expedicion.getMonth()+1)).slice(-2) + "-" + ("0"+fecha_expedicion.getDate()).slice(-2)
-                input_form_usuario_fecha_expiracion.value = fecha_expiracion == null ? "" : fecha_expiracion.getFullYear() + "-" + ("0"+(fecha_expiracion.getMonth()+1)).slice(-2) + "-" + ("0"+fecha_expiracion.getDate()).slice(-2)
+                input_form_usuario_fecha_expedicion.value = fecha_expedicion == null ? "" : fecha_expedicion.getFullYear() + "-" + ("0" + (fecha_expedicion.getMonth() + 1)).slice(-2) + "-" + ("0" + fecha_expedicion.getDate()).slice(-2)
+                input_form_usuario_fecha_expiracion.value = fecha_expiracion == null ? "" : fecha_expiracion.getFullYear() + "-" + ("0" + (fecha_expiracion.getMonth() + 1)).slice(-2) + "-" + ("0" + fecha_expiracion.getDate()).slice(-2)
                 input_form_credencial_contrasena.value = password_user == null ? "" : password_user
                 input_form_credencial_usuario.value = user == null ? "" : user
                 select_form_usuario_activo.value = activo == null ? "" : activo
@@ -532,6 +795,80 @@ function formEdicionUsuario() {
             })
     }
 }
+
+function formEdicionProveedor() {
+    hiddenForms();
+    form_edicion.classList.remove("d-none")
+    let id = document.getElementById("select_edicion_proveedor").value
+    if (!isNaN(parseInt(id))) {
+        getProveedor(id)
+            .then((array) => {
+                let { cedula, nombres, apellidos, fecha_nacimiento, sexo, estado_civil, ciudadania, instruccion, lugar_expedicion, fecha_expedicion, fecha_expiracion, activo_persona, activo_proveedor } = array[0]
+                input_form_usuario_cedula.value = cedula == null ? "" : cedula
+                input_form_usuario_apellidos.value = apellidos == null ? "" : apellidos
+                input_form_usuario_nombres.value = nombres == null ? "" : nombres
+                input_form_usuario_fecha_nacimiento.value = fecha_nacimiento == null ? "" : fecha_nacimiento.getFullYear() + "-" + ("0" + (fecha_nacimiento.getMonth() + 1)).slice(-2) + "-" + ("0" + fecha_nacimiento.getDate()).slice(-2)
+                select_form_usuario_sexo.value = sexo == null ? "" : sexo
+                select_form_usuario_estado_civil.value = estado_civil == null ? "" : estado_civil
+                input_form_usuario_ciudadania.value = ciudadania == null ? "" : ciudadania
+                input_form_usuario_instruccion.value = instruccion == null ? "" : instruccion
+                input_form_usuario_lugar_expedicion.value = lugar_expedicion == null ? "" : lugar_expedicion
+                input_form_usuario_fecha_expedicion.value = fecha_expedicion == null ? "" : fecha_expedicion.getFullYear() + "-" + ("0" + (fecha_expedicion.getMonth() + 1)).slice(-2) + "-" + ("0" + fecha_expedicion.getDate()).slice(-2)
+                input_form_usuario_fecha_expiracion.value = fecha_expiracion == null ? "" : fecha_expiracion.getFullYear() + "-" + ("0" + (fecha_expiracion.getMonth() + 1)).slice(-2) + "-" + ("0" + fecha_expiracion.getDate()).slice(-2)
+                select_form_usuario_activo.value = activo_persona == null ? "" : activo_persona
+                select_form_proveedor_activo.value = activo_proveedor == null ? "" : activo_proveedor
+                form_persona.classList.remove("d-none")
+                form_proveedor.classList.remove("d-none")
+            })
+    }
+}
+
+function formEdicionTransportista() {
+    hiddenForms();
+    form_edicion.classList.remove("d-none")
+    let id = document.getElementById("select_edicion_transportista").value
+    if (!isNaN(parseInt(id))) {
+        getTransportista(id)
+            .then((array) => {
+                let { cedula, nombres, apellidos, fecha_nacimiento, sexo, estado_civil, ciudadania, instruccion, lugar_expedicion, fecha_expedicion, fecha_expiracion, activo_persona, activo_transportista, vencimiento_licencia } = array[0]
+                input_form_usuario_cedula.value = cedula == null ? "" : cedula
+                input_form_usuario_apellidos.value = apellidos == null ? "" : apellidos
+                input_form_usuario_nombres.value = nombres == null ? "" : nombres
+                input_form_usuario_fecha_nacimiento.value = fecha_nacimiento == null ? "" : fecha_nacimiento.getFullYear() + "-" + ("0" + (fecha_nacimiento.getMonth() + 1)).slice(-2) + "-" + ("0" + fecha_nacimiento.getDate()).slice(-2)
+                select_form_usuario_sexo.value = sexo == null ? "" : sexo
+                select_form_usuario_estado_civil.value = estado_civil == null ? "" : estado_civil
+                input_form_usuario_ciudadania.value = ciudadania == null ? "" : ciudadania
+                input_form_usuario_instruccion.value = instruccion == null ? "" : instruccion
+                input_form_usuario_lugar_expedicion.value = lugar_expedicion == null ? "" : lugar_expedicion
+                input_form_usuario_fecha_expedicion.value = fecha_expedicion == null ? "" : fecha_expedicion.getFullYear() + "-" + ("0" + (fecha_expedicion.getMonth() + 1)).slice(-2) + "-" + ("0" + fecha_expedicion.getDate()).slice(-2)
+                input_form_usuario_fecha_expiracion.value = fecha_expiracion == null ? "" : fecha_expiracion.getFullYear() + "-" + ("0" + (fecha_expiracion.getMonth() + 1)).slice(-2) + "-" + ("0" + fecha_expiracion.getDate()).slice(-2)
+                select_form_usuario_activo.value = activo_persona == null ? "" : activo_persona
+                select_form_transportista_activo.value = activo_transportista == null ? "" : activo_transportista
+                input_form_transportista_fecha_vencimiento.value = vencimiento_licencia == null ? "" : vencimiento_licencia.getFullYear() + "-" + ("0" + (vencimiento_licencia.getMonth() + 1)).slice(-2) + "-" + ("0" + vencimiento_licencia.getDate()).slice(-2)
+                form_persona.classList.remove("d-none")
+                form_transportista.classList.remove("d-none")
+            })
+    }
+}
+
+function formEdicionVehiculo() {
+    hiddenForms();
+    form_edicion.classList.remove("d-none")
+    let id = document.getElementById("select_edicion_vehiculo").value
+    if (!isNaN(parseInt(id))) {
+        getVehiculo(id)
+            .then((array) => {
+                let { placa, vencimiento_matricula, activo, id_transportista, id_tipo_vehiculo } = array[0]
+                input_form_vehiculo_placa.value = placa,
+                input_form_vehiculo_fecha_vencimiento_matricula.value = vencimiento_matricula == null ? "" : vencimiento_matricula.getFullYear() + "-" + ("0" + (vencimiento_matricula.getMonth() + 1)).slice(-2) + "-" + ("0" + vencimiento_matricula.getDate()).slice(-2)
+                select_form_vehiculo_activo.value = activo == null ? "" : activo
+                select_form_vehiculo_tipo_vehiculo.value = id_tipo_vehiculo
+                select_form_vehiculo_transportista.value = id_transportista
+                form_vehiculo.classList.remove("d-none")
+            })
+    }
+}
+
 
 function llenarSelectLinea() {
     let html = "<option selected>Open this select menu</option>";
@@ -707,7 +1044,7 @@ function llenarSelectTransportista() {
                 select_form_vehiculo_transportista.innerHTML = html;
                 break;
             case "EDI_VEHICULO":
-
+                select_form_vehiculo_transportista.innerHTML = html;
                 break;
             case "EDI_TICKET_PESO":
                 select_form_ticket_transportista.innerHTML = html;
@@ -761,7 +1098,7 @@ function llenarSelectTipoVehiculo() {
                 select_form_vehiculo_tipo_vehiculo.innerHTML = html;
                 break;
             case "EDI_VEHICULO":
-
+                select_form_vehiculo_tipo_vehiculo.innerHTML = html;
                 break;
             default:
                 break;
@@ -790,11 +1127,12 @@ function llenarSelectFormaRecepcion() {
 function llenarSelectVehiculo() {
     let html = "<option selected>Open this select menu</option>";
     getAllVehiculo().then((array_vehiculos) => {
-        array_vehiculos.map(({ id_vehiculo, placa }) => {
-            html += `<option value="${id_vehiculo}">${placa}</option>`
-        })
+        
         switch (select_opcion.value) {
             case "EDI_TICKET_PESO":
+                array_vehiculos.map(({ id_vehiculo, placa }) => {
+                    html += `<option value="${id_vehiculo}">${placa}</option>`
+                })
                 select_form_ticket_vehiculo.innerHTML = html;
                 break;
             default:
@@ -1051,7 +1389,7 @@ function eliminarTicket() {
         if (filas_afectadas > 0) ipcRenderer.send('showAlert', "success", "Eliminacion exitosa")
         location.reload();
     }).catch((msm) => {
-        ipcRenderer.send('showAlert', "danger", msm)
+        ipcRenderer.send('showAlert', "danger", msm.toString())
     })
 }
 
@@ -1080,13 +1418,25 @@ function actualizarPeso() {
             if (filas_afectadas > 0) ipcRenderer.send('showAlert', "success", "Peso actualizado exitosamente")
             htmlUpdateTicket();
         }).catch((msm) => {
-            ipcRenderer.send('showAlert', "danger", msm)
+            ipcRenderer.send('showAlert', "danger", msm.toString())
         })
+    } else {
+        ipcRenderer.send('showAlert', "warning", "Existen campos vacios")
     }
 }
 
+function linkTransportista() {
+    toggleAviso("hidden");
+    hiddenForms();
+    form_persona.classList.remove("d-none");
+    form_transportista.classList.remove("d-none")
+}
 
-
+function linkTipoVehiculo() {
+    toggleAviso("hidden");
+    hiddenForms();
+    form_tipo_vehiculo.classList.remove("d-none");
+}
 
 function habilitarForm() {
     switch (select_opcion.value) {
@@ -1094,18 +1444,27 @@ function habilitarForm() {
             cleanFromUsuario()
             toggleAviso("hidden");
             hiddenForms();
+            boton_form_credencial_registrar.removeAttribute("onclick")
+            boton_form_credencial_registrar.setAttribute("onclick", "registrarUsuario()")
+            boton_form_credencial_registrar.innerHTML = "Registrar"
             form_persona.classList.remove("d-none");
             form_credencial.classList.remove("d-none")
             break;
         case "PROVEEDOR":
             toggleAviso("hidden");
             hiddenForms();
+            boton_form_proveedor.removeAttribute("onclick")
+            boton_form_proveedor.setAttribute("onclick", "registrarProveedor()")
+            boton_form_proveedor.innerHTML = "Registrar"
             form_persona.classList.remove("d-none");
             form_proveedor.classList.remove("d-none")
             break;
         case "TRANSPORTISTA":
             toggleAviso("hidden");
             hiddenForms();
+            boton_form_transportista.removeAttribute("onclick")
+            boton_form_transportista.setAttribute("onclick", "registrarTransportista()")
+            boton_form_transportista.innerHTML = "Registrar"
             form_persona.classList.remove("d-none");
             form_transportista.classList.remove("d-none")
             break;
@@ -1114,6 +1473,9 @@ function habilitarForm() {
             hiddenForms();
             llenarSelectTransportista();
             llenarSelectTipoVehiculo();
+            boton_form_vehiculo.removeAttribute("onclick")
+            boton_form_vehiculo.setAttribute("onclick", "registrarVehiculo()")
+            boton_form_vehiculo.innerHTML = "Registrar"
             form_vehiculo.classList.remove("d-none");
             break;
         case "LINEA":
@@ -1173,14 +1535,22 @@ function habilitarForm() {
         case "EDI_PROVEEDOR":
             toggleAviso("hidden");
             hiddenForms();
+            htmlEditarProveedor()
+            form_edicion.classList.remove("d-none")
             break;
         case "EDI_TRANSPORTISTA":
             toggleAviso("hidden");
             hiddenForms();
+            htmlEditarTransportista();
+            form_edicion.classList.remove("d-none")
             break;
         case "EDI_VEHICULO":
             toggleAviso("hidden");
             hiddenForms();
+            llenarSelectTransportista()
+            llenarSelectTipoVehiculo()
+            htmlEditarVehiculo();
+            form_edicion.classList.remove("d-none")
             break;
         case "EDI_LINEA":
             toggleAviso("hidden");

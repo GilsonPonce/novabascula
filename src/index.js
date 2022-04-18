@@ -212,7 +212,7 @@ function infoImpresion(id) {
                     print(res.filename, {
                         monochrome: true,
                         paperSize: "A5",
-                        copies: 1
+                        copies: 2
                     }).then(() => {
                         window.setProgressBar(0.8, {mode: "normal"});
                         fs.unlink(urlarchivo, (err) => {

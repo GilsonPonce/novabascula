@@ -81,7 +81,6 @@ const updatePersona = (objeto) => {
     , estado_civil = ? , ciudadania = ?, instruccion = ?, lugar_expedicion = ?, 
     fecha_expedicion = ?, fecha_expiracion = ? where id_persona = ?`
     return new Promise((resolve,reject)=>{
-        console.log(Object.values(objeto))
         connection.query($query, Object.values(objeto) , function (err, result) {
             if (err) reject(err.message)
             resolve(result.affectedRows)
@@ -125,9 +124,9 @@ const deleteTransportista = (id_transportista) => {
 }
 
 const insertTransportista = (objeto) => {
-    $query = `insert into transportista set ?`
+    let query = `insert into transportista set ?`
     return new Promise((resolve,reject)=>{
-        connection.query($query,objeto, function (err, result) {
+        connection.query(query,objeto,function (err, result) {
             if (err) reject(err.message)
             resolve(result.insertId)
         });
@@ -200,8 +199,8 @@ const updateProveedor = (objeto) => {
 
 const getVehiculo = (id) => {
     $query = `select veh.id_vehiculo, veh.placa, veh.vencimiento_matricula, veh.activo, veh.id_transportista, veh.id_tipo_vehiculo,
-    tveh.id_tipo_vehiculo, tveh.nombre
-    from vehiculo veh inner join tipovehiculo tveh on tveh.id_vehiculo = veh.id_vehiculo where veh.id_vehiculo = `+connection.escape(id)
+    tveh.nombre
+    from vehiculo veh inner join tipovehiculo tveh on tveh.id_tipo_vehiculo = veh.id_tipo_vehiculo where veh.id_vehiculo = `+connection.escape(id)
     return new Promise((resolve,reject)=>{
         connection.query($query, function (err, rows, fields) {
             if (err) reject(err.message)
@@ -241,7 +240,7 @@ const insertVehiculo = (objeto) => {
 } 
 
 const updateVehiculo = (objeto) => {
-    $query = `update proveedor set placa = ?, vencimiento_matricula = ?, activo = ?, id_transportista = ?, 
+    $query = `update vehiculo set placa = ?, vencimiento_matricula = ?, activo = ?, id_transportista = ?, 
     id_tipo_vehiculo = ? where id_vehiculo = ?`
     return new Promise((resolve,reject)=>{
         connection.query($query, Object.values(objeto),function (err, result) {
