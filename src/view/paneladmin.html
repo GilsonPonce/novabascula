@@ -34,6 +34,7 @@
                     <option value="TIPO_MATERIAL">REGISTRO DE TIPO DE MATERIAL</option>
                     <option value="TIPO_VEHICULO">REGISTRO DE TIPO DE VEHICULOS</option>
                     <option value="TIPO_CONTAMINACION">REGISTRO DE TIPOS DE CONTAMINACION</option>
+                    <option value="FORMA_RECEPCION">REGISTRO DE FORMAS DE RECEPCION</option>
                     <option value="EDI_TICKET_PESO">EDICION DE TICKET Y PESOS</option>
                     <option value="EDI_USUARIO">EDICION DE USUARIOS</option>
                     <option value="EDI_PROVEEDOR">EDICION DE PROVEEDOR</option>
@@ -45,6 +46,7 @@
                     <option value="EDI_TIPO_MATERIAL">EDICION DE TIPO MATERIAL</option>
                     <option value="EDI_TIPO_VEHICULO">EDICION DE TIPO VEHICULO</option>
                     <option value="EDI_TIPO_CONTAMINACION">EDICION DE TIPO CONTAMINACION</option>
+                    <option value="EDI_FORMA_RECEPCION">EDICION DE FORMA DE RECEPCION</option>
                 </select>
             </div>
         </div>
@@ -207,6 +209,16 @@
             </div>
             <div class="col-12">
                 <button class="btn btn-primary" id="boton_form_tipo_contaminacion" onclick="registrarContaminacion()">Registrar</button>
+            </div>
+        </div>
+        <div class="row d-none bg-dark rounded p-3 text-white" id="form_forma_recepcion">
+            <div class="col-6 mb-2">
+                <label for="inputEmail4" class="form-label">Forma de Recepcion</label>
+                <input type="text" id="input_form_forma_recepcion_nombre" class="form-control" placeholder="Nombre de la forma de recepcion"
+                    aria-label="Nombre de la forma de recepcion">
+            </div>
+            <div class="col-12">
+                <button class="btn btn-primary" id="boton_form_forma_recepcion" onclick="registrarFormaRecepcion()">Registrar</button>
             </div>
         </div>
         <div class="row d-none bg-dark rounded p-3 text-white" id="form_tipo_vehiculo">

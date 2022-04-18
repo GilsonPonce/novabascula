@@ -52,26 +52,26 @@ SerialPort.list()
         // LISTA DE PUERTOS
         //console.log(ports)
         if (ports.length == 0) console.log("No hay puertos disponibles")
-            ports.forEach(({ manufacturer, path, productId }) => {
-                if (manufacturer == manufacture || productId == IdProduct) {
-                    console.log(`PUERTO ${path} CUMPLE CON ESPECIFICACIONES`)
-                    const port1 = new SerialPort({ path: path, baudRate: 9600 }, (err) => {
-                        if (err) {
-                            ipcRenderer.send('showAlert', err.message + 'Esta siendo usado por otro proceso');
-                            return console.log('Error: ', err.message, ' Esta siendo usado por otro proceso')
-                        }
-                    })
-                    const parser = port1.pipe(new RegexParser({ regex: /[\r\n]+/ }))
-                    parser.on('data', (data) => {
-                        let valor = data.substring(5, 11)//seis digitos 000000
-                        valor = Number(valor)//elimina ceros a la derecha
-                        input_peso.value = valor
-                        calcularpeso();
-                    })
-                } else {
-                    console.log(`PUERTO ${path} NO CUMPLE CON ESPECIFICACIONES`)
-                }
-            })
+        ports.forEach(({ manufacturer, path, productId }) => {
+            if (manufacturer == manufacture || productId == IdProduct) {
+                console.log(`PUERTO ${path} CUMPLE CON ESPECIFICACIONES`)
+                const port1 = new SerialPort({ path: path, baudRate: 9600 }, (err) => {
+                    if (err) {
+                        ipcRenderer.send('showAlert', err.message + 'Esta siendo usado por otro proceso');
+                        return console.log('Error: ', err.message, ' Esta siendo usado por otro proceso')
+                    }
+                })
+                const parser = port1.pipe(new RegexParser({ regex: /[\r\n]+/ }))
+                parser.on('data', (data) => {
+                    let valor = data.substring(5, 11)//seis digitos 000000
+                    valor = Number(valor)//elimina ceros a la derecha
+                    input_peso.value = valor
+                    calcularpeso();
+                })
+            } else {
+                console.log(`PUERTO ${path} NO CUMPLE CON ESPECIFICACIONES`)
+            }
+        })
     });
 
 function cambiarform(e) {
@@ -94,7 +94,7 @@ select_transportista.addEventListener('change', cargarVehiculos);
 boton_registrar_entrada.addEventListener('click', registrarPesoEntrada);
 boton_registrar_salida.addEventListener('click', registrarPesoSalida);
 boton_contaminacion.addEventListener('click', addIdContaminacion);
-boton_setting.addEventListener('click',()=>{
+boton_setting.addEventListener('click', () => {
     ipcRenderer.send('openAdmin')
 });
 
@@ -141,15 +141,15 @@ function registrarPesoEntrada() {
         forma_recepcion: select_forma_recepcion_entrada.value,
         peso: parseInt(input_peso.value)
     }
-    if (infoTicket.id_vehiculo != 0 
+    if (infoTicket.id_vehiculo != 0
         && !isNaN(infoTicket.id_vehiculo)
-        && infoTicket.id_proveedor != 0 
+        && infoTicket.id_proveedor != 0
         && !isNaN(infoTicket.id_proveedor)
-        && pesoEntrada.forma_recepcion != "" 
+        && pesoEntrada.forma_recepcion != ""
         && pesoEntrada.peso != "") {
         ipcRenderer.send('registrarPesoEntrada', infoTicket, pesoEntrada)
     } else {
-        ipcRenderer.send('showAlert','warning','Datos incompletos');
+        ipcRenderer.send('showAlert', 'warning', 'Datos incompletos');
     }
 }
 
@@ -165,26 +165,26 @@ function registrarPesoSalida() {
         peso_total: parseFloat(p_neto_ticket.innerHTML)
     }
     if (
-        pesoSalida.id_ticket != 0 && !isNaN(pesoSalida.id_ticket) &&
+       !isNaN(Number(pesoSalida.id_ticket)) &&
         pesoSalida.tipo_peso != "" &&
-        pesoSalida.id_tipo_material != 0 && !isNaN(pesoSalida.id_tipo_material) &&
+       !isNaN(Number(pesoSalida.id_tipo_material)) &&
         pesoSalida.forma_recepcion != "" &&
-        pesoSalida.peso != 0 && !isNaN(pesoSalida.peso) &&
-        pesoSalida.peso_total != 0 && !isNaN(pesoSalida.peso_total)
+        !isNaN(Number(pesoSalida.peso)) &&
+         !isNaN(Number(pesoSalida.peso_total))
     ) {
-        if(isNaN(pesoSalida.peso_contaminacion)) pesoSalida.peso_contaminacion = 0
-        if(isNaN(pesoSalida.porcentaje_contaminacion)) pesoSalida.porcentaje_contaminacion = 0
-        if(pesoSalida.peso_contaminacion > 0 && pesoSalida.porcentaje_contaminacion > 0 && contaminaciones.length == 0){
-            ipcRenderer.send('showAlert','warning','Falta elejir los tipo de contaminacion')
+        if (isNaN(pesoSalida.peso_contaminacion)) pesoSalida.peso_contaminacion = 0
+        if (isNaN(pesoSalida.porcentaje_contaminacion)) pesoSalida.porcentaje_contaminacion = 0
+        if (pesoSalida.peso_contaminacion > 0 && pesoSalida.porcentaje_contaminacion > 0 && contaminaciones.length == 0) {
+            ipcRenderer.send('showAlert', 'warning', 'Falta elejir los tipo de contaminacion')
             select_contaminacion.focus()
-        }else if(pesoSalida.peso_contaminacion == 0 && pesoSalida.porcentaje_contaminacion == 0 && contaminaciones.length > 0){
-            ipcRenderer.send('showAlert','warning','Falta poner el porcentaje de contaminacion')
+        } else if (pesoSalida.peso_contaminacion == 0 && pesoSalida.porcentaje_contaminacion == 0 && contaminaciones.length > 0) {
+            ipcRenderer.send('showAlert', 'warning', 'Falta poner el porcentaje de contaminacion')
             input_porcentaje_contaminacion.focus();
-        }else{
+        } else {
             registrarSalida(pesoSalida);
         }
-    }else{
-        ipcRenderer.send('showAlert','warning','Faltan campos por llenar')
+    } else {
+        ipcRenderer.send('showAlert', 'warning', 'Faltan campos por llenar')
     }
 
 }
@@ -290,7 +290,7 @@ ipcRenderer.on('formasRecepciones', (event, arg) => {
 function getInfoTicket(id) {
     $query = `
     select
-    tic.id_ticket, tic.fecha_ticket, veh.placa , pro.nombre as proveedor, tran.nombre as transportista
+    tic.id_ticket, tic.observaciones ,tic.fecha_ticket, veh.placa , pro.nombre as proveedor, tran.nombre as transportista
     from 
     (select prov.id_proveedor, concat(per.apellidos,' ',per.nombres) as nombre from persona per inner join proveedor prov on per.id_persona = prov.id_persona ) pro,
     (select trans.id_transportista, concat(per.apellidos,' ',per.nombres) as nombre from persona per inner join transportista trans on per.id_persona = trans.id_persona ) tran,
@@ -309,10 +309,12 @@ function getInfoTicket(id) {
         }
 
         rows.map((ticket) => {
+            textarea_observacion.value = ticket.observaciones
             p_numero_ticket.innerHTML = ticket.id_ticket;
             p_placa_ticket.innerHTML = ticket.placa;
             p_proveedor_ticket.innerHTML = ticket.proveedor;
             p_transportista_ticket.innerHTML = ticket.transportista;
+
         });
     });
 }
@@ -340,10 +342,10 @@ function getPesoUltimoTicket(id) {
         getConnection().query(query, function (err, rows1, fields) {
             if (err) ipcRenderer('showAlert', 'error', err.message)
             rows1.map(({ peso }) => {
-                    pesoNeto = Math.abs(parseInt(peso) - parseInt(input_peso.value));
-                    p_entrada_ticket.innerHTML = peso;
-                    p_neto_ticket.innerHTML = Math.abs(parseInt(peso) - parseInt(input_peso.value));
-                    calcularpeso();
+                pesoNeto = Math.abs(parseInt(peso) - parseInt(input_peso.value));
+                p_entrada_ticket.innerHTML = peso;
+                p_neto_ticket.innerHTML = Math.abs(parseInt(peso) - parseInt(input_peso.value));
+                calcularpeso();
             });
         })
     });
@@ -354,7 +356,23 @@ function registrarSalida(objeto) {
     getConnection().query(sqlpeso, objeto, function (err, result) {
         if (err) ipcRenderer.send('showAlert', 'error', err.message);
         registrarContaminacion(result.insertId);
-        if (result && result.affectedRows > 0) ipcRenderer.send('showAlertPregunta', objeto.id_ticket)
+        let query = `update ticket set observaciones = ? where id_ticket = ?`
+        let objetoticket = {
+            observaciones: textarea_observacion.value == "" ? null : textarea_observacion.value,
+            id_ticket: Number(objeto.id_ticket)
+        }
+        new Promise((resolve, reject) => {
+            getConnection().query(query, Object.values(objetoticket), function (err, result) {
+                if (err) reject(err.message)
+                resolve(result.affectedRows)
+            });
+        }).then((filas)=>{
+            if (filas > 0){
+                ipcRenderer.send('showAlertPregunta', objeto.id_ticket)
+            }
+        }).catch((msm)=>{
+            ipcRenderer.send('showAlert', 'error', msm.toString());
+        })
     })
 }
 
@@ -373,7 +391,7 @@ function addIdContaminacion() {
 function deleteContaminacion(id) {
     let pos = idContaminaciones.indexOf(parseInt(id))
     if (pos > -1) {
-        idContaminaciones = idContaminaciones.filter((item) => {return item != parseInt(id)})
+        idContaminaciones = idContaminaciones.filter((item) => { return item != parseInt(id) })
         contaminaciones = contaminaciones.filter((item) => { return item.id_contaminacion != parseInt(id) })
     }
     listarContaminaciones();
@@ -390,14 +408,14 @@ function listarContaminaciones() {
 }
 
 function registrarContaminacion(id_peso) {
-    if(contaminaciones.length > 0){
+    if (contaminaciones.length > 0) {
         let arraydata = []
         let sql = "insert into contaminacion (id_tipo_contaminacion,id_peso) values ?"
-        contaminaciones.map(({id_contaminacion}) => {
-            arraydata.push([parseInt(id_contaminacion),parseInt(id_peso)])
+        contaminaciones.map(({ id_contaminacion }) => {
+            arraydata.push([parseInt(id_contaminacion), parseInt(id_peso)])
         })
-        getConnection().query(sql,[arraydata],function(err,result){
-            if (err)  ipcRenderer.send('showAlert', 'error', err.message);
+        getConnection().query(sql, [arraydata], function (err, result) {
+            if (err) ipcRenderer.send('showAlert', 'error', err.message);
         });
     }
 }

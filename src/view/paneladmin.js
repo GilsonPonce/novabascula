@@ -44,7 +44,29 @@ const { getPersona,
     deleteTransportista,
     updateVehiculo,
     deleteVehiculo,
-    getVehiculo } = require('../databaseadmin');
+    getVehiculo,
+    deleteLinea,
+    insertFormaRecepcion,
+    getLinea,
+    getFormaRecepcion,
+    deleteFormaRecepcion, 
+    updateFormaRecepcion,
+    updateMaterial,
+    updateLinea,
+    updateTipoMaterial,
+    updateProceso,
+    updateTipoVehiculo,
+    updateTipoContaminacion,
+    deleteTipoMaterial,
+    deleteMaterial,
+    deleteProceso,
+    getMaterial,
+    getProceso,
+    getTipoMaterial,
+    getTipoVehiculo,
+    getTipoContaminacion,
+    deleteTipoVehiculo,
+    deleteTipoContaminacion} = require('../databaseadmin');
 
 const input_host = document.getElementById("input_host")
 const select_opcion = document.getElementById("select_opcion")
@@ -60,6 +82,7 @@ const form_tipo_material = document.getElementById("form_tipo_material")
 const form_tipo_vehiculo = document.getElementById("form_tipo_vehiculo")
 const form_tipo_contaminacion = document.getElementById("form_tipo_contaminacion")
 const form_edicion = document.getElementById("form_edicion")
+const form_forma_recepcion = document.getElementById("form_forma_recepcion")
 const input_form_usuario_cedula = document.getElementById("input_form_usuario_cedula")
 const input_form_usuario_nombres = document.getElementById("input_form_usuario_nombres")
 const input_form_usuario_apellidos = document.getElementById("input_form_usuario_apellidos")
@@ -80,6 +103,7 @@ const select_form_tipo_material_linea = document.getElementById("select_form_tip
 const select_form_tipo_material_material = document.getElementById("select_form_tipo_material_material")
 const select_form_peso_tipo_peso = document.getElementById("select_form_peso_tipo_peso")
 const input_form_usuario_ciudadania = document.getElementById("input_form_usuario_ciudadania")
+const input_form_forma_recepcion_nombre = document.getElementById("input_form_forma_recepcion_nombre")
 const input_form_usuario_instruccion = document.getElementById("input_form_usuario_instruccion")
 const input_form_usuario_fecha_expedicion = document.getElementById("input_form_usuario_fecha_expedicion")
 const input_form_usuario_fecha_expiracion = document.getElementById("input_form_usuario_fecha_expiracion")
@@ -123,6 +147,13 @@ const boton_form_peso_contaminacion = document.getElementById("boton_form_peso_c
 const boton_form_peso_retroceder = document.getElementById("boton_form_peso_retroceder")
 const boton_form_proveedor = document.getElementById("boton_form_proveedor");
 const boton_form_transportista = document.getElementById("boton_form_transportista");
+const boton_form_forma_recepcion = document.getElementById("boton_form_forma_recepcion")
+const boton_form_linea = document.getElementById("boton_form_linea")
+const boton_form_material = document.getElementById("boton_form_material")
+const boton_form_tipo_material = document.getElementById("boton_form_tipo_material")
+const boton_form_proceso = document.getElementById("boton_form_proceso")
+const boton_form_tipo_contaminacion = document.getElementById("boton_form_tipo_contaminacion")
+const boton_form_tipo_vehiculo = document.getElementById("boton_form_tipo_vehiculo")
 const aviso = document.getElementById("aviso")
 let id = 0;
 
@@ -148,6 +179,7 @@ function hiddenForms() {
     form_edicion.classList.add("d-none")
     form_ticket.classList.add("d-none")
     form_peso.classList.add("d-none")
+    form_forma_recepcion.classList.add("d-none")
 }
 
 function htmlUsuario() {
@@ -237,6 +269,286 @@ function htmlEditarVehiculo() {
         })
 }
 
+function htmlEditarLinea() {
+    let html = `<div class="col-10"><label for="inputEmail4" class="form-label col-sm-3 mb-2">Linea</label><div class="col-9 mb-2">
+    <select class="form-select" onchange="formEdicionLinea()" aria-label="Default select example" id="select_edicion_linea">
+    <option value="" selected>Open this select menu</option>`
+    getAllLinea()
+        .then((linea) => {
+            if (linea.length > 0) {
+                linea.map(({ id_linea, nombre }) => {
+                    html += `<option value="${id_linea}">${nombre}</option>`
+                })
+                html += `</select></div>`;
+                form_edicion.innerHTML = html;
+                form_edicion.innerHTML += `<div class="col-12">
+                <button class="btn btn-danger" onclick="eliminarLinea()" id="boton_edicion_eliminar">Eliminar</button>
+                </div>`;
+                boton_form_linea.removeAttribute('onclick')
+                boton_form_linea.setAttribute('onclick', 'actualizarLinea()')
+                boton_form_linea.innerHTML = "Actualizar"
+            }
+        })
+}
+
+function htmlEditarProceso() {
+    let html = `<div class="col-10"><label for="inputEmail4" class="form-label col-sm-3 mb-2">Linea</label><div class="col-9 mb-2">
+    <select class="form-select" onchange="llenarSelectProceso()" aria-label="Default select example" id="select_edicion_linea">
+    <option value="" selected>Open this select menu</option>`
+    getAllLinea()
+        .then((linea) => {
+            if (linea.length > 0) {
+                linea.map(({ id_linea, nombre }) => {
+                    html += `<option value="${id_linea}">${nombre}</option>`
+                })
+                html += `</select></div>`;
+                form_edicion.innerHTML = html;
+                form_edicion.innerHTML += `<div class="col-10"><label for="inputEmail4" class="form-label col-sm-3 mb-2">Proceso</label><div class="col-9 mb-2">
+                <select class="form-select" onchange="formEdicionProceso()" aria-label="Default select example" id="select_edicion_proceso" disabled>
+                <option value="" selected>Open this select menu</option> </select></div>`
+                form_edicion.innerHTML += `<div class="col-12">
+                <button class="btn btn-danger" onclick="eliminarProceso()" id="boton_edicion_eliminar" disabled>Eliminar</button>
+                </div>`;
+                boton_form_proceso.removeAttribute('onclick')
+                boton_form_proceso.setAttribute('onclick', 'actualizarProceso()')
+                boton_form_proceso.innerHTML = "Actualizar"
+            }
+        })
+}
+
+function htmlEditarMaterial() {
+    let html = `<div class="col-10"><label for="inputEmail4" class="form-label col-sm-3 mb-2">Linea</label><div class="col-9 mb-2">
+    <select class="form-select" onchange="llenarSelectProceso()" aria-label="Default select example" id="select_edicion_linea">
+    <option value="" selected>Open this select menu</option>`
+    getAllLinea()
+        .then((linea) => {
+            if (linea.length > 0) {
+                linea.map(({ id_linea, nombre }) => {
+                    html += `<option value="${id_linea}">${nombre}</option>`
+                })
+                html += `</select></div>`;
+                form_edicion.innerHTML = html;
+                form_edicion.innerHTML += `<div class="col-10"><label for="inputEmail4" class="form-label col-sm-3 mb-2">Proceso</label><div class="col-9 mb-2">
+                <select class="form-select" onchange="llenarSelectMaterial()" aria-label="Default select example" id="select_edicion_proceso" disabled>
+                <option value="" selected>Open this select menu</option> </select></div>`
+                form_edicion.innerHTML += `<div class="col-10"><label for="inputEmail4" class="form-label col-sm-3 mb-2">Material</label><div class="col-9 mb-2">
+                <select class="form-select" onchange="formEdicionMaterial()" aria-label="Default select example" id="select_edicion_material" disabled>
+                <option value="" selected>Open this select menu</option> </select></div>`
+                form_edicion.innerHTML += `<div class="col-12">
+                <button class="btn btn-danger" onclick="eliminarMaterial()" id="boton_edicion_eliminar" disabled>Eliminar</button>
+                </div>`;
+                boton_form_material.removeAttribute('onclick')
+                boton_form_material.setAttribute('onclick', 'actualizarMaterial()')
+                boton_form_material.innerHTML = "Actualizar"
+                select_form_material_proceso.setAttribute("disabled","")
+                select_form_material_linea.setAttribute("disabled","")
+            }
+        })
+}
+
+function htmlEditarTipoMaterial() {
+    let html = `<div class="col-10"><label for="inputEmail4" class="form-label col-sm-3 mb-2">Linea</label><div class="col-9 mb-2">
+    <select class="form-select" onchange="llenarSelectProceso()" aria-label="Default select example" id="select_edicion_linea">
+    <option value="" selected>Open this select menu</option>`
+    getAllLinea()
+        .then((linea) => {
+            if (linea.length > 0) {
+                linea.map(({ id_linea, nombre }) => {
+                    html += `<option value="${id_linea}">${nombre}</option>`
+                })
+                html += `</select></div>`;
+                form_edicion.innerHTML = html;
+                form_edicion.innerHTML += `<div class="col-10"><label for="inputEmail4" class="form-label col-sm-3 mb-2">Proceso</label><div class="col-9 mb-2">
+                <select class="form-select" onchange="llenarSelectMaterial()" aria-label="Default select example" id="select_edicion_proceso" disabled>
+                <option value="" selected>Open this select menu</option> </select></div>`
+                form_edicion.innerHTML += `<div class="col-10"><label for="inputEmail4" class="form-label col-sm-3 mb-2">Material</label><div class="col-9 mb-2">
+                <select class="form-select" onchange="llenarSelectTipoMaterial()" aria-label="Default select example" id="select_edicion_material" disabled>
+                <option value="" selected>Open this select menu</option> </select></div>`
+                form_edicion.innerHTML += `<div class="col-10"><label for="inputEmail4" class="form-label col-sm-3 mb-2">Tipo Material</label><div class="col-9 mb-2">
+                <select class="form-select" onchange="formEdicionTipoMaterial()" aria-label="Default select example" id="select_edicion_tipo_material" disabled>
+                <option value="" selected>Open this select menu</option> </select></div>`
+                form_edicion.innerHTML += `<div class="col-12">
+                <button class="btn btn-danger" onclick="eliminarTipoMaterial()" id="boton_edicion_eliminar" disabled>Eliminar</button>
+                </div>`;
+                boton_form_tipo_material.removeAttribute('onclick')
+                boton_form_tipo_material.setAttribute('onclick', 'actualizarTipoMaterial()')
+                boton_form_tipo_material.innerHTML = "Actualizar"
+                select_form_tipo_material_proceso.setAttribute("disabled","")
+                select_form_tipo_material_linea.setAttribute("disabled","")
+                select_form_tipo_material_material.setAttribute("disabled","")
+            }
+        })
+}
+
+
+function htmlEditarFormaRecepcion() {
+    let html = `<div class="col-10"><label for="inputEmail4" class="form-label col-sm-3 mb-2">Forma Recepcion</label><div class="col-9 mb-2">
+    <select class="form-select" onchange="formEdicionFormaRecepcion()" aria-label="Default select example" id="select_edicion_forma_recepcion">
+    <option value="" selected>Open this select menu</option>`
+    getAllFormaRecepcion()
+        .then((forma) => {
+            if (forma.length > 0) {
+                forma.map(({ id_forma_recepcion, nombre }) => {
+                    html += `<option value="${id_forma_recepcion}">${nombre}</option>`
+                })
+                html += `</select></div>`;
+                form_edicion.innerHTML = html;
+                form_edicion.innerHTML += `<div class="col-12">
+                <button class="btn btn-danger" onclick="eliminarFormaRecepcion()" id="boton_edicion_eliminar">Eliminar</button>
+                </div>`;
+                boton_form_forma_recepcion.removeAttribute('onclick')
+                boton_form_forma_recepcion.setAttribute('onclick', 'actualizarFormaRecepcion()')
+                boton_form_forma_recepcion.innerHTML = "Actualizar"
+            }
+        })
+}
+
+function htmlEditarTipoVehiculo() {
+    let html = `<div class="col-10"><label for="inputEmail4" class="form-label col-sm-3 mb-2">Tipo Vehiculo</label><div class="col-9 mb-2">
+    <select class="form-select" onchange="formEdicionTipoVehiculo()" aria-label="Default select example" id="select_edicion_tipo_vehiculo">
+    <option value="" selected>Open this select menu</option>`
+    getAllTipoVehiculo()
+        .then((tipo_vehiculos) => {
+            if (tipo_vehiculos.length > 0) {
+                tipo_vehiculos.map(({ id_tipo_vehiculo, nombre }) => {
+                    html += `<option value="${id_tipo_vehiculo}">${nombre}</option>`
+                })
+                html += `</select></div>`;
+                form_edicion.innerHTML = html;
+                form_edicion.innerHTML += `<div class="col-12">
+                <button class="btn btn-danger" onclick="eliminarTipoVehiculo()" id="boton_edicion_eliminar">Eliminar</button>
+                </div>`;
+                boton_form_tipo_vehiculo.removeAttribute('onclick')
+                boton_form_tipo_vehiculo.setAttribute('onclick', 'actualizarTipoVehiculo()')
+                boton_form_tipo_vehiculo.innerHTML = "Actualizar"
+            }
+        })
+}
+
+function htmlEditarTipoContaminacion() {
+    let html = `<div class="col-10"><label for="inputEmail4" class="form-label col-sm-3 mb-2">Tipo Contaminacion</label><div class="col-9 mb-2">
+    <select class="form-select" onchange="formEdicionTipoContaminacion()" aria-label="Default select example" id="select_edicion_tipo_contaminacion">
+    <option value="" selected>Open this select menu</option>`
+    getAllTipoContaminacion()
+        .then((tipo_contaminacion) => {
+            if (tipo_contaminacion.length > 0) {
+                tipo_contaminacion.map(({ id_tipo_contaminacion, nombre }) => {
+                    html += `<option value="${id_tipo_contaminacion}">${nombre}</option>`
+                })
+                html += `</select></div>`;
+                form_edicion.innerHTML = html;
+                form_edicion.innerHTML += `<div class="col-12">
+                <button class="btn btn-danger" onclick="eliminarTipoContaminacion()" id="boton_edicion_eliminar">Eliminar</button>
+                </div>`;
+                boton_form_tipo_contaminacion.removeAttribute('onclick')
+                boton_form_tipo_contaminacion.setAttribute('onclick', 'actualizarTipoContaminacion()')
+                boton_form_tipo_contaminacion.innerHTML = "Actualizar"
+            }
+        })
+}
+
+function htmlEditarTipoVehiculo() {
+    let html = `<div class="col-10"><label for="inputEmail4" class="form-label col-sm-3 mb-2">Tipo Vehiculo</label><div class="col-9 mb-2">
+    <select class="form-select" onchange="formEdicionTipoVehiculo()" aria-label="Default select example" id="select_edicion_tipo_vehiculo">
+    <option value="" selected>Open this select menu</option>`
+    getAllTipoVehiculo()
+        .then((tipo_vehiculos) => {
+            if (tipo_vehiculos.length > 0) {
+                tipo_vehiculos.map(({ id_tipo_vehiculo, nombre }) => {
+                    html += `<option value="${id_tipo_vehiculo}">${nombre}</option>`
+                })
+                html += `</select></div>`;
+                form_edicion.innerHTML = html;
+                form_edicion.innerHTML += `<div class="col-12">
+                <button class="btn btn-danger" onclick="eliminarTipoVehiculo()" id="boton_edicion_eliminar">Eliminar</button>
+                </div>`;
+                boton_form_tipo_vehiculo.removeAttribute('onclick')
+                boton_form_tipo_vehiculo.setAttribute('onclick', 'actualizarTipoVehiculo()')
+                boton_form_tipo_vehiculo.innerHTML = "Actualizar"
+            }
+        })
+}
+
+function eliminarLinea() {
+    let id = document.getElementById("select_edicion_linea").value
+    if (!isNaN(parseInt(id))) {
+        deleteLinea(id).then((filas_afectadas) => {
+            if (filas_afectadas > 0) {
+                hiddenForms();
+                htmlEditarLinea()
+                form_edicion.classList.remove("d-none")
+                ipcRenderer.send('showAlert', "success", "Eliminacion exitosa")
+            }
+        }).catch((msm) => {
+            ipcRenderer.send('showAlert', "error", msm.toString())
+        });
+    }
+}
+
+function eliminarProceso() {
+    let id = document.getElementById("select_edicion_proceso").value
+    if (!isNaN(parseInt(id))) {
+        deleteProceso(id).then((filas_afectadas) => {
+            if (filas_afectadas > 0) {
+                hiddenForms();
+                htmlEditarProceso()
+                form_edicion.classList.remove("d-none")
+                ipcRenderer.send('showAlert', "success", "Eliminacion exitosa")
+            }
+        }).catch((msm) => {
+            ipcRenderer.send('showAlert', "error", msm.toString())
+        });
+    }
+}
+
+function eliminarMaterial() {
+    let id = document.getElementById("select_edicion_material").value
+    if (!isNaN(parseInt(id))) {
+        deleteMaterial(id).then((filas_afectadas) => {
+            if (filas_afectadas > 0) {
+                hiddenForms();
+                htmlEditarMaterial()
+                form_edicion.classList.remove("d-none")
+                ipcRenderer.send('showAlert', "success", "Eliminacion exitosa")
+            }
+        }).catch((msm) => {
+            ipcRenderer.send('showAlert', "error", msm.toString())
+        });
+    }
+}
+
+function eliminarTipoMaterial() {
+    let id = document.getElementById("select_edicion_tipo_material").value
+    if (!isNaN(parseInt(id))) {
+        deleteTipoMaterial(id).then((filas_afectadas) => {
+            if (filas_afectadas > 0) {
+                hiddenForms();
+                htmlEditarTipoMaterial()
+                form_edicion.classList.remove("d-none")
+                ipcRenderer.send('showAlert', "success", "Eliminacion exitosa")
+            }
+        }).catch((msm) => {
+            ipcRenderer.send('showAlert', "error", msm.toString())
+        });
+    }
+}
+
+function eliminarFormaRecepcion() {
+    let id = document.getElementById("select_edicion_forma_recepcion").value
+    if (!isNaN(parseInt(id))) {
+        deleteFormaRecepcion(id).then((filas_afectadas) => {
+            if (filas_afectadas > 0) {
+                hiddenForms();
+                htmlEditarFormaRecepcion()
+                form_edicion.classList.remove("d-none")
+                ipcRenderer.send('showAlert', "success", "Eliminacion exitosa")
+            }
+        }).catch((msm) => {
+            ipcRenderer.send('showAlert', "error", msm.toString())
+        });
+    }
+}
+
 function eliminarProveedor() {
     let id = document.getElementById("select_edicion_proveedor").value
     if (!isNaN(parseInt(id))) {
@@ -284,6 +596,40 @@ function eliminarVehiculo() {
         });
     }
 }
+
+function eliminarTipoVehiculo() {
+    let id = document.getElementById("select_edicion_tipo_vehiculo").value
+    if (!isNaN(parseInt(id))) {
+        deleteTipoVehiculo(id).then((filas_afectadas) => {
+            if (filas_afectadas > 0) {
+                hiddenForms();
+                htmlEditarTipoVehiculo()
+                form_edicion.classList.remove("d-none")
+                ipcRenderer.send('showAlert', "success", "Eliminacion exitosa")
+            }
+        }).catch((msm) => {
+            ipcRenderer.send('showAlert', "error", msm.toString())
+        });
+    }
+}
+
+function eliminarTipoContaminacion() {
+    let id = document.getElementById("select_edicion_tipo_contaminacion").value
+    if (!isNaN(parseInt(id))) {
+        deleteTipoContaminacion(id).then((filas_afectadas) => {
+            if (filas_afectadas > 0) {
+                hiddenForms();
+                htmlEditarTipoContaminacion()
+                form_edicion.classList.remove("d-none")
+                ipcRenderer.send('showAlert', "success", "Eliminacion exitosa")
+            }
+        }).catch((msm) => {
+            ipcRenderer.send('showAlert', "error", msm.toString())
+        });
+    }
+}
+
+
 
 function deleteUsuario() {
     let id = document.getElementById("select_edicion_usuario").value
@@ -558,6 +904,23 @@ function registrarTipoMaterial() {
     }
 }
 
+function registrarFormaRecepcion() {
+    if (
+        input_form_forma_recepcion_nombre.value != ""
+    ) {
+        insertFormaRecepcion({
+            nombre: input_form_forma_recepcion_nombre.value,
+        }).then((id_insertado) => {
+            if (id_insertado > 0) ipcRenderer.send('showAlert', "success", "Ingreso exitoso")
+            location.reload();
+        }).catch((msm) => {
+            ipcRenderer.send('showAlert', "error", msm.toString())
+        })
+    } else {
+        ipcRenderer.send('showAlert', "warning", "Faltan campos que llenar! Tilin")
+    }
+}
+
 function updateUsuario() {
     if (
         input_form_usuario_cedula.value != "" &&
@@ -729,25 +1092,168 @@ function actualizarVehiculo() {
         !isNaN(parseInt(document.getElementById("select_edicion_vehiculo").value))
     ) {
         updateVehiculo({
-            placa:  input_form_vehiculo_placa.value, 
-            vencimiento_matricula: input_form_vehiculo_fecha_vencimiento_matricula.value == "" ? null : input_form_vehiculo_fecha_vencimiento_matricula.value, 
-            activo: parseInt(select_form_vehiculo_activo.value), 
-            id_transportista: parseInt(select_form_vehiculo_transportista.value), 
+            placa: input_form_vehiculo_placa.value,
+            vencimiento_matricula: input_form_vehiculo_fecha_vencimiento_matricula.value == "" ? null : input_form_vehiculo_fecha_vencimiento_matricula.value,
+            activo: parseInt(select_form_vehiculo_activo.value),
+            id_transportista: parseInt(select_form_vehiculo_transportista.value),
             id_tipo_vehiculo: parseInt(select_form_vehiculo_tipo_vehiculo.value),
             id_vehiculo: parseInt(document.getElementById("select_edicion_vehiculo").value)
-        }).then((filas_afectadas)=>{
-            if(filas_afectadas > 0){
+        }).then((filas_afectadas) => {
+            if (filas_afectadas > 0) {
                 hiddenForms()
                 htmlEditarVehiculo()
                 form_edicion.classList.remove("d-none")
                 ipcRenderer.send('showAlert', "success", "Actualizacion exitosa")
-            } 
+            }
         }).catch((msm) => {
             ipcRenderer.send('showAlert', "error", msm.toString())
         })
 
     } else {
         ipcRenderer.send('showAlert', "warning", "Falta algun campo necesario")
+    }
+}
+
+function actualizarFormaRecepcion(){
+    let id = document.getElementById("select_edicion_forma_recepcion").value
+    if(input_form_forma_recepcion_nombre.value != "" && !isNaN(Number(id))){
+        updateFormaRecepcion({
+            nombre: input_form_forma_recepcion_nombre.value,
+            id_forma_recepcion: id
+        })
+        .then((filas_afectadas) => {
+            if (filas_afectadas > 0) {
+                hiddenForms()
+                htmlEditarFormaRecepcion()
+                form_edicion.classList.remove("d-none")
+                ipcRenderer.send('showAlert', "success", "Actualizacion exitosa")
+            }
+        }).catch((msm) => {
+            ipcRenderer.send('showAlert', "error", msm.toString())
+        })
+    }
+}
+
+function actualizarLinea(){
+    let id = document.getElementById("select_edicion_linea").value
+    if(input_form_linea_nombre.value != "" && !isNaN(Number(id)) ){
+        updateLinea({
+            nombre: input_form_linea_nombre.value,
+            id_linea: Number(id)
+        })
+        .then((filas_afectadas) => {
+            if (filas_afectadas > 0) {
+                hiddenForms()
+                htmlEditarLinea()
+                form_edicion.classList.remove("d-none")
+                ipcRenderer.send('showAlert', "success", "Actualizacion exitosa")
+            }
+        }).catch((msm) => {
+            ipcRenderer.send('showAlert', "error", msm.toString())
+        })
+    }
+}
+
+function actualizarMaterial(){
+    let id = document.getElementById("select_edicion_material").value
+    if(input_form_material_nombre.value != "" && !isNaN(Number(id)) && !isNaN(select_form_material_proceso.value)){
+        updateMaterial({
+            nombre: input_form_material_nombre.value,
+            id_proceso: Number(select_form_material_proceso.value),
+            id_material: Number(id)
+        })
+        .then((filas_afectadas) => {
+            if (filas_afectadas > 0) {
+                hiddenForms()
+                htmlEditarMaterial()
+                form_edicion.classList.remove("d-none")
+                ipcRenderer.send('showAlert', "success", "Actualizacion exitosa")
+            }
+        }).catch((msm) => {
+            ipcRenderer.send('showAlert', "error", msm.toString())
+        })
+    }
+}
+
+function actualizarProceso(){
+    let id = document.getElementById("select_edicion_proceso").value
+    if(input_form_proceso_nombre.value != "" && !isNaN(Number(id)) && !isNaN(select_form_proceso_linea.value)){
+        updateProceso({
+            nombre: input_form_proceso_nombre.value,
+            id_linea: Number(select_form_proceso_linea.value),
+            id_proceso: Number(id)
+        })
+        .then((filas_afectadas) => {
+            if (filas_afectadas > 0) {
+                hiddenForms()
+                htmlEditarProceso()
+                form_edicion.classList.remove("d-none")
+                ipcRenderer.send('showAlert', "success", "Actualizacion exitosa")
+            }
+        }).catch((msm) => {
+            ipcRenderer.send('showAlert', "error", msm.toString())
+        })
+    }
+}
+
+function actualizarTipoMaterial(){
+    let id = document.getElementById("select_edicion_tipo_material").value
+    if(input_form_tipo_material_nombre.value != "" && !isNaN(Number(id)) && !isNaN(select_form_tipo_material_material.value)){
+        updateTipoMaterial({
+            nombre: input_form_tipo_material_nombre.value,
+            id_material: Number(select_form_tipo_material_material.value),
+            id_tipo_material: Number(id)
+        })
+        .then((filas_afectadas) => {
+            if (filas_afectadas > 0) {
+                hiddenForms()
+                htmlEditarTipoMaterial()
+                form_edicion.classList.remove("d-none")
+                ipcRenderer.send('showAlert', "success", "Actualizacion exitosa")
+            }
+        }).catch((msm) => {
+            ipcRenderer.send('showAlert', "error", msm.toString())
+        })
+    }
+}
+
+function actualizarTipoVehiculo(){
+    let id = document.getElementById("select_edicion_tipo_vehiculo").value
+    if(input_form_tipo_vehiculo_nombre.value != "" && !isNaN(Number(id))){
+        updateTipoVehiculo({
+            nombre: input_form_tipo_vehiculo_nombre.value,
+            id_tipo_vehiculo: Number(id)
+        })
+        .then((filas_afectadas) => {
+            if (filas_afectadas > 0) {
+                hiddenForms()
+                htmlEditarTipoVehiculo()
+                form_edicion.classList.remove("d-none")
+                ipcRenderer.send('showAlert', "success", "Actualizacion exitosa")
+            }
+        }).catch((msm) => {
+            ipcRenderer.send('showAlert', "error", msm.toString())
+        })
+    }
+}
+
+function actualizarTipoContaminacion(){
+    let id = document.getElementById("select_edicion_tipo_contaminacion").value
+    if(input_form_tipo_contaminacion_nombre.value != "" && !isNaN(Number(id))){
+        updateTipoContaminacion({
+            nombre: input_form_tipo_contaminacion_nombre.value,
+            id_tipo_contaminacion: Number(id)
+        })
+        .then((filas_afectadas) => {
+            if (filas_afectadas > 0) {
+                hiddenForms()
+                htmlEditarTipoContaminacion()
+                form_edicion.classList.remove("d-none")
+                ipcRenderer.send('showAlert', "success", "Actualizacion exitosa")
+            }
+        }).catch((msm) => {
+            ipcRenderer.send('showAlert', "error", msm.toString())
+        })
     }
 }
 
@@ -860,11 +1366,112 @@ function formEdicionVehiculo() {
             .then((array) => {
                 let { placa, vencimiento_matricula, activo, id_transportista, id_tipo_vehiculo } = array[0]
                 input_form_vehiculo_placa.value = placa,
-                input_form_vehiculo_fecha_vencimiento_matricula.value = vencimiento_matricula == null ? "" : vencimiento_matricula.getFullYear() + "-" + ("0" + (vencimiento_matricula.getMonth() + 1)).slice(-2) + "-" + ("0" + vencimiento_matricula.getDate()).slice(-2)
+                    input_form_vehiculo_fecha_vencimiento_matricula.value = vencimiento_matricula == null ? "" : vencimiento_matricula.getFullYear() + "-" + ("0" + (vencimiento_matricula.getMonth() + 1)).slice(-2) + "-" + ("0" + vencimiento_matricula.getDate()).slice(-2)
                 select_form_vehiculo_activo.value = activo == null ? "" : activo
                 select_form_vehiculo_tipo_vehiculo.value = id_tipo_vehiculo
                 select_form_vehiculo_transportista.value = id_transportista
                 form_vehiculo.classList.remove("d-none")
+            })
+    }
+}
+
+function formEdicionLinea() {
+    hiddenForms();
+    form_edicion.classList.remove("d-none")
+    let id = document.getElementById("select_edicion_linea").value
+    if (!isNaN(parseInt(id))) {
+        getLinea(id)
+            .then((array) => {
+                let { nombre } = array[0]
+                input_form_linea_nombre.value = nombre == null ? "" : nombre
+                form_linea.classList.remove("d-none")
+            })
+    }
+}
+
+function formEdicionProceso() {
+    hiddenForms();
+    form_edicion.classList.remove("d-none")
+    let id = document.getElementById("select_edicion_proceso").value
+    if (!isNaN(parseInt(id))) {
+        getProceso(id)
+            .then((array) => {
+                let { nombre, id_linea } = array[0]
+                select_form_proceso_linea.value = id_linea
+                input_form_proceso_nombre.value = nombre == null ? "" : nombre
+                form_proceso.classList.remove("d-none")
+            })
+    }
+}
+
+function formEdicionMaterial() {
+    hiddenForms();
+    form_edicion.classList.remove("d-none")
+    let id = document.getElementById("select_edicion_material").value
+    if (!isNaN(parseInt(id))) {
+        getMaterial(id)
+            .then((array) => {
+                let { nombre, id_proceso} = array[0]
+                select_form_material_proceso.value = id_proceso
+                input_form_material_nombre.value = nombre == null ? "" : nombre
+                form_material.classList.remove("d-none")
+            })
+    }
+}
+
+function formEdicionTipoMaterial() {
+    hiddenForms();
+    form_edicion.classList.remove("d-none")
+    let id = document.getElementById("select_edicion_tipo_material").value
+    if (!isNaN(parseInt(id))) {
+        getTipoMaterial(id)
+            .then((array) => {
+                let { nombre, id_material} = array[0]
+                select_form_tipo_material_material.value = id_material
+                input_form_tipo_material_nombre.value = nombre == null ? "" : nombre
+                form_tipo_material.classList.remove("d-none")
+            })
+    }
+}
+
+function formEdicionTipoVehiculo() {
+    hiddenForms();
+    form_edicion.classList.remove("d-none")
+    let id = document.getElementById("select_edicion_tipo_vehiculo").value
+    if (!isNaN(parseInt(id))) {
+        getTipoVehiculo(id)
+            .then((array) => {
+                let { nombre } = array[0]
+                input_form_tipo_vehiculo_nombre.value = nombre == null ? "" : nombre
+                form_tipo_vehiculo.classList.remove("d-none")
+            })
+    }
+}
+
+function formEdicionTipoContaminacion() {
+    hiddenForms();
+    form_edicion.classList.remove("d-none")
+    let id = document.getElementById("select_edicion_tipo_contaminacion").value
+    if (!isNaN(parseInt(id))) {
+        getTipoContaminacion(id)
+            .then((array) => {
+                let { nombre } = array[0]
+                input_form_tipo_contaminacion_nombre.value = nombre == null ? "" : nombre
+                form_tipo_contaminacion.classList.remove("d-none")
+            })
+    }
+}
+
+function formEdicionFormaRecepcion() {
+    hiddenForms();
+    form_edicion.classList.remove("d-none")
+    let id = document.getElementById("select_edicion_forma_recepcion").value
+    if (!isNaN(parseInt(id))) {
+        getFormaRecepcion(id)
+            .then((array) => {
+                let { nombre } = array[0]
+                input_form_forma_recepcion_nombre.value = nombre == null ? "" : nombre
+                form_forma_recepcion.classList.remove("d-none")
             })
     }
 }
@@ -888,9 +1495,6 @@ function llenarSelectLinea() {
                 break;
             case "EDI_TICKET_PESO":
                 select_form_peso_linea.innerHTML = html;
-                break;
-            case "EDI_LINEA":
-
                 break;
             case "EDI_PROCESO":
                 select_form_proceso_linea.innerHTML = html;
@@ -935,23 +1539,33 @@ function llenarSelectProceso() {
                 })
                 select_form_peso_proceso.innerHTML = html;
                 break;
-            case "EDI_LINEA":
-
-                break;
             case "EDI_PROCESO":
-                select_form_proceso_linea.innerHTML = html;
+                array_procesos.map(({ id_proceso, id_linea, nombre }) => {
+                    if (id_linea == document.getElementById("select_edicion_linea").value) html += `<option value="${id_proceso}">${nombre}</option>`
+                })
+                document.getElementById("select_edicion_proceso").removeAttribute("disabled")
+                document.getElementById("boton_edicion_eliminar").removeAttribute("disabled")
+                document.getElementById("select_edicion_proceso").innerHTML = html;
                 break;
             case "EDI_MATERIAL":
+                form_material.classList.add("d-none")
+                select_form_material_linea.value = document.getElementById("select_edicion_linea").value
                 array_procesos.map(({ id_proceso, id_linea, nombre }) => {
-                    if (id_linea == select_form_material_linea.value) html += `<option value="${id_proceso}">${nombre}</option>`
+                    if (id_linea == document.getElementById("select_edicion_linea").value) html += `<option value="${id_proceso}">${nombre}</option>`
                 })
-                select_form_material_linea.innerHTML = html;
+                document.getElementById("select_edicion_proceso").removeAttribute("disabled")
+                document.getElementById("select_edicion_proceso").innerHTML = html;
+                select_form_material_proceso.innerHTML = html;
                 break;
             case "EDI_TIPO_MATERIAL":
+                form_tipo_material.classList.add("d-none")
+                select_form_tipo_material_linea.value = document.getElementById("select_edicion_linea").value
                 array_procesos.map(({ id_proceso, id_linea, nombre }) => {
-                    if (id_linea == select_form_tipo_material_linea.value) html += `<option value="${id_proceso}">${nombre}</option>`
+                    if (id_linea == document.getElementById("select_edicion_linea").value) html += `<option value="${id_proceso}">${nombre}</option>`
                 })
-                select_form_tipo_material_linea.innerHTML = html;
+                document.getElementById("select_edicion_proceso").removeAttribute("disabled")
+                document.getElementById("select_edicion_proceso").innerHTML = html;
+                select_form_tipo_material_proceso.innerHTML = html;
                 break;
             default:
                 break;
@@ -988,15 +1602,24 @@ function llenarSelectMaterial() {
                 select_form_peso_material.innerHTML = html;
                 break;
             case "EDI_MATERIAL":
+                form_material.classList.add("d-none")
+                select_form_material_proceso.value = document.getElementById("select_edicion_proceso").value
                 array_material.map(({ id_proceso, id_material, nombre }) => {
-                    if (id_proceso == select_form_material_proceso.value) html += `<option value="${id_material}">${nombre}</option>`
+                    if (id_proceso == document.getElementById("select_edicion_proceso").value) html += `<option value="${id_material}">${nombre}</option>`
                 })
-                select_form_material_material.innerHTML = html;
+                document.getElementById("select_edicion_material").removeAttribute("disabled")
+                document.getElementById("boton_edicion_eliminar").removeAttribute("disabled")
+                document.getElementById("select_edicion_material").innerHTML = html;
+                select_form_tipo_material_proceso.innerHTML = html;
                 break;
             case "EDI_TIPO_MATERIAL":
+                form_tipo_material.classList.add("d-none")
+                select_form_tipo_material_proceso.value = document.getElementById("select_edicion_proceso").value
                 array_material.map(({ id_proceso, id_material, nombre }) => {
-                    if (id_proceso == select_form_tipo_material_proceso.value) html += `<option value="${id_material}">${nombre}</option>`
+                    if (id_proceso == document.getElementById("select_edicion_proceso").value) html += `<option value="${id_material}">${nombre}</option>`
                 })
+                document.getElementById("select_edicion_material").removeAttribute("disabled")
+                document.getElementById("select_edicion_material").innerHTML = html;
                 select_form_tipo_material_material.innerHTML = html;
                 break;
             default:
@@ -1012,7 +1635,7 @@ function llenarSelectTipoMaterial() {
             case "EDI_TICKET_PESO":
                 array_tipo_material.map(({ id_tipo_material, id_material, nombre }) => {
                     if (!isNaN(Number(select_form_peso_material.value))) {
-                        select_form_peso_tipo_material.removeAttribute("disabled", "")
+                        select_form_peso_tipo_material.removeAttribute("disabled")
                         if (id_material == Number(select_form_peso_material.value)) html += `<option value="${id_tipo_material}">${nombre}</option>`
                     } else {
                         html += `<option value="${id_tipo_material}">${nombre}</option>`
@@ -1021,11 +1644,13 @@ function llenarSelectTipoMaterial() {
                 })
                 select_form_peso_tipo_material.innerHTML = html;
                 break;
-            case "EDI_MATERIAL":
-
-                break;
             case "EDI_TIPO_MATERIAL":
-
+                array_tipo_material.map(({ id_tipo_material, id_material, nombre }) => {
+                    if (id_material == Number(document.getElementById("select_edicion_material").value)) html += `<option value="${id_tipo_material}">${nombre}</option>`
+                })
+                document.getElementById("select_edicion_tipo_material").removeAttribute("disabled")
+                document.getElementById("boton_edicion_eliminar").removeAttribute("disabled")
+                document.getElementById("select_edicion_tipo_material").innerHTML = html;
                 break;
             default:
                 break;
@@ -1127,7 +1752,7 @@ function llenarSelectFormaRecepcion() {
 function llenarSelectVehiculo() {
     let html = "<option selected>Open this select menu</option>";
     getAllVehiculo().then((array_vehiculos) => {
-        
+
         switch (select_opcion.value) {
             case "EDI_TICKET_PESO":
                 array_vehiculos.map(({ id_vehiculo, placa }) => {
@@ -1481,35 +2106,61 @@ function habilitarForm() {
         case "LINEA":
             toggleAviso("hidden");
             hiddenForms();
+            boton_form_linea.removeAttribute("onclick")
+            boton_form_linea.setAttribute("onclick", "registrarLinea()")
+            boton_form_linea.innerHTML = "Registrar"
             form_linea.classList.remove("d-none");
             break;
         case "PROCESO":
             toggleAviso("hidden");
             hiddenForms();
             llenarSelectLinea();
+            boton_form_proceso.removeAttribute("onclick")
+            boton_form_proceso.setAttribute("onclick", "registrarProceso()")
+            boton_form_proceso.innerHTML = "Registrar"
             form_proceso.classList.remove("d-none");
             break;
         case "MATERIAL":
             toggleAviso("hidden");
             hiddenForms();
             llenarSelectLinea();
+            boton_form_material.removeAttribute("onclick")
+            boton_form_material.setAttribute("onclick", "registrarMaterial()")
+            boton_form_material.innerHTML = "Registrar"
             form_material.classList.remove("d-none");
             break;
         case "TIPO_MATERIAL":
             toggleAviso("hidden");
             hiddenForms();
             llenarSelectLinea();
+            boton_form_tipo_material.removeAttribute("onclick")
+            boton_form_tipo_material.setAttribute("onclick", "registrarTipoMaterial()")
+            boton_form_tipo_material.innerHTML = "Registrar"
             form_tipo_material.classList.remove("d-none");
             break;
         case "TIPO_VEHICULO":
             toggleAviso("hidden");
             hiddenForms();
+            boton_form_tipo_vehiculo.removeAttribute("onclick")
+            boton_form_tipo_vehiculo.setAttribute("onclick", "registrarTipoVehiculo()")
+            boton_form_tipo_vehiculo.innerHTML = "Registrar"
             form_tipo_vehiculo.classList.remove("d-none");
             break;
         case "TIPO_CONTAMINACION":
             toggleAviso("hidden");
             hiddenForms();
+            boton_form_tipo_contaminacion.removeAttribute("onclick")
+            boton_form_tipo_contaminacion.setAttribute("onclick", "registrarContaminacion()")
+            boton_form_tipo_contaminacion.innerHTML = "Registrar"
             form_tipo_contaminacion.classList.remove("d-none");
+            break;
+        case "FORMA_RECEPCION":
+            toggleAviso("hidden");
+            hiddenForms();
+            boton_form_forma_recepcion.removeAttribute("onclick")
+            boton_form_forma_recepcion.setAttribute("onclick", "registrarFormaRecepcion()")
+            boton_form_forma_recepcion.innerHTML = "Registrar"
+            form_forma_recepcion.classList.remove("d-none")
             break;
         case "EDI_TICKET_PESO":
             toggleAviso("hidden");
@@ -1555,30 +2206,47 @@ function habilitarForm() {
         case "EDI_LINEA":
             toggleAviso("hidden");
             hiddenForms();
-            llenarSelectLinea();
+            htmlEditarLinea();
+            form_edicion.classList.remove("d-none")
             break;
         case "EDI_PROCESO":
             toggleAviso("hidden");
             hiddenForms();
             llenarSelectLinea();
+            htmlEditarProceso();
+            form_edicion.classList.remove("d-none")
             break;
         case "EDI_MATERIAL":
             toggleAviso("hidden");
             hiddenForms();
             llenarSelectLinea();
+            htmlEditarMaterial();
+            form_edicion.classList.remove("d-none")
             break;
         case "EDI_TIPO_MATERIAL":
             toggleAviso("hidden");
             hiddenForms();
             llenarSelectLinea();
+            htmlEditarTipoMaterial();
+            form_edicion.classList.remove("d-none")
             break;
         case "EDI_TIPO_VEHICULO":
             toggleAviso("hidden");
             hiddenForms();
+            htmlEditarTipoVehiculo();
+            form_edicion.classList.remove("d-none")
             break;
         case "EDI_TIPO_CONTAMINACION":
             toggleAviso("hidden");
             hiddenForms();
+            htmlEditarTipoContaminacion();
+            form_edicion.classList.remove("d-none")
+            break;
+        case "EDI_FORMA_RECEPCION":
+            toggleAviso("hidden");
+            hiddenForms();
+            htmlEditarFormaRecepcion();
+            form_edicion.classList.remove("d-none")
             break;
         default:
             hiddenForms();
