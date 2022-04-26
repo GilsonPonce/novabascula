@@ -5,7 +5,7 @@ const mysql = require('mysql');
 const connection =  mysql.createPool({
     connectionLimit : 10,
     host:"localhost",
-    user: "root",
+    user: "appbascula",
     password: "admin1223",
     database: "bascula",
     port: 3306

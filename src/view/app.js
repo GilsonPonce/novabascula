@@ -369,6 +369,7 @@ function registrarSalida(objeto) {
         }).then((filas)=>{
             if (filas > 0){
                 ipcRenderer.send('showAlertPregunta', objeto.id_ticket)
+                location.reload();
             }
         }).catch((msm)=>{
             ipcRenderer.send('showAlert', 'error', msm.toString());

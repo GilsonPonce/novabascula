@@ -1,12 +1,11 @@
 const { app, ipcMain, BrowserWindow, ipcRenderer } = require('electron')
 const Alert = require("electron-alert");
 const fs = require("fs")
-const { getConnection, infoticket, infopesos, infocontaminacion } = require('./database.js')
+const { getConnection } = require('./database.js')
 const path = require('path');
 const url = require('url');
 const moment = require('moment');
-const pdf = require('html-pdf');
-const { print } = require('pdf-to-printer');
+
 let window;
 let windowtickets;
 let windowlogin;
@@ -21,7 +20,7 @@ let transportistas;
 let proveedores;
 let ticketsinprocesar;
 let formarecepcion;
-const incremento = 100 / 7;
+let windowticketprint;
 
 function alerta(icon = 'warning', text) {
     let alert = new Alert();
@@ -36,199 +35,6 @@ function alerta(icon = 'warning', text) {
     alert.fireFrameless(swalOptions, null, true, false);
 }
 
-function infoImpresion(id) {
-    let conteoSalida = 0;
-    window.setProgressBar(0.1, {mode: "normal"});//rango de valor recibido es 0 a 1.0
-    procesarTicket(id);
-    let salidaconta = [];
-    let contaminacion = [];
-    let html = ``;
-    infoticket(id)
-        .then((info_ticket) => {
-            window.setProgressBar(0.3, {mode: "normal"});
-            return infopesos(id, info_ticket)
-        }).then(({ infoticket, pesos }) => {
-            window.setProgressBar(0.4, {mode: "normal"});
-            let tipo_ticket = ""
-            pesos.map((item) => {
-                if (item.tipo_peso == "SALIDA") {
-                    tipo_ticket = item.linea + " - " + item.material;
-                    return;
-                }
-            });
-            html += `<!DOCTYPE html>
-                <html lang="en">
-            
-                <head>
-                    <meta charset="utf-8">
-                    <title>PDF Result Template</title>
-                    <title>Document</title>
-                    <style>
-                        body{
-                            font-size: 10px;
-                        }
-                        .border {
-                            border: solid 1px #2c2c2c;
-                            padding: 5px;
-                            margin-top: 3px;
-                        }
-                        .table_info{
-                            width: 100%;
-                            text-align: left;
-                        }
-                        .table_data{
-                            width: 100%;
-                            margin-top: 3px;
-                            border-collapse: collapse;
-                        }
-                       .td{
-                            border: 1px solid #2c2c2c;
-                            border-collapse: collapse;
-                            padding: 3px;
-                       }
-                        .th{
-                            border: 1px solid #2c2c2c;
-                            border-collapse: collapse;
-                            padding: 3px;
-                        }
-                        .imagen{
-                            display: inline;
-                            width: 200px;
-                        }
-                        .d-block{
-                            height: 100px;
-                            display: inline;
-                        }
-                        .text-right{
-                            text-align: right;
-                        }
-                        .w{
-                            width: 550px;
-                        }
-                    </style>
-                </head>
-            
-                <body>
-                    <div class="container">
-                        <div class="border">
-                            <table>
-                                <tr>
-                                    <td class="w"> <img src="https://novared.com.ec/wp-content/uploads/2021/03/logo-novared.png" class="imagen"></td>
-                                    <th class="text-right"><p class="d-block">NOVARED - NEGOCIOS Y RECICLAJE S.A. <br> <br> RUC# 0992968079001</p></th>
-                                </tr>
-                            </table>
-                        </div>
-                        <div>
-                            <table class="table_info border">
-                                <tr>
-                                    <th ><b>Nro Ticket</b></th>
-                                    <td >${infoticket.id_ticket}</td>
-                                    <th >Fecha Ticket</th>
-                                    <td >${infoticket.fecha_procesado == null ? "NO PROCESADO" : infoticket.fecha_procesado.getDate() + "/" + infoticket.fecha_procesado.getMonth() + "/" + infoticket.fecha_procesado.getFullYear() + " - " + infoticket.fecha_procesado.getHours() + ":" + infoticket.fecha_procesado.getMinutes() + ":" + infoticket.fecha_procesado.getSeconds()}</td>
-                                    <th >Tipo Ticket</th>
-                                    <td >${tipo_ticket}</td>
-                                </tr>
-                                <tr>
-                                    <th>Placa</th>
-                                    <td>${infoticket.placa}</td>
-                                    <th>Transportista</th>
-                                    <td>${infoticket.transportista}</td>
-                                    <th>Cedula Transportista</th>
-                                    <td>${infoticket.cedula}</td>
-                                </tr>
-                                <tr>
-                                    <th class="">Observacion</th>
-                                    <td class="">${infoticket.observaciones == null ? "" : infoticket.observaciones}</td>
-                                </tr>
-                                <tr>
-                                    <th class="">Proveedor/Cliente</th>
-                                    <td class="">${infoticket.proveedor}</td>
-                                </tr>
-                            </table>
-                        </div>
-                        <table class="table_data">
-            
-                                <tr>
-                                    <th class="th">TIPO PESO</th>
-                                    <th class="th">MATERIAL</th>
-                                    <th class="th">PESO</th>
-                                    <th class="th">PESO CONTAMINACION</th>
-                                    <th class="th">%</th>
-                                    <th class="th">PESO A PAGAR</th>
-                                    <th class="th">FECHA</th>
-                                    <th class="th">FORMA RECEPCION</th>
-                                </tr>`
-
-            pesos.map(({ id_peso, peso, peso_contaminacion, porcentaje_contaminacion, peso_total, tipo_peso, forma_recepcion, fecha_hora, proceso, material, tipomaterial }) => {
-                tipo_peso == "SALIDA" && conteoSalida++;
-                if (peso_contaminacion != null && peso_contaminacion != 0) {
-                    salidaconta.push(parseInt(conteoSalida))
-                    contaminacion.push(parseInt(id_peso))
-                }
-                html += `<tr>
-                        <th class="th">${tipo_peso == "SALIDA" ? "SALIDA " + conteoSalida : tipo_peso}</th>
-                        <td class="td">${proceso == null ? "" : proceso  + " " + material == null ? "" : material + " " + tipomaterial == null ? "" : tipomaterial}</td>
-                        <td class="td">${peso == null ? 0 : peso}</td>
-                        <td class="td">${peso_contaminacion == null ? 0 : peso_contaminacion}</td>
-                        <td class="td">${porcentaje_contaminacion == null ? 0 : porcentaje_contaminacion}</td>
-                        <td class="td">${peso_total == null ? 0 : peso_total}</td>
-                        <td class="td">${fecha_hora.getDate() + "/" + fecha_hora.getMonth() + "/" + fecha_hora.getFullYear() + " - " + fecha_hora.getHours() + ":" + fecha_hora.getMinutes() + ":" + fecha_hora.getSeconds()}</td>
-                        <td class="td">${forma_recepcion}</td>
-                        </tr>`
-
-            })
-            html += ` </table>`
-            return infocontaminacion(id);
-        }).then((NombreContaminacion) => {
-            window.setProgressBar(0.5, {mode: "normal"});
-            if (contaminacion.length > 0) {
-                html += `<table class="table_data">`
-                for (i in contaminacion) {
-                    let conta = NombreContaminacion.filter(({ id_peso }) => { return id_peso == contaminacion[i] })
-                    console.log("ARRAY DE CONTAMINACION", conta)
-                    if (conta.length > 0) {
-                        let detalle = ""
-                        conta.map(({ nombre }) => {
-                            detalle += `${nombre}, `
-                        })
-                        html += `<tr>
-                    <th class="th">DETALLE DE CONTAMINACION SALIDA ${salidaconta[i]}</th>
-                    <td class="td">${detalle}</td>
-                    </tr>`
-                    }
-                }
-                html += `  </table>`
-            }
-            window.setProgressBar(0.6, {mode: "normal"});
-            html += `</div> </body> </html>`
-            let options = { format: 'A5', orientation: "landscape" }
-            let nombre = "./" + id + ".pdf"
-            let urlarchivo = "";
-            pdf.create(html, options).toFile(nombre, (err, res) => {
-                if (err) alerta('error', err.message);
-                if (res) {
-                    window.setProgressBar(0.7, {mode: "normal"});
-                    urlarchivo = res.filename;
-                    print(res.filename, {
-                        monochrome: true,
-                        paperSize: "A5",
-                        copies: 2
-                    }).then(() => {
-                        window.setProgressBar(0.8, {mode: "normal"});
-                        fs.unlink(urlarchivo, (err) => {
-                            if (err) alerta("error", err.message)
-                            if (!err) console.log("ELiminacion exitosa")
-                        })
-                        console.log('Print ticket');
-                        window.setProgressBar(1.0, {mode: "normal"});
-                        window.setProgressBar(-1.0, {mode: "normal"});
-                        window.reload()
-                    })
-                }
-            });
-           
-        });
-}
 
 function alertaPregunta(id) {
     let alert = new Alert();
@@ -242,7 +48,13 @@ function alertaPregunta(id) {
     let promise = alert.fireWithFrame(swalOptions, "Terminar ticket?", null, false);
     promise.then((result) => {
         if (result.value) {
-            infoImpresion(id)
+            procesarTicket(id)
+            createWindowticketprint()
+            windowticketprint.once('ready-to-show', () => {
+                windowticketprint.show();
+            });
+            windowticketprint.webContents.send('pasoId', id);
+            //infoImpresion(id)
         } else if (result.dismiss === Alert.DismissReason.cancel) {
             window.reload();
         }
@@ -491,10 +303,10 @@ function registrarEntrada(
             values('${tipo_peso}', '${forma_recepcion}', ${peso}, ${result.insertId})`
             getConnection().query(sqlpeso, function (err2, result2) {
                 if (err2) alerta('error', err2.message);
-                if (result2 && result2.affectedRows > 0){
+                if (result2 && result2.affectedRows > 0) {
                     alerta('success', 'Peso Entrada Registrado')
                     window.reload()
-                } 
+                }
             });
         }
     });
@@ -581,7 +393,7 @@ function createWindowAdmin() {
     })
 }
 
-function showWindowAdmin(){
+function showWindowAdmin() {
     createWindowAdmin();
     windowadmin.once('ready-to-show', () => {
         windowadmin.show();
@@ -616,6 +428,32 @@ function windowticketsinpro() {
     }));
 }
 
+function createWindowticketprint() {
+    windowticketprint = new BrowserWindow({
+        width: 800,
+        minWidth: 800,
+        maxWidth: 800,
+        height: 400,
+        minHeight: 600,
+        maxHeight: 600,
+        resizable: false,
+        maximizable: false,
+        autoHideMenuBar: true,
+        center: true,
+        webPreferences: {
+            nodeIntegration: true,
+            contextIsolation: false,
+            preload: path.join(__dirname, 'preload.js')
+        },
+    });
+
+    windowticketprint.loadURL(url.format({
+        pathname: path.join(__dirname, 'view/ticketpdf.html'),
+        protocol: 'file',
+        slashes: true
+    }));
+}
+
 function createwindowlogin() {
     windowlogin = new BrowserWindow({
         width: 400,
@@ -645,7 +483,7 @@ function createwindowlogin() {
 
 function imprimirTicket() {
     const options = {
-        silent: false,
+        silent: true,
         printBackground: true,
         color: false,
         margin: {
@@ -654,7 +492,7 @@ function imprimirTicket() {
         landscape: false,
         pagesPerSheet: 1,
         collate: false,
-        copies: 1,
+        copies: 2,
         header: 'Header of the Page',
         footer: 'Footer of the Page'
     }
@@ -662,7 +500,9 @@ function imprimirTicket() {
     let win = BrowserWindow.getAllWindows()[0];
     win.webContents.print(options, (success, failureReason) => {
         if (!success) console.log(failureReason);
+        console.log(win)
         console.log('Print Initiated');
+        win.close()
     });
 
 }
@@ -681,7 +521,7 @@ ipcMain.on('openMain', () => {
         windowlogin.close();
     });
 });
-ipcMain.on('openAdmin',()=>{
+ipcMain.on('openAdmin', () => {
     showWindowAdmin();
 })
 
@@ -756,10 +596,9 @@ ipcMain.on('getInfoTicket', (event, id) => {
 ipcMain.on('imprimir', (event, id) => {
     imprimirTicket();
 })
-ipcMain.on('reimprimir',(event,id)=>{
+ipcMain.on('reimprimir', (event, id) => {
     infoImpresion(id);
 })
-
 
 require('electron-reload')(__dirname)
 

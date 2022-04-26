@@ -3,8 +3,7 @@
 
 <head>
     <meta charset="utf-8">
-    <title>PDF Result Template</title>
-    <title>Document</title>
+    <title>PRINTER TICKET</title>
     <style>
         body{
             font-size: 10px;
@@ -45,13 +44,16 @@
             text-align: right;
         }
         .w{
-            width: 1100px;
+            width: 450px;
+        }
+        .boton{
+            margin: 20px;
         }
     </style>
 </head>
 
 <body>
-    <div class="container">
+    <div class="container" id="container" >
         <div class="border">
             <table>
                 <tr>
@@ -64,27 +66,31 @@
             <table class="table_info border">
                 <tr>
                     <th ><b>Nro Ticket</b></th>
-                    <td >8869</td>
+                    <td id="id_ticket">8869</td>
                     <th >Fecha Ticket</th>
-                    <td >22/03/2022 13:55:00</td>
+                    <td id="fecha_procesado">22/03/2022 13:55:00</td>
                     <th >Tipo Ticket</th>
-                    <td >METAL - CHATARRA</td>
+                    <td id="tipo_tiket">METAL - CHATARRA</td>
                 </tr>
                 <tr>
                     <th>Placa</th>
-                    <td>GHB-1456</td>
+                    <td id="num_placa">GHB-1456</td>
                     <th>Transportista</th>
-                    <td>VELEZ ALCIVAR JEFFERSON FERNANDEZ</td>
+                    <td id="nom_transportista">VELEZ ALCIVAR JEFFERSON FERNANDEZ</td>
                     <th>Cedula Transportista</th>
-                    <td>0955682314</td>
+                    <td id="cedula_transportista">0955682314</td>
+                </tr>
+                <tr>
+                    <th class="">Observacion</th>
+                    <td colspan="5" class="" id="observacion">Se aplica el dos porciento de descuento por telas, fundas, plastico klasdhfklasd hfsadkhfasñdklfhas fasdklhfkladshfas </td>
                 </tr>
                 <tr>
                     <th class="">Proveedor/Cliente</th>
-                    <td class="">MENDEZ MORA JEFFERSON FERNANDEZ</td>
+                    <td  colspan="5" class="" id="nom_proveedor">MENDEZ MORA JEFFERSON FERNANDEZ</td>
                 </tr>
             </table>
         </div>
-        <table class="table_data">
+        <table class="table_data" id="body_table">
           
                 <tr>
                     <th class="th">TIPO PESO</th>
@@ -96,31 +102,13 @@
                     <th class="th">FECHA</th>
                     <th class="th">FORMA RECEPCION</th>
                 </tr>
-           
-             <tr>
-                    <th class="th">ENTRADA</th>
-                    <td class="td"></td>
-                    <td class="td">25000</td>
-                    <td class="td">0</td>
-                    <td class="td">0</td>
-                    <td class="td">0</td>
-                    <td class="td">22/13/2022 11:30</td>
-                    <td class="td">PLATAFORMA</td>
-                </tr>
-                <tr>
-                    <th class="th">SALIDA</th>
-                    <td class="td">CHATARRA SEMIPROCESADA</td>
-                    <td class="td">10000</td>
-                    <td class="td">2000</td>
-                    <td class="td">2</td>
-                    <td class="td">13000</td>
-                    <td class="td">22/13/2022 12:30</td>
-                    <td class="td">PLATAFORMA</td>
-                </tr>
         
         </table>
+
         
     </div>
+    <button id="boton_imprimir" class="boton">IMPRIMIR</button>
+    <script src="./ticketpdf.js"></script>
 </body>
 
 </html>
