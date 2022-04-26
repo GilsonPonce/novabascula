@@ -593,11 +593,17 @@ ipcMain.on('getInfoTicket', (event, id) => {
     console.log(ticket);
     event.returnValue = ticket;
 })
+
 ipcMain.on('imprimir', (event, id) => {
     imprimirTicket();
 })
+
 ipcMain.on('reimprimir', (event, id) => {
-    infoImpresion(id);
+    createWindowticketprint()
+    windowticketprint.once('ready-to-show', () => {
+        windowticketprint.show();
+    });
+    windowticketprint.webContents.send('pasoId', id);
 })
 
 require('electron-reload')(__dirname)
