@@ -32,7 +32,6 @@ function cargarData(id){
     .then((info_ticket) => {
         return infopesos(id, info_ticket)
     }).then(({ infoticket, pesos }) => {
-        console.error('INFORMACION',infoticket)
         let tipo_ticket = ""
         pesos.map((item) => {
             if (item.tipo_peso == "SALIDA") {

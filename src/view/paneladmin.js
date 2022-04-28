@@ -49,7 +49,7 @@ const { getPersona,
     insertFormaRecepcion,
     getLinea,
     getFormaRecepcion,
-    deleteFormaRecepcion, 
+    deleteFormaRecepcion,
     updateFormaRecepcion,
     updateMaterial,
     updateLinea,
@@ -66,7 +66,8 @@ const { getPersona,
     getTipoVehiculo,
     getTipoContaminacion,
     deleteTipoVehiculo,
-    deleteTipoContaminacion} = require('../databaseadmin');
+    deleteTipoContaminacion,
+    getAllUsuario } = require('../databaseadmin');
 
 const input_host = document.getElementById("input_host")
 const select_opcion = document.getElementById("select_opcion")
@@ -186,7 +187,7 @@ function htmlUsuario() {
     let html = `<div class="col-10"><label for="inputEmail4" class="form-label col-sm-3 mb-2">Usuario</label><div class="col-9 mb-2">
     <select class="form-select" onchange="formEdicionUsuario()" aria-label="Default select example" id="select_edicion_usuario">
     <option selected>Open this select menu</option>`
-    getAllPersona()
+    getAllUsuario()
         .then((personas) => {
             if (personas.length > 0) {
                 personas.map(({ id_persona, nombre }) => {
@@ -340,8 +341,8 @@ function htmlEditarMaterial() {
                 boton_form_material.removeAttribute('onclick')
                 boton_form_material.setAttribute('onclick', 'actualizarMaterial()')
                 boton_form_material.innerHTML = "Actualizar"
-                select_form_material_proceso.setAttribute("disabled","")
-                select_form_material_linea.setAttribute("disabled","")
+                select_form_material_proceso.setAttribute("disabled", "")
+                select_form_material_linea.setAttribute("disabled", "")
             }
         })
 }
@@ -373,9 +374,9 @@ function htmlEditarTipoMaterial() {
                 boton_form_tipo_material.removeAttribute('onclick')
                 boton_form_tipo_material.setAttribute('onclick', 'actualizarTipoMaterial()')
                 boton_form_tipo_material.innerHTML = "Actualizar"
-                select_form_tipo_material_proceso.setAttribute("disabled","")
-                select_form_tipo_material_linea.setAttribute("disabled","")
-                select_form_tipo_material_material.setAttribute("disabled","")
+                select_form_tipo_material_proceso.setAttribute("disabled", "")
+                select_form_tipo_material_linea.setAttribute("disabled", "")
+                select_form_tipo_material_material.setAttribute("disabled", "")
             }
         })
 }
@@ -646,129 +647,189 @@ function deleteUsuario() {
 }
 
 function registrarUsuario() {
-    if (
-        input_form_usuario_cedula.value != "" &&
-        input_form_usuario_nombres.value != "" &&
-        input_form_usuario_apellidos.value != "" &&
-        !isNaN(parseInt(select_form_usuario_activo.value)) &&
-        input_form_credencial_contrasena.value != "" &&
-        input_form_credencial_usuario.value != ""
-    ) {
-        insertPersona({
-            cedula: input_form_usuario_cedula.value,
-            nombres: input_form_usuario_nombres.value,
-            apellidos: input_form_usuario_apellidos.value,
-            activo: parseInt(select_form_usuario_activo.value),
-            fecha_nacimiento: input_form_usuario_fecha_nacimiento.value == "" ? null : input_form_usuario_fecha_nacimiento.value,
-            sexo: select_form_usuario_sexo.value == "" ? null : select_form_usuario_sexo.value,
-            estado_civil: select_form_usuario_estado_civil.value == "" ? null : select_form_usuario_estado_civil.value,
-            ciudadania: input_form_usuario_ciudadania.value == "" ? null : input_form_usuario_ciudadania.value,
-            instruccion: input_form_usuario_instruccion.value == "" ? null : input_form_usuario_instruccion.value,
-            lugar_expedicion: input_form_usuario_lugar_expedicion.value == "" ? null : input_form_usuario_lugar_expedicion.value,
-            fecha_expedicion: input_form_usuario_fecha_expedicion.value == "" ? null : input_form_usuario_fecha_expedicion.value,
-            fecha_expiracion: input_form_usuario_fecha_expiracion.value == "" ? null : input_form_usuario_fecha_expiracion.value
-        }).then((id_usuario) => {
-            return insertCredencial({
-                id_persona: id_usuario,
+    if (form_edicion.classList.contains("d-none")) {
+        if (
+            input_form_usuario_cedula.value != "" &&
+            input_form_usuario_nombres.value != "" &&
+            input_form_usuario_apellidos.value != "" &&
+            !isNaN(parseInt(select_form_usuario_activo.value)) &&
+            input_form_credencial_contrasena.value != "" &&
+            input_form_credencial_usuario.value != ""
+        ) {
+            insertPersona({
+                cedula: input_form_usuario_cedula.value,
+                nombres: input_form_usuario_nombres.value,
+                apellidos: input_form_usuario_apellidos.value,
+                activo: parseInt(select_form_usuario_activo.value),
+                fecha_nacimiento: input_form_usuario_fecha_nacimiento.value == "" ? null : input_form_usuario_fecha_nacimiento.value,
+                sexo: select_form_usuario_sexo.value == "" ? null : select_form_usuario_sexo.value,
+                estado_civil: select_form_usuario_estado_civil.value == "" ? null : select_form_usuario_estado_civil.value,
+                ciudadania: input_form_usuario_ciudadania.value == "" ? null : input_form_usuario_ciudadania.value,
+                instruccion: input_form_usuario_instruccion.value == "" ? null : input_form_usuario_instruccion.value,
+                lugar_expedicion: input_form_usuario_lugar_expedicion.value == "" ? null : input_form_usuario_lugar_expedicion.value,
+                fecha_expedicion: input_form_usuario_fecha_expedicion.value == "" ? null : input_form_usuario_fecha_expedicion.value,
+                fecha_expiracion: input_form_usuario_fecha_expiracion.value == "" ? null : input_form_usuario_fecha_expiracion.value
+            }).then((id_usuario) => {
+                return insertCredencial({
+                    id_persona: id_usuario,
+                    user: input_form_credencial_usuario.value,
+                    password_user: input_form_credencial_contrasena.value,
+                    estado: parseInt(select_form_usuario_activo.value)
+                })
+            }).catch((msm) => {
+                ipcRenderer.send('showAlert', "error", msm.toString())
+            }).then((id) => {
+                if (id > 0) {
+                    location.reload();
+                    ipcRenderer.send('showAlert', "success", "Ingreso exitoso")
+                }
+            }).catch((msm) => {
+                ipcRenderer.send('showAlert', "error", msm.toString())
+            })
+        } else {
+            ipcRenderer.send('showAlert', "warning", "Faltan campos por llenar!")
+        }
+    } else {
+        if (!isNaN(Number(document.getElementById("select_edicion_persona").value)) &&
+            input_form_credencial_usuario.value != "" &&
+            input_form_credencial_contrasena.value != "" &&
+            !isNaN(parseInt(select_form_usuario_activo.value))) {
+            insertCredencial({
+                id_persona: Number(document.getElementById("select_edicion_persona").value),
                 user: input_form_credencial_usuario.value,
                 password_user: input_form_credencial_contrasena.value,
                 estado: parseInt(select_form_usuario_activo.value)
+            }).then((id) => {
+                if (id > 0) {
+                    location.reload();
+                    ipcRenderer.send('showAlert', "success", "Ingreso exitoso")
+                }
+            }).catch((msm) => {
+                ipcRenderer.send('showAlert', "error", msm.toString())
             })
-        }).catch((msm) => {
-            ipcRenderer.send('showAlert', "error", msm.toString())
-        }).then((id) => {
-            if (id > 0) {
-                location.reload();
-                ipcRenderer.send('showAlert', "success", "Ingreso exitoso")
-            }
-        }).catch((msm) => {
-            ipcRenderer.send('showAlert', "error", msm.toString())
-        })
-    } else {
-        ipcRenderer.send('showAlert', "warning", "Faltan campos por llenar!")
+        } else {
+            ipcRenderer.send('showAlert', "warning", "Faltan campos por llenar!")
+        }
     }
 }
 
 function registrarProveedor() {
-    if (
-        input_form_usuario_cedula.value != "" &&
-        input_form_usuario_nombres.value != "" &&
-        input_form_usuario_apellidos.value != "" &&
-        !isNaN(parseInt(select_form_usuario_activo.value)) &&
-        !isNaN(parseInt(select_form_proveedor_activo.value))
-    ) {
-        insertPersona({
-            cedula: input_form_usuario_cedula.value,
-            nombres: input_form_usuario_nombres.value,
-            apellidos: input_form_usuario_apellidos.value,
-            activo: parseInt(select_form_usuario_activo.value),
-            fecha_nacimiento: input_form_usuario_fecha_nacimiento.value == "" ? null : input_form_usuario_fecha_nacimiento.value,
-            sexo: select_form_usuario_sexo.value == "" ? null : select_form_usuario_sexo.value,
-            estado_civil: select_form_usuario_estado_civil.value == "" ? null : select_form_usuario_estado_civil.value,
-            ciudadania: input_form_usuario_ciudadania.value == "" ? null : input_form_usuario_ciudadania.value,
-            instruccion: input_form_usuario_instruccion.value == "" ? null : input_form_usuario_instruccion.value,
-            lugar_expedicion: input_form_usuario_lugar_expedicion.value == "" ? null : input_form_usuario_lugar_expedicion.value,
-            fecha_expedicion: input_form_usuario_fecha_expedicion.value == "" ? null : input_form_usuario_fecha_expedicion.value,
-            fecha_expiracion: input_form_usuario_fecha_expiracion.value == "" ? null : input_form_usuario_fecha_expiracion.value
-        }).then((id_usuario) => {
-            return insertProveedor({
-                id_persona: id_usuario,
-                activo: parseInt(select_form_proveedor_activo.value)
+    if (form_edicion.classList.contains("d-none")) {
+        if (
+            input_form_usuario_cedula.value != "" &&
+            input_form_usuario_nombres.value != "" &&
+            input_form_usuario_apellidos.value != "" &&
+            !isNaN(parseInt(select_form_usuario_activo.value)) &&
+            !isNaN(parseInt(select_form_proveedor_activo.value))
+        ) {
+            insertPersona({
+                cedula: input_form_usuario_cedula.value,
+                nombres: input_form_usuario_nombres.value,
+                apellidos: input_form_usuario_apellidos.value,
+                activo: parseInt(select_form_usuario_activo.value),
+                fecha_nacimiento: input_form_usuario_fecha_nacimiento.value == "" ? null : input_form_usuario_fecha_nacimiento.value,
+                sexo: select_form_usuario_sexo.value == "" ? null : select_form_usuario_sexo.value,
+                estado_civil: select_form_usuario_estado_civil.value == "" ? null : select_form_usuario_estado_civil.value,
+                ciudadania: input_form_usuario_ciudadania.value == "" ? null : input_form_usuario_ciudadania.value,
+                instruccion: input_form_usuario_instruccion.value == "" ? null : input_form_usuario_instruccion.value,
+                lugar_expedicion: input_form_usuario_lugar_expedicion.value == "" ? null : input_form_usuario_lugar_expedicion.value,
+                fecha_expedicion: input_form_usuario_fecha_expedicion.value == "" ? null : input_form_usuario_fecha_expedicion.value,
+                fecha_expiracion: input_form_usuario_fecha_expiracion.value == "" ? null : input_form_usuario_fecha_expiracion.value
+            }).then((id_usuario) => {
+                return insertProveedor({
+                    id_persona: id_usuario,
+                    activo: parseInt(select_form_proveedor_activo.value)
+                })
+            }).catch((msm) => {
+                ipcRenderer.send('showAlert', "error", msm.toString())
+            }).then((id) => {
+                if (id > 0) {
+                    location.reload();
+                    ipcRenderer.send('showAlert', "success", "Ingreso exitoso")
+                }
+            }).catch((msm) => {
+                ipcRenderer.send('showAlert', "error", msm.toString())
             })
-        }).catch((msm) => {
-            ipcRenderer.send('showAlert', "error", msm.toString())
-        }).then((id) => {
-            if (id > 0) {
-                location.reload();
-                ipcRenderer.send('showAlert', "success", "Ingreso exitoso")
-            }
-        }).catch((msm) => {
-            ipcRenderer.send('showAlert', "error", msm.toString())
-        })
+        } else {
+            ipcRenderer.send('showAlert', "warning", "Faltan campos por llenar!")
+        }
     } else {
-        ipcRenderer.send('showAlert', "warning", "Faltan campos por llenar!")
+        if (!isNaN(Number(document.getElementById("select_edicion_persona").value)) && !isNaN(parseInt(select_form_proveedor_activo.value))) {
+            insertProveedor({
+                id_persona: Number(document.getElementById("select_edicion_persona").value),
+                activo: parseInt(select_form_proveedor_activo.value)
+            }).then((id) => {
+                if (id > 0) {
+                    location.reload();
+                    ipcRenderer.send('showAlert', "success", "Ingreso exitoso")
+                }
+            }).catch((msm) => {
+                ipcRenderer.send('showAlert', "error", msm.toString())
+            })
+        } else {
+            ipcRenderer.send('showAlert', "warning", "Faltan campos por llenar!")
+        }
     }
 }
 
 function registrarTransportista() {
-    if (
-        input_form_usuario_cedula.value != "" &&
-        input_form_usuario_nombres.value != "" &&
-        input_form_usuario_apellidos.value != "" &&
-        !isNaN(parseInt(select_form_usuario_activo.value)) &&
-        !isNaN(parseInt(select_form_transportista_activo.value))
-    ) {
-        insertPersona({
-            cedula: input_form_usuario_cedula.value,
-            nombres: input_form_usuario_nombres.value,
-            apellidos: input_form_usuario_apellidos.value,
-            activo: parseInt(select_form_usuario_activo.value),
-            fecha_nacimiento: input_form_usuario_fecha_nacimiento.value == "" ? null : input_form_usuario_fecha_nacimiento.value,
-            sexo: select_form_usuario_sexo.value == "" ? null : select_form_usuario_sexo.value,
-            estado_civil: select_form_usuario_estado_civil.value == "" ? null : select_form_usuario_estado_civil.value,
-            ciudadania: input_form_usuario_ciudadania.value == "" ? null : input_form_usuario_ciudadania.value,
-            instruccion: input_form_usuario_instruccion.value == "" ? null : input_form_usuario_instruccion.value,
-            lugar_expedicion: input_form_usuario_lugar_expedicion.value == "" ? null : input_form_usuario_lugar_expedicion.value,
-            fecha_expedicion: input_form_usuario_fecha_expedicion.value == "" ? null : input_form_usuario_fecha_expedicion.value,
-            fecha_expiracion: input_form_usuario_fecha_expiracion.value == "" ? null : input_form_usuario_fecha_expiracion.value
-        }).then((id_usuario) => {
-            return insertTransportista({
+    if (form_edicion.classList.contains("d-none")) {
+        if (
+            input_form_usuario_cedula.value != "" &&
+            input_form_usuario_nombres.value != "" &&
+            input_form_usuario_apellidos.value != "" &&
+            !isNaN(parseInt(select_form_usuario_activo.value)) &&
+            !isNaN(parseInt(select_form_transportista_activo.value))
+        ) {
+            insertPersona({
+                cedula: input_form_usuario_cedula.value,
+                nombres: input_form_usuario_nombres.value,
+                apellidos: input_form_usuario_apellidos.value,
+                activo: parseInt(select_form_usuario_activo.value),
+                fecha_nacimiento: input_form_usuario_fecha_nacimiento.value == "" ? null : input_form_usuario_fecha_nacimiento.value,
+                sexo: select_form_usuario_sexo.value == "" ? null : select_form_usuario_sexo.value,
+                estado_civil: select_form_usuario_estado_civil.value == "" ? null : select_form_usuario_estado_civil.value,
+                ciudadania: input_form_usuario_ciudadania.value == "" ? null : input_form_usuario_ciudadania.value,
+                instruccion: input_form_usuario_instruccion.value == "" ? null : input_form_usuario_instruccion.value,
+                lugar_expedicion: input_form_usuario_lugar_expedicion.value == "" ? null : input_form_usuario_lugar_expedicion.value,
+                fecha_expedicion: input_form_usuario_fecha_expedicion.value == "" ? null : input_form_usuario_fecha_expedicion.value,
+                fecha_expiracion: input_form_usuario_fecha_expiracion.value == "" ? null : input_form_usuario_fecha_expiracion.value
+            }).then((id_usuario) => {
+                return insertTransportista({
+                    vencimiento_licencia: input_form_transportista_fecha_vencimiento.value == "" ? null : input_form_transportista_fecha_vencimiento.value,
+                    activo: parseInt(select_form_transportista_activo.value),
+                    id_persona: id_usuario
+                })
+            }).catch((msm) => {
+                ipcRenderer.send('showAlert', "error", msm.toString())
+            }).then((id) => {
+                if (id > 0) {
+                    location.reload();
+                    ipcRenderer.send('showAlert', "success", "Ingreso exitoso")
+                }
+            }).catch((msm) => {
+                ipcRenderer.send('showAlert', "error", msm.toString())
+            })
+        } else {
+            ipcRenderer.send('showAlert', "warning", "Faltan campos por llenar!")
+        }
+    }else{
+        if(!isNaN(Number(document.getElementById("select_edicion_persona").value)) && !isNaN(parseInt(select_form_transportista_activo.value))){
+            insertTransportista({
                 vencimiento_licencia: input_form_transportista_fecha_vencimiento.value == "" ? null : input_form_transportista_fecha_vencimiento.value,
                 activo: parseInt(select_form_transportista_activo.value),
-                id_persona: id_usuario
+                id_persona: Number(document.getElementById("select_edicion_persona").value)
+            }).then((id) => {
+                if (id > 0) {
+                    location.reload();
+                    ipcRenderer.send('showAlert', "success", "Ingreso exitoso")
+                }
+            }).catch((msm) => {
+                ipcRenderer.send('showAlert', "error", msm.toString())
             })
-        }).catch((msm) => {
-            ipcRenderer.send('showAlert', "error", msm.toString())
-        }).then((id) => {
-            if (id > 0) {
-                location.reload();
-                ipcRenderer.send('showAlert', "success", "Ingreso exitoso")
-            }
-        }).catch((msm) => {
-            ipcRenderer.send('showAlert', "error", msm.toString())
-        })
-    } else {
-        ipcRenderer.send('showAlert', "warning", "Faltan campos por llenar!")
+        }else {
+            ipcRenderer.send('showAlert', "warning", "Faltan campos por llenar!")
+        } 
     }
 }
 
@@ -1114,146 +1175,146 @@ function actualizarVehiculo() {
     }
 }
 
-function actualizarFormaRecepcion(){
+function actualizarFormaRecepcion() {
     let id = document.getElementById("select_edicion_forma_recepcion").value
-    if(input_form_forma_recepcion_nombre.value != "" && !isNaN(Number(id))){
+    if (input_form_forma_recepcion_nombre.value != "" && !isNaN(Number(id))) {
         updateFormaRecepcion({
             nombre: input_form_forma_recepcion_nombre.value,
             id_forma_recepcion: id
         })
-        .then((filas_afectadas) => {
-            if (filas_afectadas > 0) {
-                hiddenForms()
-                htmlEditarFormaRecepcion()
-                form_edicion.classList.remove("d-none")
-                ipcRenderer.send('showAlert', "success", "Actualizacion exitosa")
-            }
-        }).catch((msm) => {
-            ipcRenderer.send('showAlert', "error", msm.toString())
-        })
+            .then((filas_afectadas) => {
+                if (filas_afectadas > 0) {
+                    hiddenForms()
+                    htmlEditarFormaRecepcion()
+                    form_edicion.classList.remove("d-none")
+                    ipcRenderer.send('showAlert', "success", "Actualizacion exitosa")
+                }
+            }).catch((msm) => {
+                ipcRenderer.send('showAlert', "error", msm.toString())
+            })
     }
 }
 
-function actualizarLinea(){
+function actualizarLinea() {
     let id = document.getElementById("select_edicion_linea").value
-    if(input_form_linea_nombre.value != "" && !isNaN(Number(id)) ){
+    if (input_form_linea_nombre.value != "" && !isNaN(Number(id))) {
         updateLinea({
             nombre: input_form_linea_nombre.value,
             id_linea: Number(id)
         })
-        .then((filas_afectadas) => {
-            if (filas_afectadas > 0) {
-                hiddenForms()
-                htmlEditarLinea()
-                form_edicion.classList.remove("d-none")
-                ipcRenderer.send('showAlert', "success", "Actualizacion exitosa")
-            }
-        }).catch((msm) => {
-            ipcRenderer.send('showAlert', "error", msm.toString())
-        })
+            .then((filas_afectadas) => {
+                if (filas_afectadas > 0) {
+                    hiddenForms()
+                    htmlEditarLinea()
+                    form_edicion.classList.remove("d-none")
+                    ipcRenderer.send('showAlert', "success", "Actualizacion exitosa")
+                }
+            }).catch((msm) => {
+                ipcRenderer.send('showAlert', "error", msm.toString())
+            })
     }
 }
 
-function actualizarMaterial(){
+function actualizarMaterial() {
     let id = document.getElementById("select_edicion_material").value
-    if(input_form_material_nombre.value != "" && !isNaN(Number(id)) && !isNaN(select_form_material_proceso.value)){
+    if (input_form_material_nombre.value != "" && !isNaN(Number(id)) && !isNaN(select_form_material_proceso.value)) {
         updateMaterial({
             nombre: input_form_material_nombre.value,
             id_proceso: Number(select_form_material_proceso.value),
             id_material: Number(id)
         })
-        .then((filas_afectadas) => {
-            if (filas_afectadas > 0) {
-                hiddenForms()
-                htmlEditarMaterial()
-                form_edicion.classList.remove("d-none")
-                ipcRenderer.send('showAlert', "success", "Actualizacion exitosa")
-            }
-        }).catch((msm) => {
-            ipcRenderer.send('showAlert', "error", msm.toString())
-        })
+            .then((filas_afectadas) => {
+                if (filas_afectadas > 0) {
+                    hiddenForms()
+                    htmlEditarMaterial()
+                    form_edicion.classList.remove("d-none")
+                    ipcRenderer.send('showAlert', "success", "Actualizacion exitosa")
+                }
+            }).catch((msm) => {
+                ipcRenderer.send('showAlert', "error", msm.toString())
+            })
     }
 }
 
-function actualizarProceso(){
+function actualizarProceso() {
     let id = document.getElementById("select_edicion_proceso").value
-    if(input_form_proceso_nombre.value != "" && !isNaN(Number(id)) && !isNaN(select_form_proceso_linea.value)){
+    if (input_form_proceso_nombre.value != "" && !isNaN(Number(id)) && !isNaN(select_form_proceso_linea.value)) {
         updateProceso({
             nombre: input_form_proceso_nombre.value,
             id_linea: Number(select_form_proceso_linea.value),
             id_proceso: Number(id)
         })
-        .then((filas_afectadas) => {
-            if (filas_afectadas > 0) {
-                hiddenForms()
-                htmlEditarProceso()
-                form_edicion.classList.remove("d-none")
-                ipcRenderer.send('showAlert', "success", "Actualizacion exitosa")
-            }
-        }).catch((msm) => {
-            ipcRenderer.send('showAlert', "error", msm.toString())
-        })
+            .then((filas_afectadas) => {
+                if (filas_afectadas > 0) {
+                    hiddenForms()
+                    htmlEditarProceso()
+                    form_edicion.classList.remove("d-none")
+                    ipcRenderer.send('showAlert', "success", "Actualizacion exitosa")
+                }
+            }).catch((msm) => {
+                ipcRenderer.send('showAlert', "error", msm.toString())
+            })
     }
 }
 
-function actualizarTipoMaterial(){
+function actualizarTipoMaterial() {
     let id = document.getElementById("select_edicion_tipo_material").value
-    if(input_form_tipo_material_nombre.value != "" && !isNaN(Number(id)) && !isNaN(select_form_tipo_material_material.value)){
+    if (input_form_tipo_material_nombre.value != "" && !isNaN(Number(id)) && !isNaN(select_form_tipo_material_material.value)) {
         updateTipoMaterial({
             nombre: input_form_tipo_material_nombre.value,
             id_material: Number(select_form_tipo_material_material.value),
             id_tipo_material: Number(id)
         })
-        .then((filas_afectadas) => {
-            if (filas_afectadas > 0) {
-                hiddenForms()
-                htmlEditarTipoMaterial()
-                form_edicion.classList.remove("d-none")
-                ipcRenderer.send('showAlert', "success", "Actualizacion exitosa")
-            }
-        }).catch((msm) => {
-            ipcRenderer.send('showAlert', "error", msm.toString())
-        })
+            .then((filas_afectadas) => {
+                if (filas_afectadas > 0) {
+                    hiddenForms()
+                    htmlEditarTipoMaterial()
+                    form_edicion.classList.remove("d-none")
+                    ipcRenderer.send('showAlert', "success", "Actualizacion exitosa")
+                }
+            }).catch((msm) => {
+                ipcRenderer.send('showAlert', "error", msm.toString())
+            })
     }
 }
 
-function actualizarTipoVehiculo(){
+function actualizarTipoVehiculo() {
     let id = document.getElementById("select_edicion_tipo_vehiculo").value
-    if(input_form_tipo_vehiculo_nombre.value != "" && !isNaN(Number(id))){
+    if (input_form_tipo_vehiculo_nombre.value != "" && !isNaN(Number(id))) {
         updateTipoVehiculo({
             nombre: input_form_tipo_vehiculo_nombre.value,
             id_tipo_vehiculo: Number(id)
         })
-        .then((filas_afectadas) => {
-            if (filas_afectadas > 0) {
-                hiddenForms()
-                htmlEditarTipoVehiculo()
-                form_edicion.classList.remove("d-none")
-                ipcRenderer.send('showAlert', "success", "Actualizacion exitosa")
-            }
-        }).catch((msm) => {
-            ipcRenderer.send('showAlert', "error", msm.toString())
-        })
+            .then((filas_afectadas) => {
+                if (filas_afectadas > 0) {
+                    hiddenForms()
+                    htmlEditarTipoVehiculo()
+                    form_edicion.classList.remove("d-none")
+                    ipcRenderer.send('showAlert', "success", "Actualizacion exitosa")
+                }
+            }).catch((msm) => {
+                ipcRenderer.send('showAlert', "error", msm.toString())
+            })
     }
 }
 
-function actualizarTipoContaminacion(){
+function actualizarTipoContaminacion() {
     let id = document.getElementById("select_edicion_tipo_contaminacion").value
-    if(input_form_tipo_contaminacion_nombre.value != "" && !isNaN(Number(id))){
+    if (input_form_tipo_contaminacion_nombre.value != "" && !isNaN(Number(id))) {
         updateTipoContaminacion({
             nombre: input_form_tipo_contaminacion_nombre.value,
             id_tipo_contaminacion: Number(id)
         })
-        .then((filas_afectadas) => {
-            if (filas_afectadas > 0) {
-                hiddenForms()
-                htmlEditarTipoContaminacion()
-                form_edicion.classList.remove("d-none")
-                ipcRenderer.send('showAlert', "success", "Actualizacion exitosa")
-            }
-        }).catch((msm) => {
-            ipcRenderer.send('showAlert', "error", msm.toString())
-        })
+            .then((filas_afectadas) => {
+                if (filas_afectadas > 0) {
+                    hiddenForms()
+                    htmlEditarTipoContaminacion()
+                    form_edicion.classList.remove("d-none")
+                    ipcRenderer.send('showAlert', "success", "Actualizacion exitosa")
+                }
+            }).catch((msm) => {
+                ipcRenderer.send('showAlert', "error", msm.toString())
+            })
     }
 }
 
@@ -1411,7 +1472,7 @@ function formEdicionMaterial() {
     if (!isNaN(parseInt(id))) {
         getMaterial(id)
             .then((array) => {
-                let { nombre, id_proceso} = array[0]
+                let { nombre, id_proceso } = array[0]
                 select_form_material_proceso.value = id_proceso
                 input_form_material_nombre.value = nombre == null ? "" : nombre
                 form_material.classList.remove("d-none")
@@ -1426,7 +1487,7 @@ function formEdicionTipoMaterial() {
     if (!isNaN(parseInt(id))) {
         getTipoMaterial(id)
             .then((array) => {
-                let { nombre, id_material} = array[0]
+                let { nombre, id_material } = array[0]
                 select_form_tipo_material_material.value = id_material
                 input_form_tipo_material_nombre.value = nombre == null ? "" : nombre
                 form_tipo_material.classList.remove("d-none")
@@ -2061,6 +2122,23 @@ function linkTipoVehiculo() {
     toggleAviso("hidden");
     hiddenForms();
     form_tipo_vehiculo.classList.remove("d-none");
+}
+
+function personaExistente() {
+    let html = ` <div class="col">
+    <label for="inputEmail4" class="form-label" id="label_select_edicion">Personas Registradas</label>
+    <select class="form-select" aria-label="Default select example" id="select_edicion_persona"> 
+    <option selected>Open this select menu</option>`;
+    getAllPersona().then((array_pesonas) => {
+        array_pesonas.map(({ id_persona, nombre }) => {
+            html += `<option value="${id_persona}">${nombre}</option>`
+        })
+        html += ` </select> </div>`
+        form_edicion.innerHTML = html;
+        form_persona.classList.add("d-none");
+        form_edicion.classList.remove("d-none")
+    })
+
 }
 
 function habilitarForm() {

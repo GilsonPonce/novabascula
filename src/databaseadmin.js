@@ -46,6 +46,16 @@ const getPersona = (id_persona) => {
 }
 
 const getAllPersona = () => {
+    $query = `select  per.id_persona, concat(per.apellidos," ",per.nombres) as nombre from persona per`
+    return new Promise((resolve,reject)=>{
+        connection.query($query, function (err, rows, fields) {
+            if (err) reject(err.message)
+            resolve(rows)
+        });
+    })
+}
+
+const getAllUsuario = () => {
     $query = `select  per.id_persona, concat(per.apellidos," ",per.nombres) as nombre from persona per inner join credencial cre on per.id_persona = cre.id_persona`
     return new Promise((resolve,reject)=>{
         connection.query($query, function (err, rows, fields) {
@@ -891,4 +901,5 @@ module.exports = {
     insertFormaRecepcion,
     updateFormaRecepcion,
     deleteFormaRecepcion,
+    getAllUsuario
  }
