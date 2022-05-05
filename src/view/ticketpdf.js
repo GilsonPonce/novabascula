@@ -55,10 +55,14 @@ function cargarData(id){
                 salidaconta.push(parseInt(conteoSalida))
                 contaminacion.push(parseInt(id_peso))
             }
-            let detalle = proceso == null ? "" : proceso + " " + material == null ? "" : material + " " + tipomaterial == null ? "" : tipomaterial
+
+            let procesod = proceso == null ? "" : proceso + " ";
+            let materiald = material == null ? "" : material + " ";
+            let tipomateriald = tipomaterial == null ? "" : tipomaterial;
+
             body_table.innerHTML += `<tr>
                     <th class="th">${tipo_peso == "SALIDA" ? "SALIDA " + conteoSalida : tipo_peso}</th>
-                    <td class="td">${detalle}</td>
+                    <td class="td">${procesod + materiald + tipomateriald}</td>
                     <td class="td">${peso == null ? 0 : peso}</td>
                     <td class="td">${peso_contaminacion == null ? 0 : peso_contaminacion}</td>
                     <td class="td">${porcentaje_contaminacion == null ? 0 : porcentaje_contaminacion}</td>

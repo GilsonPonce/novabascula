@@ -305,7 +305,7 @@ function registrarEntrada(
                 if (err2) alerta('error', err2.message);
                 if (result2 && result2.affectedRows > 0) {
                     alerta('success', 'Peso Entrada Registrado')
-                    window.reload()
+                    location.reload()
                 }
             });
         }
