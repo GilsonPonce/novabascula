@@ -15,7 +15,7 @@ function llenarTabla() {
         data.map(({ id_ticket, placa, fecha_ticket, proveedor, transportista }) => {
             html += `<tr ondblclick="enviarticket(${id_ticket})">
                       <th scope="row">${id_ticket}</th>
-                      <td>${fecha_ticket.getDate() + "/" + fecha_ticket.getMonth() + "/" + fecha_ticket.getFullYear() + " - " + fecha_ticket.getHours() + ":" + fecha_ticket.getMinutes() + ":" + fecha_ticket.getSeconds()}</td>
+                      <td>${fecha_ticket.getDate() + "/" + (fecha_ticket.getMonth() + 1 ) + "/" + fecha_ticket.getFullYear() + " - " + fecha_ticket.getHours() + ":" + fecha_ticket.getMinutes() + ":" + fecha_ticket.getSeconds()}</td>
                       <td>${placa}</td>
                       <td>${transportista}</td>
                       <td>${proveedor}</td>
@@ -32,7 +32,7 @@ function llenarTabla() {
 function enviarticket(id) {
     ipcRenderer.invoke('info', id);
     ipcRenderer.send('closeTicket');
-    ipcRenderer.send('showMain');
+    
 }
 
 function mostrarVentanaPesaje() {

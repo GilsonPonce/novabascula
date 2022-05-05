@@ -28,21 +28,22 @@ input_contrasena.addEventListener('keyup', function(e) {
   });
 
 function ingresar() {
-    let cedula = input_cedula.value;
-    let usuario = input_usuario.value;
-    let contrasena = input_contrasena.value;
-    if (cedula != '' && usuario != '' && contrasena != '') {
-        let objectCredenciales = {
-            cedula,
-            usuario,
-            contrasena
-        }
+    // let cedula = input_cedula.value;
+    // let usuario = input_usuario.value;
+    // let contrasena = input_contrasena.value;
+    // if (cedula != '' && usuario != '' && contrasena != '') {
+        // let objectCredenciales = {
+        //     cedula,
+        //     usuario,
+        //     contrasena
+        // }
+        let objectCredenciales = {}
         ipcRenderer.send('login', objectCredenciales);
         input_cedula.value = '';
         input_usuario.value = '';
         input_contrasena.value = '';
-    } else {
-        ipcRenderer.send('showAlert','Llene los campos requeridos');
-    }
+    // } else {
+    //     ipcRenderer.send('showAlert','Llene los campos requeridos');
+    // }
 
 }

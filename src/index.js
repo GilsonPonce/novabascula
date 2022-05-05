@@ -5,6 +5,7 @@ const { getConnection } = require('./database.js')
 const path = require('path');
 const url = require('url');
 const moment = require('moment');
+const { insertLogin } = require('./databaseadmin.js');
 
 let window;
 let windowtickets;
@@ -63,24 +64,27 @@ function alertaPregunta(id) {
 
 function login({ cedula, usuario, contrasena }) {
 
-    $query = 'SELECT cre.user, cre.password_user from persona per inner join credencial cre on per.id_persona = cre.id_persona where per.cedula = ' + getConnection().escape(cedula) + ' and cre.estado = 1 and per.activo = 1';
+    // $query = 'SELECT per.id_persona, cre.user, cre.password_user from persona per inner join credencial cre on per.id_persona = cre.id_persona where per.cedula = ' + getConnection().escape(cedula) + ' and cre.estado = 1 and per.activo = 1';
 
-    getConnection().query($query, function (err, rows, fields) {
-        if (err) {
-            console.log("An error ocurred performing the query.");
-            return;
-        }
+    // getConnection().query($query, function (err, rows, fields) {
+    //     if (err) {
+    //         console.log("An error ocurred performing the query.");
+    //         return;
+    //     }
 
-        if (rows.length == 0) {
-            alerta('warning', 'Usuario no existe');
-            return;
-        }
+    //     if (rows.length == 0) {
+    //         alerta('warning', 'Usuario no existe');
+    //         return;
+    //     }
 
-        let { user, password_user } = rows[0];
+    //     let { id_personal, user, password_user } = rows[0];
 
-        if (
-            user == usuario && password_user == contrasena
-        ) {
+    //     if (
+    //         user == usuario && password_user == contrasena
+    //     ) {
+    //         insertLogin({
+    //             id_persona: id_personal
+    //         })
             getLinea();
             getProceso();
             getMaterial();
@@ -94,11 +98,12 @@ function login({ cedula, usuario, contrasena }) {
             createWindow();
             window.show();
             windowlogin.close();
-        } else {
-            alerta('warning', 'Usuario i/o contraseña incorrectas');
-        }
 
-    });
+    //     } else {
+    //         alerta('warning', 'Usuario i/o contraseña incorrectas');
+    //     }
+
+    // });
 }
 
 function getLinea() {
@@ -305,7 +310,6 @@ function registrarEntrada(
                 if (err2) alerta('error', err2.message);
                 if (result2 && result2.affectedRows > 0) {
                     alerta('success', 'Peso Entrada Registrado')
-                    location.reload()
                 }
             });
         }
@@ -527,12 +531,15 @@ ipcMain.on('openAdmin', () => {
 
 ipcMain.on('closeTicket', () => { windowtickets.close() });
 ipcMain.on('hideMain', () => { window.minimize() });
-ipcMain.on('showMain', () => { window.show() });
+ipcMain.on('showMain', () => {
+    window.show()
+});
 ipcMain.on('showAlert', (event, ...data) => { alerta(data[0], data[1]) });
 ipcMain.on('showAlertPregunta', (event, data) => { alertaPregunta(data) });
 ipcMain.on('login', (event, data) => { login(data) });
 ipcMain.handle('info', (event, id) => {
     window.webContents.send('pasoinfo', id);
+    window.show()
 });
 
 ipcMain.on('listarLineas', (event, arg) => {

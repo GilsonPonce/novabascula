@@ -37,6 +37,7 @@ const select_forma_recepcion_salida = document.getElementById('select_forma_rece
 const input_peso_contaminacion = document.getElementById('input_peso_contaminacion');
 const lista_contaminacion = document.getElementById('lista_contaminacion');
 const textarea_observacion = document.getElementById("textarea_observacion");
+const boton_refrest = document.getElementById("boton_refrest");
 let procesos;
 let materiales;
 let tipo_materiales;
@@ -73,6 +74,18 @@ SerialPort.list()
             }
         })
     });
+
+boton_refrest.addEventListener('click',()=>{
+    ipcRenderer.send("listarLineas");
+    ipcRenderer.send("listarMateriales");
+    ipcRenderer.send("listarTipoMateriales");
+    ipcRenderer.send("listarProveedores");
+    ipcRenderer.send("listarTransportistas");
+    ipcRenderer.send("listarProcesos");
+    ipcRenderer.send("listarTipoContaminacion");
+    ipcRenderer.send("listarFormasRecepciones");
+    ipcRenderer.send("listarVehiculos");
+})
 
 function cambiarform(e) {
     if (select_tipo_peso.value == "SALIDA") {
@@ -369,7 +382,7 @@ function registrarSalida(objeto) {
         }).then((filas)=>{
             if (filas > 0){
                 ipcRenderer.send('showAlertPregunta', objeto.id_ticket)
-                location.reload();
+                //location.reload();
             }
         }).catch((msm)=>{
             ipcRenderer.send('showAlert', 'error', msm.toString());
