@@ -75,7 +75,7 @@ SerialPort.list()
         })
     });
 
-boton_refrest.addEventListener('click',()=>{
+boton_refrest.addEventListener('click', () => {
     ipcRenderer.send("listarLineas");
     ipcRenderer.send("listarMateriales");
     ipcRenderer.send("listarTipoMateriales");
@@ -160,6 +160,15 @@ function registrarPesoEntrada() {
         && !isNaN(infoTicket.id_proveedor)
         && pesoEntrada.forma_recepcion != ""
         && pesoEntrada.peso != "") {
+        ipcRenderer.send("listarLineas");
+        ipcRenderer.send("listarMateriales");
+        ipcRenderer.send("listarTipoMateriales");
+        ipcRenderer.send("listarProveedores");
+        ipcRenderer.send("listarTransportistas");
+        ipcRenderer.send("listarProcesos");
+        ipcRenderer.send("listarTipoContaminacion");
+        ipcRenderer.send("listarFormasRecepciones");
+        ipcRenderer.send("listarVehiculos");
         ipcRenderer.send('registrarPesoEntrada', infoTicket, pesoEntrada)
     } else {
         ipcRenderer.send('showAlert', 'warning', 'Datos incompletos');
@@ -178,13 +187,14 @@ function registrarPesoSalida() {
         peso_total: parseFloat(p_neto_ticket.innerHTML)
     }
     if (
-       !isNaN(Number(pesoSalida.id_ticket)) &&
+        !isNaN(Number(pesoSalida.id_ticket)) &&
         pesoSalida.tipo_peso != "" &&
-       !isNaN(Number(pesoSalida.id_tipo_material)) &&
+        !isNaN(Number(pesoSalida.id_tipo_material)) &&
         pesoSalida.forma_recepcion != "" &&
         !isNaN(Number(pesoSalida.peso)) &&
-         !isNaN(Number(pesoSalida.peso_total))
+        !isNaN(Number(pesoSalida.peso_total))
     ) {
+        calcularpeso();
         if (isNaN(pesoSalida.peso_contaminacion)) pesoSalida.peso_contaminacion = 0
         if (isNaN(pesoSalida.porcentaje_contaminacion)) pesoSalida.porcentaje_contaminacion = 0
         if (pesoSalida.peso_contaminacion > 0 && pesoSalida.porcentaje_contaminacion > 0 && contaminaciones.length == 0) {
@@ -194,6 +204,7 @@ function registrarPesoSalida() {
             ipcRenderer.send('showAlert', 'warning', 'Falta poner el porcentaje de contaminacion')
             input_porcentaje_contaminacion.focus();
         } else {
+            calcularpeso();
             registrarSalida(pesoSalida);
         }
     } else {
@@ -203,6 +214,7 @@ function registrarPesoSalida() {
 }
 
 function cargaProcesos() {
+    select_proceso.innerHTML = "";
     select_proceso.removeAttribute("disabled");
     let html = '<option value="0" selected>Open this select menu</option>';
     procesos.map(({ id_linea, nombre, id_proceso }) => {
@@ -212,6 +224,7 @@ function cargaProcesos() {
 }
 
 function cargaMateriales() {
+    select_material.innerHTML = "";
     select_material.removeAttribute("disabled");
     let html = '<option value="0" selected>Open this select menu</option>';
     materiales.map(({ id_proceso, nombre, id_material }) => {
@@ -221,6 +234,7 @@ function cargaMateriales() {
 }
 
 function cargarTipoMateriles() {
+    select_tipo_material.innerHTML = "";
     select_tipo_material.removeAttribute("disabled");
     let html = '<option value="0" selected>Open this select menu</option>';
     tipo_materiales.map(({ id_tipo_material, nombre, id_material }) => {
@@ -230,6 +244,7 @@ function cargarTipoMateriles() {
 }
 
 function cargarVehiculos() {
+    select_vehiculo.innerHTML = "";
     select_vehiculo.removeAttribute("disabled");
     let html = '<option value="0" selected>Open this select menu</option>';
     vehiculos.map(({ id_vehiculo, id_transportista, placa }) => {
@@ -239,6 +254,7 @@ function cargarVehiculos() {
 }
 
 ipcRenderer.on('lineas', (event, arg) => {
+    select_linea.innerHTML = "";
     let html = '<option value="0" selected>Open this select menu</option>';
     arg.map(({ id_linea, nombre }) => {
         html += `<option value="${id_linea}">${nombre}</option>`
@@ -259,6 +275,7 @@ ipcRenderer.on('tipoMateriales', (event, arg) => {
 });
 
 ipcRenderer.on('tipoContaminaciones', (event, arg) => {
+    select_contaminacion.innerHTML = "";
     let html = '';
     arg.map(({ id_tipo_contaminacion, nombre }) => {
         html += `<option value="${id_tipo_contaminacion}_${nombre}">${nombre}</option>`
@@ -266,6 +283,7 @@ ipcRenderer.on('tipoContaminaciones', (event, arg) => {
     select_contaminacion.innerHTML = html;
 });
 ipcRenderer.on('proveedores', (event, arg) => {
+    select_proveedor.innerHTML = "";
     let html = '<option value="0" selected>Open this select menu</option>';
     arg.map(({ id_proveedor, nombre }) => {
         html += `<option value="${id_proveedor}">${nombre}</option>`
@@ -274,6 +292,9 @@ ipcRenderer.on('proveedores', (event, arg) => {
 });
 
 ipcRenderer.on('transportistas', (event, arg) => {
+    select_vehiculo.innerHTML = "";
+    select_vehiculo.setAttribute("disabled","");
+    select_transportista.innerHTML = "";
     let html = '<option value="0" selected>Open this select menu</option>';
     arg.map(({ id_transportista, nombre }) => {
         html += `<option value="${id_transportista}">${nombre}</option>`
@@ -286,6 +307,8 @@ ipcRenderer.on('vehiculos', (event, arg) => {
 });
 
 ipcRenderer.on('formasRecepciones', (event, arg) => {
+    select_forma_recepcion_entrada.innerHTML = "";
+    select_forma_recepcion_salida.innerHTML = "";
     let cont = 0;
     let html = '<option value="">Open this select menu</option>';
     arg.map(({ id_forma_recepcion, nombre }) => {
@@ -379,12 +402,38 @@ function registrarSalida(objeto) {
                 if (err) reject(err.message)
                 resolve(result.affectedRows)
             });
-        }).then((filas)=>{
-            if (filas > 0){
+        }).then((filas) => {
+            if (filas > 0) {
+                p_numero_ticket.innerHTML = "";
+                p_placa_ticket.innerHTML = "";
+                p_transportista_ticket.innerHTML = "";
+                p_proveedor_ticket.innerHTML = "";
+                p_entrada_ticket.innerHTML = "";
+                p_neto_ticket.innerHTML = "";
+                input_peso_contaminacion.value = "";
+                input_porcentaje_contaminacion.value = "";
+                textarea_observacion.value = "";
+                select_proceso.innerHTML = "";
+                select_material.innerHTML = "";
+                select_tipo_material.innerHTML = "";
+                select_proceso.setAttribute("disabled","")
+                select_material.setAttribute("disabled","")
+                select_tipo_material.setAttribute("disabled","")
+                idContaminaciones = []
+                contaminaciones = []
+                ipcRenderer.send("listarLineas");
+                ipcRenderer.send("listarMateriales");
+                ipcRenderer.send("listarTipoMateriales");
+                ipcRenderer.send("listarProveedores");
+                ipcRenderer.send("listarTransportistas");
+                ipcRenderer.send("listarProcesos");
+                ipcRenderer.send("listarTipoContaminacion");
+                ipcRenderer.send("listarFormasRecepciones");
+                ipcRenderer.send("listarVehiculos");
                 ipcRenderer.send('showAlertPregunta', objeto.id_ticket)
                 //location.reload();
             }
-        }).catch((msm)=>{
+        }).catch((msm) => {
             ipcRenderer.send('showAlert', 'error', msm.toString());
         })
     })
