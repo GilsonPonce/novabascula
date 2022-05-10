@@ -722,33 +722,42 @@ function registrarProveedor() {
             !isNaN(parseInt(select_form_usuario_activo.value)) &&
             !isNaN(parseInt(select_form_proveedor_activo.value))
         ) {
-            insertPersona({
-                cedula: input_form_usuario_cedula.value,
-                nombres: input_form_usuario_nombres.value,
-                apellidos: input_form_usuario_apellidos.value,
-                activo: parseInt(select_form_usuario_activo.value),
-                fecha_nacimiento: input_form_usuario_fecha_nacimiento.value == "" ? null : input_form_usuario_fecha_nacimiento.value,
-                sexo: select_form_usuario_sexo.value == "" ? null : select_form_usuario_sexo.value,
-                estado_civil: select_form_usuario_estado_civil.value == "" ? null : select_form_usuario_estado_civil.value,
-                ciudadania: input_form_usuario_ciudadania.value == "" ? null : input_form_usuario_ciudadania.value,
-                instruccion: input_form_usuario_instruccion.value == "" ? null : input_form_usuario_instruccion.value,
-                lugar_expedicion: input_form_usuario_lugar_expedicion.value == "" ? null : input_form_usuario_lugar_expedicion.value,
-                fecha_expedicion: input_form_usuario_fecha_expedicion.value == "" ? null : input_form_usuario_fecha_expedicion.value,
-                fecha_expiracion: input_form_usuario_fecha_expiracion.value == "" ? null : input_form_usuario_fecha_expiracion.value
-            }).then((id_usuario) => {
+            getAllPersona()
+            .then((array_personas)=>{
+                let nombrereg = input_form_usuario_apellidos.value + " " + input_form_usuario_nombres.value;
+                array_personas.map(({nombre})=>{
+                    if(nombrereg == nombre){
+                        throw new Error('Usuario ya registrado')
+                    }
+                })
+                return insertPersona({
+                    cedula: input_form_usuario_cedula.value,
+                    nombres: input_form_usuario_nombres.value,
+                    apellidos: input_form_usuario_apellidos.value,
+                    activo: parseInt(select_form_usuario_activo.value),
+                    fecha_nacimiento: input_form_usuario_fecha_nacimiento.value == "" ? null : input_form_usuario_fecha_nacimiento.value,
+                    sexo: select_form_usuario_sexo.value == "" ? null : select_form_usuario_sexo.value,
+                    estado_civil: select_form_usuario_estado_civil.value == "" ? null : select_form_usuario_estado_civil.value,
+                    ciudadania: input_form_usuario_ciudadania.value == "" ? null : input_form_usuario_ciudadania.value,
+                    instruccion: input_form_usuario_instruccion.value == "" ? null : input_form_usuario_instruccion.value,
+                    lugar_expedicion: input_form_usuario_lugar_expedicion.value == "" ? null : input_form_usuario_lugar_expedicion.value,
+                    fecha_expedicion: input_form_usuario_fecha_expedicion.value == "" ? null : input_form_usuario_fecha_expedicion.value,
+                    fecha_expiracion: input_form_usuario_fecha_expiracion.value == "" ? null : input_form_usuario_fecha_expiracion.value
+                })
+            })
+            .catch((mensaje)=>{
+                ipcRenderer.send('showAlert', "warning", mensaje.message) 
+            })
+            .then((id_usuario) => {
                 return insertProveedor({
                     id_persona: id_usuario,
                     activo: parseInt(select_form_proveedor_activo.value)
                 })
-            }).catch((msm) => {
-                ipcRenderer.send('showAlert', "error", msm.toString())
             }).then((id) => {
                 if (id > 0) {
                     location.reload();
                     ipcRenderer.send('showAlert', "success", "Ingreso exitoso")
                 }
-            }).catch((msm) => {
-                ipcRenderer.send('showAlert', "error", msm.toString())
             })
         } else {
             ipcRenderer.send('showAlert', "warning", "Faltan campos por llenar!")

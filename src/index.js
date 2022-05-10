@@ -57,7 +57,16 @@ function alertaPregunta(id) {
             windowticketprint.webContents.send('pasoId', id);
             //infoImpresion(id)
         } else if (result.dismiss === Alert.DismissReason.cancel) {
-            window.reload();
+            getLinea();
+            getProceso();
+            getMaterial();
+            getTipoMaterial();
+            getTipoContaminacion();
+            getProveedor();
+            getTransportista();
+            getVehiculo();
+            getTicketSinProcesar();
+            getFormasRecepcion();
         }
     })
 }

@@ -47,6 +47,7 @@ let idContaminaciones = [];
 let contaminaciones = [];
 
 
+
 //LISTAR PUERTOS
 SerialPort.list()
     .then((ports) => {
@@ -86,6 +87,44 @@ boton_refrest.addEventListener('click', () => {
     ipcRenderer.send("listarFormasRecepciones");
     ipcRenderer.send("listarVehiculos");
 })
+
+select_linea.addEventListener('change',()=>{
+    if(select_linea.value == "1"){
+        textarea_observacion.value = "DESCUENTO POR CONFIRMAR"
+    }else{
+        textarea_observacion.value = ""
+    }
+})
+
+function limpiar(){
+    p_numero_ticket.innerHTML = "";
+    p_placa_ticket.innerHTML = "";
+    p_transportista_ticket.innerHTML = "";
+    p_proveedor_ticket.innerHTML = "";
+    p_entrada_ticket.innerHTML = "";
+    p_neto_ticket.innerHTML = "";
+    input_peso_contaminacion.value = "";
+    input_porcentaje_contaminacion.value = "";
+    textarea_observacion.value = "";
+    select_proceso.innerHTML = "";
+    select_material.innerHTML = "";
+    select_tipo_material.innerHTML = "";
+    select_proceso.setAttribute("disabled","")
+    select_material.setAttribute("disabled","")
+    select_tipo_material.setAttribute("disabled","")
+    idContaminaciones = []
+    contaminaciones = []
+    ipcRenderer.send("listarLineas");
+    ipcRenderer.send("listarMateriales");
+    ipcRenderer.send("listarTipoMateriales");
+    ipcRenderer.send("listarProveedores");
+    ipcRenderer.send("listarTransportistas");
+    ipcRenderer.send("listarProcesos");
+    ipcRenderer.send("listarTipoContaminacion");
+    ipcRenderer.send("listarFormasRecepciones");
+    ipcRenderer.send("listarVehiculos");
+    listarContaminaciones();
+}
 
 function cambiarform(e) {
     if (select_tipo_peso.value == "SALIDA") {
@@ -160,15 +199,7 @@ function registrarPesoEntrada() {
         && !isNaN(infoTicket.id_proveedor)
         && pesoEntrada.forma_recepcion != ""
         && pesoEntrada.peso != "") {
-        ipcRenderer.send("listarLineas");
-        ipcRenderer.send("listarMateriales");
-        ipcRenderer.send("listarTipoMateriales");
-        ipcRenderer.send("listarProveedores");
-        ipcRenderer.send("listarTransportistas");
-        ipcRenderer.send("listarProcesos");
-        ipcRenderer.send("listarTipoContaminacion");
-        ipcRenderer.send("listarFormasRecepciones");
-        ipcRenderer.send("listarVehiculos");
+        limpiar();
         ipcRenderer.send('registrarPesoEntrada', infoTicket, pesoEntrada)
     } else {
         ipcRenderer.send('showAlert', 'warning', 'Datos incompletos');
@@ -184,7 +215,7 @@ function registrarPesoSalida() {
         peso: parseInt(input_peso.value),
         peso_contaminacion: parseFloat(input_peso_contaminacion.value),
         porcentaje_contaminacion: parseFloat(input_porcentaje_contaminacion.value),
-        peso_total: parseFloat(p_neto_ticket.innerHTML)
+        peso_total: parseInt(p_entrada_ticket.innerHTML) - parseInt(input_peso.value)
     }
     if (
         !isNaN(Number(pesoSalida.id_ticket)) &&
@@ -404,32 +435,7 @@ function registrarSalida(objeto) {
             });
         }).then((filas) => {
             if (filas > 0) {
-                p_numero_ticket.innerHTML = "";
-                p_placa_ticket.innerHTML = "";
-                p_transportista_ticket.innerHTML = "";
-                p_proveedor_ticket.innerHTML = "";
-                p_entrada_ticket.innerHTML = "";
-                p_neto_ticket.innerHTML = "";
-                input_peso_contaminacion.value = "";
-                input_porcentaje_contaminacion.value = "";
-                textarea_observacion.value = "";
-                select_proceso.innerHTML = "";
-                select_material.innerHTML = "";
-                select_tipo_material.innerHTML = "";
-                select_proceso.setAttribute("disabled","")
-                select_material.setAttribute("disabled","")
-                select_tipo_material.setAttribute("disabled","")
-                idContaminaciones = []
-                contaminaciones = []
-                ipcRenderer.send("listarLineas");
-                ipcRenderer.send("listarMateriales");
-                ipcRenderer.send("listarTipoMateriales");
-                ipcRenderer.send("listarProveedores");
-                ipcRenderer.send("listarTransportistas");
-                ipcRenderer.send("listarProcesos");
-                ipcRenderer.send("listarTipoContaminacion");
-                ipcRenderer.send("listarFormasRecepciones");
-                ipcRenderer.send("listarVehiculos");
+               limpiar();
                 ipcRenderer.send('showAlertPregunta', objeto.id_ticket)
                 //location.reload();
             }
