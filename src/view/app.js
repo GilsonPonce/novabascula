@@ -63,18 +63,18 @@ SerialPort.list()
                         return console.log('Error: ', err.message, ' Esta siendo usado por otro proceso')
                     }
                 })
-                const parser = port1.pipe(new RegexParser({ regex: /[\r\n]+/ }))
+                const parser = port1.pipe(new RegexParser({ regex: /[\r\n]+/ }))//
                 parser.on('data', (data) => {
                     let valor = data.substring(5, 11)//seis digitos 000000
                     valor = Number(valor)//elimina ceros a la derecha
                     input_peso.value = valor
-                    calcularpeso();
                 })
             } else {
                 console.log(`PUERTO ${path} NO CUMPLE CON ESPECIFICACIONES`)
             }
         })
     });
+
 
 boton_refrest.addEventListener('click', () => {
     ipcRenderer.send("listarLineas");
@@ -89,6 +89,8 @@ boton_refrest.addEventListener('click', () => {
 })
 
 select_linea.addEventListener('change',()=>{
+    select_material.setAttribute('disabled','')
+    select_tipo_material.setAttribute('disabled','')
     if(select_linea.value == "1"){
         textarea_observacion.value = "DESCUENTO POR CONFIRMAR"
     }else{
@@ -96,7 +98,16 @@ select_linea.addEventListener('change',()=>{
     }
 })
 
+select_proceso.addEventListener('change',()=>{
+    select_tipo_material.setAttribute('disabled','')
+})
+
+input_peso.addEventListener('change',()=>{
+    calcularpeso();
+})
+
 function limpiar(){
+    pesoNeto = 0;
     p_numero_ticket.innerHTML = "";
     p_placa_ticket.innerHTML = "";
     p_transportista_ticket.innerHTML = "";
@@ -157,7 +168,7 @@ function mostrarticket(e) {
 }
 
 function calcularpeso() {
-    input_peso_contaminacion.value = Math.abs((Number(parseInt(pesoNeto == "" ? 0 : pesoNeto)) * Number(parseInt(input_porcentaje_contaminacion.value == "" ? 0 : input_porcentaje_contaminacion.value))) / 100)
+    input_peso_contaminacion.value = Math.abs((Number(parseFloat(pesoNeto == "" ? 0 : pesoNeto)) * Number(parseFloat(input_porcentaje_contaminacion.value == "" ? 0 : input_porcentaje_contaminacion.value))) / 100)
     p_neto_ticket.innerHTML = Math.abs(parseFloat(pesoNeto == "" ? 0 : pesoNeto) - parseFloat(isNaN(input_peso_contaminacion.value) ? 0 : input_peso_contaminacion.value))
 }
 
@@ -207,15 +218,26 @@ function registrarPesoEntrada() {
 }
 
 function registrarPesoSalida() {
+    let peso_pagar = 0
+    let peso_pagar_sindes = Math.abs(parseFloat(p_entrada_ticket.innerHTML) - parseFloat(input_peso.value))
+    let peso_des = 0
+
+    if(!isNaN(parseInt(input_peso_contaminacion.value)) && !isNaN(parseInt(input_porcentaje_contaminacion.value)) && parseInt(input_peso_contaminacion.value) != 0){
+        peso_des = (peso_pagar_sindes * parseFloat(input_porcentaje_contaminacion.value))/100
+        peso_pagar = Math.abs((parseFloat(peso_pagar_sindes) - parseFloat(peso_des)))
+    }else{
+        peso_pagar = peso_pagar_sindes
+    }
+
     const pesoSalida = {
         id_ticket: parseInt(p_numero_ticket.innerHTML),
         tipo_peso: select_tipo_peso.value,
         id_tipo_material: parseInt(select_tipo_material.value),
         forma_recepcion: select_forma_recepcion_salida.value,
-        peso: parseInt(input_peso.value),
+        peso: parseFloat(input_peso.value),
         peso_contaminacion: parseFloat(input_peso_contaminacion.value),
         porcentaje_contaminacion: parseFloat(input_porcentaje_contaminacion.value),
-        peso_total: parseInt(p_entrada_ticket.innerHTML) - parseInt(input_peso.value)
+        peso_total: peso_pagar
     }
     if (
         !isNaN(Number(pesoSalida.id_ticket)) &&

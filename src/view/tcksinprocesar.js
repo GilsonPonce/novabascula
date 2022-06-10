@@ -15,7 +15,7 @@ function llenarTabla() {
         data.map(({ id_ticket, placa, fecha_ticket, proveedor, transportista }) => {
             html += `<tr ondblclick="enviarticket(${id_ticket})">
                       <th scope="row">${id_ticket}</th>
-                      <td>${("0"+fecha_ticket.getDate()).slice(-2) + "/" + ("0"+(fecha_ticket.getMonth() + 1 )).slice(-2) + "/" + fecha_ticket.getFullYear() + " - " + ("0"+fecha_ticket.getHours()).slice(-2) + ":" + ("0"+fecha_ticket.getMinutes()).slice(-2) + ":" + ("0"+fecha_ticket.getSeconds()).slice(-2)}</td>
+                      <td>${("0"+fecha_ticket.getDate()).slice(-2) + "/" + ("0"+(fecha_ticket.getMonth() + 1 )).slice(-2) + "/" + fecha_ticket.getFullYear() + " - " + ("0"+(fecha_ticket.getHours()-2)).slice(-2) + ":" + ("0"+fecha_ticket.getMinutes()).slice(-2) + ":" + ("0"+fecha_ticket.getSeconds()).slice(-2)}</td>
                       <td>${placa}</td>
                       <td>${transportista}</td>
                       <td>${proveedor}</td>

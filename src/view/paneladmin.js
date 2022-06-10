@@ -656,36 +656,44 @@ function registrarUsuario() {
             input_form_credencial_contrasena.value != "" &&
             input_form_credencial_usuario.value != ""
         ) {
-            insertPersona({
-                cedula: input_form_usuario_cedula.value,
-                nombres: input_form_usuario_nombres.value,
-                apellidos: input_form_usuario_apellidos.value,
-                activo: parseInt(select_form_usuario_activo.value),
-                fecha_nacimiento: input_form_usuario_fecha_nacimiento.value == "" ? null : input_form_usuario_fecha_nacimiento.value,
-                sexo: select_form_usuario_sexo.value == "" ? null : select_form_usuario_sexo.value,
-                estado_civil: select_form_usuario_estado_civil.value == "" ? null : select_form_usuario_estado_civil.value,
-                ciudadania: input_form_usuario_ciudadania.value == "" ? null : input_form_usuario_ciudadania.value,
-                instruccion: input_form_usuario_instruccion.value == "" ? null : input_form_usuario_instruccion.value,
-                lugar_expedicion: input_form_usuario_lugar_expedicion.value == "" ? null : input_form_usuario_lugar_expedicion.value,
-                fecha_expedicion: input_form_usuario_fecha_expedicion.value == "" ? null : input_form_usuario_fecha_expedicion.value,
-                fecha_expiracion: input_form_usuario_fecha_expiracion.value == "" ? null : input_form_usuario_fecha_expiracion.value
-            }).then((id_usuario) => {
-                return insertCredencial({
-                    id_persona: id_usuario,
-                    user: input_form_credencial_usuario.value,
-                    password_user: input_form_credencial_contrasena.value,
-                    estado: parseInt(select_form_usuario_activo.value)
+            getAllPersona()
+                .then((array_personas) => {
+                    let nombrereg = input_form_usuario_apellidos.value + " " + input_form_usuario_nombres.value;
+                    array_personas.map(({ nombre }) => {
+                        if (nombrereg == nombre) {
+                            throw new Error('Usuario ya registrado')
+                        }
+                    })
+
+                    return insertPersona({
+                        cedula: input_form_usuario_cedula.value,
+                        nombres: input_form_usuario_nombres.value,
+                        apellidos: input_form_usuario_apellidos.value,
+                        activo: parseInt(select_form_usuario_activo.value),
+                        fecha_nacimiento: input_form_usuario_fecha_nacimiento.value == "" ? null : input_form_usuario_fecha_nacimiento.value,
+                        sexo: select_form_usuario_sexo.value == "" ? null : select_form_usuario_sexo.value,
+                        estado_civil: select_form_usuario_estado_civil.value == "" ? null : select_form_usuario_estado_civil.value,
+                        ciudadania: input_form_usuario_ciudadania.value == "" ? null : input_form_usuario_ciudadania.value,
+                        instruccion: input_form_usuario_instruccion.value == "" ? null : input_form_usuario_instruccion.value,
+                        lugar_expedicion: input_form_usuario_lugar_expedicion.value == "" ? null : input_form_usuario_lugar_expedicion.value,
+                        fecha_expedicion: input_form_usuario_fecha_expedicion.value == "" ? null : input_form_usuario_fecha_expedicion.value,
+                        fecha_expiracion: input_form_usuario_fecha_expiracion.value == "" ? null : input_form_usuario_fecha_expiracion.value
+                    })
+                }).catch((msm) => {
+                    ipcRenderer.send('showAlert', "warning", msm.toString())
+                }).then((id_usuario) => {
+                    return insertCredencial({
+                        id_persona: id_usuario,
+                        user: input_form_credencial_usuario.value,
+                        password_user: input_form_credencial_contrasena.value,
+                        estado: parseInt(select_form_usuario_activo.value)
+                    })
+                }).then((id) => {
+                    if (id > 0) {
+                        location.reload();
+                        ipcRenderer.send('showAlert', "success", "Ingreso exitoso")
+                    }
                 })
-            }).catch((msm) => {
-                ipcRenderer.send('showAlert', "error", msm.toString())
-            }).then((id) => {
-                if (id > 0) {
-                    location.reload();
-                    ipcRenderer.send('showAlert', "success", "Ingreso exitoso")
-                }
-            }).catch((msm) => {
-                ipcRenderer.send('showAlert', "error", msm.toString())
-            })
         } else {
             ipcRenderer.send('showAlert', "warning", "Faltan campos por llenar!")
         }
@@ -723,42 +731,42 @@ function registrarProveedor() {
             !isNaN(parseInt(select_form_proveedor_activo.value))
         ) {
             getAllPersona()
-            .then((array_personas)=>{
-                let nombrereg = input_form_usuario_apellidos.value + " " + input_form_usuario_nombres.value;
-                array_personas.map(({nombre})=>{
-                    if(nombrereg == nombre){
-                        throw new Error('Usuario ya registrado')
+                .then((array_personas) => {
+                    let nombrereg = input_form_usuario_apellidos.value + " " + input_form_usuario_nombres.value;
+                    array_personas.map(({ nombre }) => {
+                        if (nombrereg == nombre) {
+                            throw new Error('Usuario ya registrado')
+                        }
+                    })
+                    return insertPersona({
+                        cedula: input_form_usuario_cedula.value,
+                        nombres: input_form_usuario_nombres.value,
+                        apellidos: input_form_usuario_apellidos.value,
+                        activo: parseInt(select_form_usuario_activo.value),
+                        fecha_nacimiento: input_form_usuario_fecha_nacimiento.value == "" ? null : input_form_usuario_fecha_nacimiento.value,
+                        sexo: select_form_usuario_sexo.value == "" ? null : select_form_usuario_sexo.value,
+                        estado_civil: select_form_usuario_estado_civil.value == "" ? null : select_form_usuario_estado_civil.value,
+                        ciudadania: input_form_usuario_ciudadania.value == "" ? null : input_form_usuario_ciudadania.value,
+                        instruccion: input_form_usuario_instruccion.value == "" ? null : input_form_usuario_instruccion.value,
+                        lugar_expedicion: input_form_usuario_lugar_expedicion.value == "" ? null : input_form_usuario_lugar_expedicion.value,
+                        fecha_expedicion: input_form_usuario_fecha_expedicion.value == "" ? null : input_form_usuario_fecha_expedicion.value,
+                        fecha_expiracion: input_form_usuario_fecha_expiracion.value == "" ? null : input_form_usuario_fecha_expiracion.value
+                    })
+                })
+                .catch((mensaje) => {
+                    ipcRenderer.send('showAlert', "warning", mensaje.message)
+                })
+                .then((id_usuario) => {
+                    return insertProveedor({
+                        id_persona: id_usuario,
+                        activo: parseInt(select_form_proveedor_activo.value)
+                    })
+                }).then((id) => {
+                    if (id > 0) {
+                        location.reload();
+                        ipcRenderer.send('showAlert', "success", "Ingreso exitoso")
                     }
                 })
-                return insertPersona({
-                    cedula: input_form_usuario_cedula.value,
-                    nombres: input_form_usuario_nombres.value,
-                    apellidos: input_form_usuario_apellidos.value,
-                    activo: parseInt(select_form_usuario_activo.value),
-                    fecha_nacimiento: input_form_usuario_fecha_nacimiento.value == "" ? null : input_form_usuario_fecha_nacimiento.value,
-                    sexo: select_form_usuario_sexo.value == "" ? null : select_form_usuario_sexo.value,
-                    estado_civil: select_form_usuario_estado_civil.value == "" ? null : select_form_usuario_estado_civil.value,
-                    ciudadania: input_form_usuario_ciudadania.value == "" ? null : input_form_usuario_ciudadania.value,
-                    instruccion: input_form_usuario_instruccion.value == "" ? null : input_form_usuario_instruccion.value,
-                    lugar_expedicion: input_form_usuario_lugar_expedicion.value == "" ? null : input_form_usuario_lugar_expedicion.value,
-                    fecha_expedicion: input_form_usuario_fecha_expedicion.value == "" ? null : input_form_usuario_fecha_expedicion.value,
-                    fecha_expiracion: input_form_usuario_fecha_expiracion.value == "" ? null : input_form_usuario_fecha_expiracion.value
-                })
-            })
-            .catch((mensaje)=>{
-                ipcRenderer.send('showAlert', "warning", mensaje.message) 
-            })
-            .then((id_usuario) => {
-                return insertProveedor({
-                    id_persona: id_usuario,
-                    activo: parseInt(select_form_proveedor_activo.value)
-                })
-            }).then((id) => {
-                if (id > 0) {
-                    location.reload();
-                    ipcRenderer.send('showAlert', "success", "Ingreso exitoso")
-                }
-            })
         } else {
             ipcRenderer.send('showAlert', "warning", "Faltan campos por llenar!")
         }
@@ -790,40 +798,47 @@ function registrarTransportista() {
             !isNaN(parseInt(select_form_usuario_activo.value)) &&
             !isNaN(parseInt(select_form_transportista_activo.value))
         ) {
-            insertPersona({
-                cedula: input_form_usuario_cedula.value,
-                nombres: input_form_usuario_nombres.value,
-                apellidos: input_form_usuario_apellidos.value,
-                activo: parseInt(select_form_usuario_activo.value),
-                fecha_nacimiento: input_form_usuario_fecha_nacimiento.value == "" ? null : input_form_usuario_fecha_nacimiento.value,
-                sexo: select_form_usuario_sexo.value == "" ? null : select_form_usuario_sexo.value,
-                estado_civil: select_form_usuario_estado_civil.value == "" ? null : select_form_usuario_estado_civil.value,
-                ciudadania: input_form_usuario_ciudadania.value == "" ? null : input_form_usuario_ciudadania.value,
-                instruccion: input_form_usuario_instruccion.value == "" ? null : input_form_usuario_instruccion.value,
-                lugar_expedicion: input_form_usuario_lugar_expedicion.value == "" ? null : input_form_usuario_lugar_expedicion.value,
-                fecha_expedicion: input_form_usuario_fecha_expedicion.value == "" ? null : input_form_usuario_fecha_expedicion.value,
-                fecha_expiracion: input_form_usuario_fecha_expiracion.value == "" ? null : input_form_usuario_fecha_expiracion.value
-            }).then((id_usuario) => {
-                return insertTransportista({
-                    vencimiento_licencia: input_form_transportista_fecha_vencimiento.value == "" ? null : input_form_transportista_fecha_vencimiento.value,
-                    activo: parseInt(select_form_transportista_activo.value),
-                    id_persona: id_usuario
+            getAllPersona()
+                .then((array_personas) => {
+                    let nombrereg = input_form_usuario_apellidos.value + " " + input_form_usuario_nombres.value;
+                    array_personas.map(({ nombre }) => {
+                        if (nombrereg == nombre) {
+                            throw new Error('Usuario ya registrado')
+                        }
+                    })
+                    return insertPersona({
+                        cedula: input_form_usuario_cedula.value,
+                        nombres: input_form_usuario_nombres.value,
+                        apellidos: input_form_usuario_apellidos.value,
+                        activo: parseInt(select_form_usuario_activo.value),
+                        fecha_nacimiento: input_form_usuario_fecha_nacimiento.value == "" ? null : input_form_usuario_fecha_nacimiento.value,
+                        sexo: select_form_usuario_sexo.value == "" ? null : select_form_usuario_sexo.value,
+                        estado_civil: select_form_usuario_estado_civil.value == "" ? null : select_form_usuario_estado_civil.value,
+                        ciudadania: input_form_usuario_ciudadania.value == "" ? null : input_form_usuario_ciudadania.value,
+                        instruccion: input_form_usuario_instruccion.value == "" ? null : input_form_usuario_instruccion.value,
+                        lugar_expedicion: input_form_usuario_lugar_expedicion.value == "" ? null : input_form_usuario_lugar_expedicion.value,
+                        fecha_expedicion: input_form_usuario_fecha_expedicion.value == "" ? null : input_form_usuario_fecha_expedicion.value,
+                        fecha_expiracion: input_form_usuario_fecha_expiracion.value == "" ? null : input_form_usuario_fecha_expiracion.value
+                    })
+                }).catch((msm) => {
+                    ipcRenderer.send('showAlert', "warning", msm.toString())
+                }).then((id_usuario) => {
+                    return insertTransportista({
+                        vencimiento_licencia: input_form_transportista_fecha_vencimiento.value == "" ? null : input_form_transportista_fecha_vencimiento.value,
+                        activo: parseInt(select_form_transportista_activo.value),
+                        id_persona: id_usuario
+                    })
+                }).then((id) => {
+                    if (id > 0) {
+                        location.reload();
+                        ipcRenderer.send('showAlert', "success", "Ingreso exitoso")
+                    }
                 })
-            }).catch((msm) => {
-                ipcRenderer.send('showAlert', "error", msm.toString())
-            }).then((id) => {
-                if (id > 0) {
-                    location.reload();
-                    ipcRenderer.send('showAlert', "success", "Ingreso exitoso")
-                }
-            }).catch((msm) => {
-                ipcRenderer.send('showAlert', "error", msm.toString())
-            })
         } else {
             ipcRenderer.send('showAlert', "warning", "Faltan campos por llenar!")
         }
-    }else{
-        if(!isNaN(Number(document.getElementById("select_edicion_persona").value)) && !isNaN(parseInt(select_form_transportista_activo.value))){
+    } else {
+        if (!isNaN(Number(document.getElementById("select_edicion_persona").value)) && !isNaN(parseInt(select_form_transportista_activo.value))) {
             insertTransportista({
                 vencimiento_licencia: input_form_transportista_fecha_vencimiento.value == "" ? null : input_form_transportista_fecha_vencimiento.value,
                 activo: parseInt(select_form_transportista_activo.value),
@@ -836,9 +851,9 @@ function registrarTransportista() {
             }).catch((msm) => {
                 ipcRenderer.send('showAlert', "error", msm.toString())
             })
-        }else {
+        } else {
             ipcRenderer.send('showAlert', "warning", "Faltan campos por llenar!")
-        } 
+        }
     }
 }
 
@@ -1858,8 +1873,8 @@ function fillIdTicket() {
     let html = "<option selected>Open this select menu</option>"
     let procesadose = document.getElementById("select_edicion_estado_ticket").value
     getAllTicket().then((array_tickets) => {
-        array_tickets.map(({ procesado, id_ticket }) => {
-            if (Number(procesadose) == procesado) html += `<option value="${id_ticket}">${id_ticket}</option>`
+        array_tickets.map(({ procesado, id_ticket, proveedor }) => {
+            if (Number(procesadose) == procesado) html += `<option value="${id_ticket}">${id_ticket+" - "+proveedor}</option>`
         });
         document.getElementById("select_edicion_numero_ticket").innerHTML = html;
         document.getElementById("select_edicion_numero_ticket").removeAttribute("disabled")

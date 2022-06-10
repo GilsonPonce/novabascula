@@ -531,7 +531,8 @@ const getTicket = (id) => {
 }
 
 const getAllTicket = () => {
-    $query = `select id_ticket, procesado from ticket`
+    $query = `select tk.id_ticket, tk.procesado, concat(per.apellidos," ",per.nombres) as proveedor from ticket tk inner join proveedor pro on
+    tk.id_proveedor = pro.id_proveedor inner join persona per on pro.id_persona = per.id_persona`
     return new Promise((resolve, reject) => {
         connection.query($query, function (err, rows, fields) {
             if (err) reject(err.message)
