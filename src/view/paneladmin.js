@@ -1944,6 +1944,7 @@ function htmlupdatePeso(id) {
     form_edicion.classList.remove("d-none")
     getPeso(id).then((array_peso) => {
         array_peso.map(({ id_peso, id_linea, id_proceso, id_material, tipo_peso, forma_recepcion, peso, peso_contaminacion, porcentaje_contaminacion, peso_total, fecha_hora, id_ticket, id_tipo_material }) => {
+            console.log("Hola, estoy aquí", + id_peso);
             input_form_peso_id_peso.value = id_peso
             select_form_peso_tipo_peso.value = tipo_peso
             select_form_peso_forma_recepcion.value = forma_recepcion
@@ -2102,6 +2103,7 @@ function eliminarTicket() {
         ipcRenderer.send('showAlert', "danger", msm.toString())
     })
 }
+
 
 function actualizarPeso() {
     if (
