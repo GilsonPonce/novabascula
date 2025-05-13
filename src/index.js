@@ -1,3 +1,4 @@
+require('dotenv').config();
 const { app, ipcMain, BrowserWindow, ipcRenderer } = require('electron')
 const Alert = require("electron-alert");
 const fs = require("fs")

@@ -1,14 +1,15 @@
-const mysql = require('mysql');
+const mysql = require('mysql2');
+require('dotenv').config();
 
 // localAddress
 // host
 const connection = mysql.createPool({
     connectionLimit: 10,
-    host: "localhost",
-    user: "appbascula",
-    password: "admin1223",
-    database: "bascula",
-    port: 3306
+    host: process.env.HOSTDATABASE,
+    user: process.env.USERDATABASE,
+    password: process.env.PASSWORDDATABASE,
+    database: process.env.NAMEDATABASE,
+    port: process.env.PORTDATABASE
 })
 
 const insertLogin = (objeto) => {
