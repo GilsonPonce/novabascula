@@ -2,3 +2,5 @@ node_modules
 *.jpg
 *.pdf
 dist
+.idea
+.env

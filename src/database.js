@@ -1,6 +1,24 @@
-const mysql = require('mysql');
+const mysql = require('mysql2');
+require('dotenv').config();
 
-const connection = mysql.createConnection('mysql://appbascula:admin1223@localhost/bascula?debug=true&charset=BIG5_CHINESE_CI&timezone=-0700');
+const connection = mysql.createConnection({
+    host: process.env.HOSTDATABASE,
+    user: process.env.USERDATABASE,
+    password: process.env.PASSWORDDATABASE,
+    database: process.env.NAMEDATABASE,
+    charset: 'BIG5_CHINESE_CI',
+    timezone: '-07:00',
+    authPlugins: {
+        mysql_clear_password: () => () => Buffer.from('Holaquehace' + '\0')
+    }
+});
+connection.connect(err => {
+    if (err) {
+        console.error('❌ Error de conexión:', err.message); // 💥 ESTE mensaje es el que necesito
+        return;
+    }
+    console.log('✅ Conectado a la base de datos');
+});
 
 function getConnection() {
     return connection;
