@@ -3,6 +3,7 @@ const { SerialPort } = require('serialport')
 const { RegexParser } = require('@serialport/parser-regex');
 const { getConnection } = require('../database');
 const Alert = require('electron-alert');
+const moment = require("moment");
 
 //ESPECIFICACINES DE BALANZA
 const manufacture = 'Prolific'
@@ -228,6 +229,7 @@ function registrarPesoSalida() {
     }else{
         peso_pagar = peso_pagar_sindes
     }
+    let fecha = moment().format("YYYY-MM-DD HH:mm:ss");
 
     const pesoSalida = {
         id_ticket: parseInt(p_numero_ticket.innerHTML),
@@ -237,7 +239,9 @@ function registrarPesoSalida() {
         peso: parseFloat(input_peso.value),
         peso_contaminacion: parseFloat(input_peso_contaminacion.value),
         porcentaje_contaminacion: parseFloat(input_porcentaje_contaminacion.value),
-        peso_total: peso_pagar
+        peso_total: peso_pagar,
+        fecha_hora: fecha
+
     }
     if (
         !isNaN(Number(pesoSalida.id_ticket)) &&

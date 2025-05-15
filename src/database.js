@@ -7,10 +7,6 @@ const connection = mysql.createConnection({
     password: process.env.PASSWORDDATABASE,
     database: process.env.NAMEDATABASE,
     charset: 'BIG5_CHINESE_CI',
-    timezone: '-07:00',
-    authPlugins: {
-        mysql_clear_password: () => () => Buffer.from('Holaquehace' + '\0')
-    }
 });
 connection.connect(err => {
     if (err) {

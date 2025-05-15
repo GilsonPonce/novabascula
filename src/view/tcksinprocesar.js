@@ -1,5 +1,7 @@
 const { ipcRenderer } = require('electron');
 const { getTicketSinProcesar } = require('../database');
+const moment = require('moment');
+
 
 
 const body_table = document.getElementById('body_table');
@@ -15,7 +17,9 @@ function llenarTabla() {
         data.map(({ id_ticket, placa, fecha_ticket, proveedor, transportista }) => {
             html += `<tr ondblclick="enviarticket(${id_ticket})">
                       <th scope="row">${id_ticket}</th>
-                      <td>${("0"+fecha_ticket.getDate()).slice(-2) + "/" + ("0"+(fecha_ticket.getMonth() + 1 )).slice(-2) + "/" + fecha_ticket.getFullYear() + " - " + ("0"+(fecha_ticket.getHours()-2)).slice(-2) + ":" + ("0"+fecha_ticket.getMinutes()).slice(-2) + ":" + ("0"+fecha_ticket.getSeconds()).slice(-2)}</td>
+                      
+                      <!-- <td>${fecha_ticket.toLocaleString()}</td>-->
+                      <td>${(fecha_ticket.getDate()) + "/" + ((fecha_ticket.getMonth() + 1 )) + "/" + fecha_ticket.getFullYear() + " - " + ((fecha_ticket.getHours())) + ":" + ("0"+fecha_ticket.getMinutes()) + ":" + (fecha_ticket.getSeconds())}</td>
                       <td>${placa}</td>
                       <td>${transportista}</td>
                       <td>${proveedor}</td>
