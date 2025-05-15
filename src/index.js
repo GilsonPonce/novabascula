@@ -1,4 +1,3 @@
-require('dotenv').config();
 const { app, ipcMain, BrowserWindow, ipcRenderer } = require('electron')
 const Alert = require("electron-alert");
 const fs = require("fs")
@@ -309,13 +308,17 @@ function registrarEntrada(
     { procesado, id_vehiculo, id_proveedor, id_empresa },
     { tipo_peso, forma_recepcion, peso }
 ) {
-    let sqlticket = `insert into ticket(procesado, id_vehiculo, id_proveedor, id_empresa)
-            values(${procesado}, ${id_vehiculo}, ${id_proveedor}, ${id_empresa})`
+    let fecha = moment().format("YYYY-MM-DD HH:mm:ss");
+    let sqlticket = `insert into ticket(procesado, id_vehiculo, id_proveedor, id_empresa, fecha_ticket)
+            values(${procesado}, ${id_vehiculo}, ${id_proveedor}, ${id_empresa}, '${fecha}');`
     getConnection().query(sqlticket, function (err, result) {
+        console.log({error: err})
         if (err) alerta('error', err.message);
+
         if (result.affectedRows > 0) {
-            let sqlpeso = `insert into peso(tipo_peso, forma_recepcion, peso, id_ticket)
-            values('${tipo_peso}', '${forma_recepcion}', ${peso}, ${result.insertId})`
+            console.log(result)
+            let sqlpeso = `insert into peso(tipo_peso, forma_recepcion, peso, id_ticket, fecha_hora)
+            values('${tipo_peso}', '${forma_recepcion}', ${peso}, ${result.insertId}, '${fecha}')`
             getConnection().query(sqlpeso, function (err2, result2) {
                 if (err2) alerta('error', err2.message);
                 if (result2 && result2.affectedRows > 0) {
@@ -327,7 +330,8 @@ function registrarEntrada(
 }
 
 function procesarTicket(id_ticket) {
-    let sqlprocesar = `update ticket set procesado = 1, fecha_procesado = '${moment().format("YYYY-MM-DD h:mm:ss")}' WHERE id_ticket = ` + getConnection().escape(id_ticket);
+    let fecha = moment().format("YYYY-MM-DD HH:mm:ss");
+    let sqlprocesar = `update ticket set procesado = 1, fecha_procesado = '${fecha}' WHERE id_ticket = ` + getConnection().escape(id_ticket);
     getConnection().query(sqlprocesar, function (err, result) {
         if (err) alerta('error', err.message)
         if (result && result.affectedRows > 0) console.log("ticket procesado")

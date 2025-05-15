@@ -1874,7 +1874,7 @@ function fillIdTicket() {
     let procesadose = document.getElementById("select_edicion_estado_ticket").value
     getAllTicket().then((array_tickets) => {
         array_tickets.map(({ procesado, id_ticket, proveedor }) => {
-            if (Number(procesadose) == procesado) html += `<option value="${id_ticket}">${id_ticket+" - "+proveedor}</option>`
+            if (Number(procesadose) == procesado) html += `<option value="${id_ticket}">${proveedor +" - "+ id_ticket}</option>`
         });
         document.getElementById("select_edicion_numero_ticket").innerHTML = html;
         document.getElementById("select_edicion_numero_ticket").removeAttribute("disabled")
