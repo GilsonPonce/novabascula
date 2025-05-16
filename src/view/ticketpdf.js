@@ -42,7 +42,7 @@ function cargarData(id){
 
         tipo_tiket.innerHTML = tipo_ticket
         id_ticket.innerHTML = infoticket.id_ticket
-        fecha_procesado.innerHTML = infoticket.fecha_procesado == null ? "NO PROCESADO" : (infoticket.fecha_procesado.getDate()) + "/" + ((infoticket.fecha_procesado.getMonth())) + "/" + infoticket.fecha_procesado.getFullYear() + " - " + ((infoticket.fecha_procesado.getHours())) + ":" + (infoticket.fecha_procesado.getMinutes()) + ":" + (infoticket.fecha_procesado.getSeconds())
+        fecha_procesado.innerHTML = infoticket.fecha_procesado == null ? "NO PROCESADO" : (infoticket.fecha_procesado.getDate()) + "/" + ((infoticket.fecha_procesado.getMonth() +1 )) + "/" + infoticket.fecha_procesado.getFullYear() + " - " + ((infoticket.fecha_procesado.getHours())) + ":" + (infoticket.fecha_procesado.getMinutes()) + ":" + (infoticket.fecha_procesado.getSeconds())
         num_placa.innerHTML = infoticket.placa
         nom_transportista.innerHTML = infoticket.transportista
         cedula_transportista.innerHTML = infoticket.cedula
@@ -77,7 +77,7 @@ function cargarData(id){
                     <td class="td">${porcentaje_contaminacion == null ? 0 : porcentaje_contaminacion}</td>
                     <td class="td">${peso_total == null ? 0 : peso_total}</td>
                     <!--<td class="td">${fecha_hora.toLocaleString()}</td>-->
-                    <td class="td">${(fecha_hora.getDate()) + "/" + ((fecha_hora.getMonth())) + "/" + fecha_hora.getFullYear() + " - " + ((fecha_hora.getHours())) + ":" + (fecha_hora.getMinutes()) + ":" + (fecha_hora.getSeconds())}</td>
+                    <td class="td">${(fecha_hora.getDate()) + "/" + ((fecha_hora.getMonth() +1 )) + "/" + fecha_hora.getFullYear() + " - " + ((fecha_hora.getHours())) + ":" + (fecha_hora.getMinutes()) + ":" + (fecha_hora.getSeconds())}</td>
                     <td class="td">${forma_recepcion}</td>
                     </tr>`
 
